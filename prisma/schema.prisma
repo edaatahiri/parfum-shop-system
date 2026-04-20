@@ -1,0 +1,111 @@
+// 1. Konfigurimi i Gjeneratorit
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 2. Lidhja me Databazën (MySQL)
+datasource db {
+  provider = "mysql"
+}
+
+// 3. Modelet tuaja (Tabelat)
+model Parfum {
+  parfum_id     Int     @id @default(autoincrement())
+  emri          String
+  gjinia_target String
+  volumi_ml     Int
+  cmimi         Float
+  sasia_stok    Int
+  pershkrimi    String?
+  notat_ere     String?
+
+  kategoria_id Int
+  Kategoria    Kategoria @relation(fields: [kategoria_id], references: [kategori_id])
+
+  marka_id Int
+  marka    Markat    @relation(fields: [marka_id], references: [marka_id])
+  mostrats Mostrat[]
+}
+
+model Kategoria {
+  kategori_id Int      @id @default(autoincrement())
+  emri        String   @unique
+  pershkrimi  String?
+  parfumet    Parfum[]
+}
+
+model Klientet {
+  id                Int      @id @default(autoincrement())
+  emri              String
+  mbiemri           String
+  telefoni          String?
+  email             String   @unique
+  data_lindjes      DateTime
+  gjinia            String
+  adresa            String
+  data_regjistrimit DateTime @default(now())
+  piket_besnikerise Int      @default(0)
+}
+
+model Markat {
+  marka_id         Int      @id @default(autoincrement())
+  emri             String   @unique
+  shteti_origjines String?
+  website          String?
+  pershkrimi       String?
+  logoja           String?
+  parfumet         Parfum[]
+}
+
+model Ofertat {
+  oferte_id          Int      @id @default(autoincrement())
+  emri               String
+  pershkrimi         String?
+  perqindja_zbritjes Float
+  data_fillimit      DateTime
+  data_perfundimit   DateTime
+  statusi            String
+}
+
+model Mostrat {
+  mostre_id  Int    @id @default(autoincrement())
+  sasia_stok Int
+  volumi_ml  Int
+  statusi    String
+
+  parfum_id Int
+  parfumi   Parfum @relation(fields: [parfum_id], references: [parfum_id])
+}
+
+model Users {
+  id                  Int      @id @default(autoincrement())
+  emri                String
+  mbiemri             String
+  email               String   @unique
+  password_hash       String
+  phone_number        String?
+  email_confirmed     Boolean  @default(false)
+  lockout_enabled     Boolean  @default(true)
+  access_failed_count Int      @default(0)
+  data_krijimit       DateTime @default(now())
+  statusi             String   @default("Active")
+
+  userRoles UserRoles[]
+}
+
+model Roles {
+  id              Int     @id @default(autoincrement())
+  emertimi        String  @unique
+  pershkrimi      String?
+  normalized_name String?
+
+  userRoles UserRoles[]
+}
+
+model UserRoles {
+  id      Int   @id @default(autoincrement())
+  user_id Int
+  role_id Int
+  user    Users @relation(fields: [user_id], references: [id])
+  role    Roles @relation(fields: [role_id], references: [id])
+}
