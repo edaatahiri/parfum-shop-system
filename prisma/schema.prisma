@@ -20,18 +20,22 @@ model Parfum {
   notat_ere     String?
 
   kategoria_id Int
-  Kategoria    Kategoria @relation(fields: [kategoria_id], references: [kategori_id])
+  marka_id     Int
 
-  marka_id Int
-  marka    Markat    @relation(fields: [marka_id], references: [marka_id])
-  mostrats Mostrat[]
+  kategoria Kategoria @relation(fields: [kategoria_id], references: [kategori_id])
+  marka     Markat    @relation(fields: [marka_id], references: [marka_id])
+
+  mostrats        Mostrat[]
+  detajetShitjes  Detajet_Shitjes[]
+  detajetPorosise Detajet_Porosise_Furnitorit[]
 }
 
 model Kategoria {
-  kategori_id Int      @id @default(autoincrement())
-  emri        String   @unique
+  kategori_id Int     @id @default(autoincrement())
+  emri        String  @unique
   pershkrimi  String?
-  parfumet    Parfum[]
+
+  parfumet Parfum[]
 }
 
 model Klientet {
@@ -45,16 +49,19 @@ model Klientet {
   adresa            String
   data_regjistrimit DateTime @default(now())
   piket_besnikerise Int      @default(0)
+
+  shitjet Shitjet[]
 }
 
 model Markat {
-  marka_id         Int      @id @default(autoincrement())
-  emri             String   @unique
+  marka_id         Int     @id @default(autoincrement())
+  emri             String  @unique
   shteti_origjines String?
   website          String?
   pershkrimi       String?
   logoja           String?
-  parfumet         Parfum[]
+
+  parfumet Parfum[]
 }
 
 model Ofertat {
@@ -90,7 +97,10 @@ model Users {
   data_krijimit       DateTime @default(now())
   statusi             String   @default("Active")
 
-  userRoles UserRoles[]
+  userRoles     UserRoles[]
+  userClaims    UserClaims[]
+  userTokens    UserTokens[]
+  refreshTokens RefreshTokens[]
 }
 
 model Roles {
@@ -103,9 +113,116 @@ model Roles {
 }
 
 model UserRoles {
-  id      Int   @id @default(autoincrement())
+  id Int @id @default(autoincrement())
+
   user_id Int
   role_id Int
-  user    Users @relation(fields: [user_id], references: [id])
-  role    Roles @relation(fields: [role_id], references: [id])
+
+  user Users @relation(fields: [user_id], references: [id])
+  role Roles @relation(fields: [role_id], references: [id])
+}
+
+model UserClaims {
+  id          Int    @id @default(autoincrement())
+  user_id     Int
+  claim_type  String
+  claim_value String
+
+  user Users @relation(fields: [user_id], references: [id])
+}
+
+model UserTokens {
+  id             Int    @id @default(autoincrement())
+  user_id        Int
+  login_provider String
+  token_name     String
+  token_value    String
+
+  user Users @relation(fields: [user_id], references: [id])
+}
+
+model RefreshTokens {
+  id      Int      @id @default(autoincrement())
+  user_id Int
+  token   String
+  expires DateTime
+  created DateTime @default(now())
+  revoked Boolean  @default(false)
+
+  user Users @relation(fields: [user_id], references: [id])
+}
+
+model Punetoret {
+  punetor_id     Int      @id @default(autoincrement())
+  emri           String
+  mbiemri        String
+  pozita         String
+  telefoni       String?
+  email          String
+  data_punesimit DateTime
+  paga           Float
+
+  shitjet Shitjet[]
+}
+
+model Furnitoret {
+  furnitor_id       Int    @id @default(autoincrement())
+  emri              String
+  personi_kontaktit String
+  telefoni          String
+  email             String
+  adresa            String
+  shteti            String
+
+  porosite Porosite_Furnitoreve[]
+}
+
+model Shitjet {
+  shitje_id      Int      @id @default(autoincrement())
+  klient_id      Int
+  punetor_id     Int
+  data_shitjes   DateTime
+  shuma_totale   Float
+  zbritja        Float
+  metoda_pageses String
+
+  klient  Klientet          @relation(fields: [klient_id], references: [id])
+  punetor Punetoret         @relation(fields: [punetor_id], references: [punetor_id])
+  detajet Detajet_Shitjes[]
+}
+
+model Detajet_Shitjes {
+  detal_id    Int   @id @default(autoincrement())
+  shitje_id   Int
+  parfum_id   Int
+  sasia       Int
+  cmimi_njesi Float
+  cmimi_total Float
+
+  shitje Shitjet @relation(fields: [shitje_id], references: [shitje_id])
+  parfum Parfum  @relation(fields: [parfum_id], references: [parfum_id])
+}
+
+model Porosite_Furnitoreve {
+  porosi_id     Int       @id @default(autoincrement())
+  furnitor_id   Int
+  data_porosise DateTime
+  shuma_totale  Float
+  statusi       String
+  data_pranimit DateTime?
+
+  furnitor Furnitoret                    @relation(fields: [furnitor_id], references: [furnitor_id])
+  detajet  Detajet_Porosise_Furnitorit[]
+}
+
+model Detajet_Porosise_Furnitorit {
+  detal_id    Int   @id @default(autoincrement())
+  porosi_id   Int
+  parfum_id   Int
+  sasia       Int
+  cmimi_njesi Float
+  cmimi_total Float
+
+  porosi Porosite_Furnitoreve @relation(fields: [porosi_id], references: [porosi_id])
+  parfum Parfum               @relation(fields: [parfum_id], references: [parfum_id])
 }
