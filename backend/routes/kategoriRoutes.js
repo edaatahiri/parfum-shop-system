@@ -2,7 +2,9 @@ const express = require("express");
 const router = express.Router();
 const kategoriController = require("../controllers/kategoriController");
 
+router.post("/", kategoriController.createKategoria);
 router.get("/", kategoriController.getAllKategorite);
-router.post("/", kategoriController.createKategorite);
+router.put("/:id", kategoriController.updateKategoria);
+router.delete("/:id", kategoriController.deleteKategoria);
 
 module.exports = router;

@@ -1,19 +1,47 @@
-const db = require("./config/db");
+const prisma = require("../config/db");
 
-exports.getAllKategorite = (req, res) => {
-  db.query("SELECT * FROM kategorite", (err, results) => {
-    if (err) return res.status(500).json(err);
-    res.status(200).json(results);
-  });
+exports.createKategoria = async (req, res) => {
+  try {
+    const kategoria = await prisma.kategoria.create({
+      data: {
+        emri: req.body.emri,
+        pershkrimi: req.body.pershkrimi,
+      },
+    });
+    res.status(201).json(kategoria);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 };
 
-exports.createKategorite = (req, res) => {
-  const { emri, pershkrimi } = req.body;
+exports.getAllKategorite = async (req, res) => {
+  try {
+    const kategorite = await prisma.kategoria.findMany();
+    res.json(kategorite);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
-  const q = "INSERT INTO kategorite (emri,pershkrimi) VALUES(?,?)";
+exports.updateKategoria = async (req, res) => {
+  try {
+    const updated = await prisma.kategoria.update({
+      where: { kategori_id: parseInt(req.params.id) },
+      data: req.body,
+    });
+    res.json(updated);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
 
-  db.query(q, [emri, pershkrimi], (err, result) => {
-    if (err) return res.status(500).json(err);
-    res.status(201).json({ message: " Kategoria u shtua me sukses!" });
-  });
+exports.deleteKategoria = async (req, res) => {
+  try {
+    await prisma.kategoria.delete({
+      where: { kategori_id: parseInt(req.params.id) },
+    });
+    res.json({ message: "Kategoria u fshi" });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 };

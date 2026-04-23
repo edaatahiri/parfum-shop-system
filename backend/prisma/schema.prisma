@@ -1,14 +1,15 @@
-// 1. Konfigurimi i Gjeneratorit
+// Konfigurimi i Gjeneratorit
 generator client {
   provider = "prisma-client-js"
 }
 
-// 2. Lidhja me Databazën (MySQL)
+// Lidhja me Databazën (MySQL)
 datasource db {
   provider = "mysql"
+  url=env("DATABASE_URL")
 }
 
-// 3. Modelet tuaja (Tabelat)
+// Tabelat
 model Parfum {
   parfum_id     Int     @id @default(autoincrement())
   emri          String
@@ -28,6 +29,8 @@ model Parfum {
   mostrats        Mostrat[]
   detajetShitjes  Detajet_Shitjes[]
   detajetPorosise Detajet_Porosise_Furnitorit[]
+  reviews Reviews[]
+  wishlist Wishlist[]
 }
 
 model Kategoria {
@@ -51,6 +54,8 @@ model Klientet {
   piket_besnikerise Int      @default(0)
 
   shitjet Shitjet[]
+  reviews Reviews[]
+  wishlist Wishlist[]
 }
 
 model Markat {
@@ -120,6 +125,32 @@ model UserRoles {
 
   user Users @relation(fields: [user_id], references: [id])
   role Roles @relation(fields: [role_id], references: [id])
+}
+
+model Reviews{
+  review_id Int @id @default(autoincrement())
+  rating Int 
+  komenti String? @db.Text
+  data DateTime @default(now())
+
+  klient_id Int
+  parfum_id Int
+
+  klient Klientet @relation(fields: [klient_id], references: [id])
+  parfumi Parfum @relation(fields: [parfum_id], references: [parfum_id])
+}
+
+model Wishlist{
+  wishlist_id Int @id @default(autoincrement())
+  data_shtimit DateTime @default(now())
+
+  klient_id Int
+  parfum_id Int
+
+  klient Klientet @relation(fields: [klient_id], references: [id])
+  parfumi Parfum @relation(fields: [parfum_id], references: [parfum_id])
+
+  @@unique([klient_id,parfum_id])
 }
 
 model UserClaims {
