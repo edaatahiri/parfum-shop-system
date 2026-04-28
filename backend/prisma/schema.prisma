@@ -31,6 +31,7 @@ model Parfum {
   detajetPorosise Detajet_Porosise_Furnitorit[]
   reviews Reviews[]
   wishlist Wishlist[]
+  ofertatParfumit Ofertat_Parfumit[]
 }
 
 model Kategoria {
@@ -77,6 +78,8 @@ model Ofertat {
   data_fillimit      DateTime
   data_perfundimit   DateTime
   statusi            String
+
+  ofertatParfumit Ofertat_Parfumit[]
 }
 
 model Mostrat {
@@ -106,6 +109,7 @@ model Users {
   userClaims    UserClaims[]
   userTokens    UserTokens[]
   refreshTokens RefreshTokens[]
+  auditLogs AuditLogs[]
 }
 
 model Roles {
@@ -256,4 +260,29 @@ model Detajet_Porosise_Furnitorit {
 
   porosi Porosite_Furnitoreve @relation(fields: [porosi_id], references: [porosi_id])
   parfum Parfum               @relation(fields: [parfum_id], references: [parfum_id])
+}
+
+
+model Ofertat_Parfumit {
+  id         Int @id @default(autoincrement())
+
+  oferte_id  Int
+  parfum_id  Int
+
+  oferte Ofertat @relation(fields: [oferte_id], references: [oferte_id])
+  parfum Parfum  @relation(fields: [parfum_id], references: [parfum_id])
+}
+
+model AuditLogs {
+  id          Int      @id @default(autoincrement())
+  user_id     Int?
+  action      String
+  table_name  String
+  record_id   Int?
+  old_value   String? @db.Text
+  new_value   String? @db.Text
+  ip_address  String?
+  created_at  DateTime @default(now())
+
+  user Users? @relation(fields: [user_id], references: [id])
 }
