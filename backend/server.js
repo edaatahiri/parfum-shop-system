@@ -1,3 +1,11 @@
+
+const puntoretRoutes = require("./routes/puntoretRoutes");
+const shitjetRoutes = require("./routes/shitjetRoutes");
+const porositFurnitoreveRoutes = require("./routes/porositeFurnitoreveRoutes");
+const detajetShitjesRoutes = require("./routes/detajetShitjesRoutes");
+const detajetPorosisRoutes = require("./routes/detajetPorosisRoutes");
+const authRoutes = require("./routes/authRoutes");
+const furnitoretRoutes = require("./routes/furnitoretRoutes");
 const express = require("express");
 const cors = require("cors");
 
@@ -29,6 +37,13 @@ app.use("/api/mostrat", mostraRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/user-roles", userRoleRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/furnitoret", furnitoretRoutes);
+app.use("/api/puntoret", puntoretRoutes);
+app.use("/api/shitjet", shitjetRoutes);
+app.use("/api/porosit-furnitoreve", porositFurnitoreveRoutes);
+app.use("/api/detajet-shitjes", detajetShitjesRoutes);
+app.use("/api/detajet-porosis", detajetPorosisRoutes);
 
 app.get("/", (req, res) => {
   res.send("Backend punon");
