@@ -1,7 +1,7 @@
 const prisma = require("../config/db");
 
 
-exports.createRefreshToken = async (req, res) => {
+exports.createRefreshTokens = async (req, res) => {
   try {
     const { user_id, token, expires } = req.body;
 
@@ -9,8 +9,8 @@ exports.createRefreshToken = async (req, res) => {
       data: {
         user_id,
         token,
-        expires: new Date(expires)
-      }
+        expires: new Date(expires),
+      },
     });
 
     res.status(201).json(data);
@@ -23,7 +23,7 @@ exports.createRefreshToken = async (req, res) => {
 exports.getRefreshTokens = async (req, res) => {
   try {
     const data = await prisma.refreshTokens.findMany({
-      include: { user: true }
+      include: { user: true },
     });
 
     res.json(data);
@@ -33,13 +33,13 @@ exports.getRefreshTokens = async (req, res) => {
 };
 
 
-exports.getRefreshTokenById = async (req, res) => {
+exports.getRefreshTokensById = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
 
     const data = await prisma.refreshTokens.findUnique({
       where: { id },
-      include: { user: true }
+      include: { user: true },
     });
 
     res.json(data);
@@ -49,13 +49,13 @@ exports.getRefreshTokenById = async (req, res) => {
 };
 
 
-exports.updateRefreshToken = async (req, res) => {
+exports.updateRefreshTokens = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
 
     const data = await prisma.refreshTokens.update({
       where: { id },
-      data: req.body
+      data: req.body,
     });
 
     res.json(data);
@@ -65,12 +65,12 @@ exports.updateRefreshToken = async (req, res) => {
 };
 
 
-exports.deleteRefreshToken = async (req, res) => {
+exports.deleteRefreshTokens = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
 
     await prisma.refreshTokens.delete({
-      where: { id }
+      where: { id },
     });
 
     res.json({ message: "Deleted" });

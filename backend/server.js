@@ -1,12 +1,16 @@
-const puntoretRoutes = require("./routes/puntoretRoutes");
+const express = require("express");
+const cors = require("cors");
+
+const refreshTokensRoutes = require("./routes/refreshTokensRoutes");
+const userTokensRoutes = require("./routes/userTokensRoutes");
+const userClaimsRoutes = require("./routes/userClaimsRoutes");
+const puntoretRoutes = require("./routes/punetoretRoutes");
 const shitjetRoutes = require("./routes/shitjetRoutes");
 const porositFurnitoreveRoutes = require("./routes/porositeFurnitoreveRoutes");
 const detajetShitjesRoutes = require("./routes/detajetShitjesRoutes");
-const detajetPorosisRoutes = require("./routes/detajetPorosisRoutes");
-const authRoutes = require("./routes/authRoutes");
+const detajetPorosisRoutes = require("./routes/detajetPorosiseRoutes");
+
 const furnitoretRoutes = require("./routes/furnitoretRoutes");
-const express = require("express");
-const cors = require("cors");
 
 const kategoriRoutes = require("./routes/kategoriRoutes");
 const markaRoutes = require("./routes/markaRoutes");
@@ -25,6 +29,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use("/api/refresh-tokens", refreshTokensRoutes);
+app.use("/api/user-tokens", userTokensRoutes);
+app.use("/api/user-claims", userClaimsRoutes);
 app.use("/api/kategorite", kategoriRoutes);
 app.use("/api/markat", markaRoutes);
 app.use("/api/klientet", klientRoutes);
@@ -36,7 +43,6 @@ app.use("/api/mostrat", mostraRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/user-roles", userRoleRoutes);
-app.use("/api/auth", authRoutes);
 app.use("/api/furnitoret", furnitoretRoutes);
 app.use("/api/puntoret", puntoretRoutes);
 app.use("/api/shitjet", shitjetRoutes);

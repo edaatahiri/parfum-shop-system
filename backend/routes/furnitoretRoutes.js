@@ -1,18 +1,19 @@
 const express = require("express");
+
 const {
   getFurnitoret,
-  getFurnitoriById,
-  createFurnitori,
-  updateFurnitori,
-  deleteFurnitori
+  getFurnitorById,
+  createFurnitor,
+  updateFurnitor,
+  deleteFurnitor
 } = require("../controllers/furnitoretController");
 
 const router = express.Router();
 
 router.get("/", getFurnitoret);
-router.get("/:id", getFurnitoriById);
-router.post("/", createFurnitori);
-router.put("/:id", updateFurnitori);
-router.delete("/:id", deleteFurnitori);
+router.get("/:id", getFurnitorById);
+router.post("/", createFurnitor);
+router.put("/:id", updateFurnitor);
+router.delete("/:id", deleteFurnitor);
 
 module.exports = router;

@@ -1,6 +1,4 @@
 const prisma = require("../config/db");
-
-
 exports.createFurnitor = async (req, res) => {
   try {
     const {

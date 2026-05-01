@@ -1,4 +1,4 @@
-const prisma = require("./config/db"); // nese file eshte ne root
+const prisma = require("../config/db"); // nese file eshte ne root
 
 const logAction = async ({
   userId,

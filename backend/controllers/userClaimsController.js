@@ -1,12 +1,12 @@
 const prisma = require("../config/db");
 
-
-exports.createUserClaim = async (req, res) => {
+// CREATE
+exports.createUserClaims = async (req, res) => {
   try {
     const { user_id, claim_type, claim_value } = req.body;
 
     const data = await prisma.userClaims.create({
-      data: { user_id, claim_type, claim_value }
+      data: { user_id, claim_type, claim_value },
     });
 
     res.status(201).json(data);
@@ -15,11 +15,11 @@ exports.createUserClaim = async (req, res) => {
   }
 };
 
-
+// GET ALL
 exports.getUserClaims = async (req, res) => {
   try {
     const data = await prisma.userClaims.findMany({
-      include: { user: true }
+      include: { user: true },
     });
 
     res.json(data);
@@ -28,14 +28,14 @@ exports.getUserClaims = async (req, res) => {
   }
 };
 
-
-exports.getUserClaimById = async (req, res) => {
+// GET BY ID
+exports.getUserClaimsById = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
 
     const data = await prisma.userClaims.findUnique({
       where: { id },
-      include: { user: true }
+      include: { user: true },
     });
 
     res.json(data);
@@ -44,14 +44,14 @@ exports.getUserClaimById = async (req, res) => {
   }
 };
 
-
-exports.updateUserClaim = async (req, res) => {
+// UPDATE
+exports.updateUserClaims = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
 
     const data = await prisma.userClaims.update({
       where: { id },
-      data: req.body
+      data: req.body,
     });
 
     res.json(data);
@@ -61,12 +61,12 @@ exports.updateUserClaim = async (req, res) => {
 };
 
 
-exports.deleteUserClaim = async (req, res) => {
+exports.deleteUserClaims = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
 
     await prisma.userClaims.delete({
-      where: { id }
+      where: { id },
     });
 
     res.json({ message: "Deleted" });

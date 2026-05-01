@@ -1,7 +1,5 @@
-const logAction = require("../utilsAuditLogger");//per auditlog (lidhja)
 const prisma = require("../config/db");
-
-const logAction = require("../utilsAuditLogger");
+const logAction = require("./utilsAuditLogger"); // e saktë (brenda controllers folder)
 
 exports.createOferta = async (req, res) => {
   try {
@@ -9,14 +7,19 @@ exports.createOferta = async (req, res) => {
       data: {
         emri: req.body.emri,
         pershkrimi: req.body.pershkrimi,
-        perqindja_zbritjes: parseFloat(req.body.perqindja_zbritjes),
-        data_fillimit: new Date(req.body.data_fillimit),
-        data_perfundimit: new Date(req.body.data_perfundimit),
+        perqindja_zbritjes: req.body.perqindja_zbritjes
+          ? parseFloat(req.body.perqindja_zbritjes)
+          : null,
+        data_fillimit: req.body.data_fillimit
+          ? new Date(req.body.data_fillimit)
+          : null,
+        data_perfundimit: req.body.data_perfundimit
+          ? new Date(req.body.data_perfundimit)
+          : null,
         statusi: req.body.statusi,
       },
     });
 
-    //  AUDIT LOG
     await logAction({
       userId: req.user?.id || 1,
       action: "CREATE",
@@ -31,53 +34,30 @@ exports.createOferta = async (req, res) => {
   }
 };
 
-
-
-
 exports.getAllOfertat = async (req, res) => {
   try {
     const ofertat = await prisma.ofertat.findMany();
-    res.status(200).json(ofertat);
+    res.json(ofertat);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-const logAction = require("../utilsAuditLogger");
-
 exports.updateOferta = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
 
-    
     const old = await prisma.ofertat.findUnique({
       where: { oferte_id: id },
     });
 
-    if (!old) {
-      return res.status(404).json({ error: "Oferta nuk ekziston" });
-    }
+    if (!old) return res.status(404).json({ error: "Nuk ekziston" });
 
-    
     const updated = await prisma.ofertat.update({
       where: { oferte_id: id },
-      data: {
-        emri: req.body.emri,
-        pershkrimi: req.body.pershkrimi,
-        perqindja_zbritjes: req.body.perqindja_zbritjes
-          ? parseFloat(req.body.perqindja_zbritjes)
-          : undefined,
-        data_fillimit: req.body.data_fillimit
-          ? new Date(req.body.data_fillimit)
-          : undefined,
-        data_perfundimit: req.body.data_perfundimit
-          ? new Date(req.body.data_perfundimit)
-          : undefined,
-        statusi: req.body.statusi,
-      },
+      data: req.body,
     });
 
-    // AUDIT LOG
     await logAction({
       userId: req.user?.id || 1,
       action: "UPDATE",
@@ -89,35 +69,24 @@ exports.updateOferta = async (req, res) => {
 
     res.json(updated);
   } catch (err) {
-    res.status(400).json({
-      error: "Gabim gjate perditesimit: " + err.message,
-    });
+    res.status(400).json({ error: err.message });
   }
 };
-
-
-
-
 
 exports.deleteOferta = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
 
-    
     const old = await prisma.ofertat.findUnique({
       where: { oferte_id: id },
     });
 
-    if (!old) {
-      return res.status(404).json({ error: "Oferta nuk ekziston" });
-    }
+    if (!old) return res.status(404).json({ error: "Nuk ekziston" });
 
-    
     await prisma.ofertat.delete({
       where: { oferte_id: id },
     });
 
-    // audit log
     await logAction({
       userId: req.user?.id || 1,
       action: "DELETE",
@@ -126,10 +95,8 @@ exports.deleteOferta = async (req, res) => {
       oldData: old,
     });
 
-    res.status(200).json({ message: "Oferta u fshi me sukses!" });
+    res.json({ message: "U fshi me sukses" });
   } catch (err) {
-    res.status(400).json({
-      error: "Gabim gjate fshirjes: " + err.message,
-    });
+    res.status(400).json({ error: err.message });
   }
 };
