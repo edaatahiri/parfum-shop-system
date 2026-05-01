@@ -21,7 +21,7 @@ exports.getAllReviews = async (req, res) => {
   try {
     const reviews = await prisma.reviews.findMany({
       include: {
-        klientet: true,
+        klient: true,
         parfumi: true,
       },
     });

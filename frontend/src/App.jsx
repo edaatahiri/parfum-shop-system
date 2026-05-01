@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import axios from "axios";
 import ParfumCard from "./components/ParfumCard";
+import Register from "./components/Register";
 
 function App() {
   const [parfumet, setParfumet] = useState([]);
@@ -14,7 +15,7 @@ function App() {
   }, []);
 
   return (
-    <div className="container">
+    /*<div className="container">
       <header>
         <h1>Parfum Shop</h1>
       </header>
@@ -23,7 +24,10 @@ function App() {
           <ParfumCard key={parfumi.parfum_id} p={parfumi} />
         ))}
       </section>
-    </div>
+    </div>*/
+    <>
+      <Register></Register>
+    </>
   );
 }
 

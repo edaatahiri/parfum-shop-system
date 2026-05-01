@@ -21,7 +21,7 @@ exports.getAllWishlists = async (req, res) => {
   try {
     const listat = await prisma.wishlist.findMany({
       include: {
-        klientet: true,
+        klient: true,
         parfumi: true,
       },
     });

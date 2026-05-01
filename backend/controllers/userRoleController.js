@@ -18,8 +18,8 @@ exports.getAllUserRoles = async (req, res) => {
   try {
     const list = await prisma.userRoles.findMany({
       include: {
-        users: true,
-        roles: true,
+        user: true,
+        role: true,
       },
     });
     res.status(200).json(list);

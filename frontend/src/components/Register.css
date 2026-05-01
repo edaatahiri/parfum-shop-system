@@ -1,0 +1,153 @@
+/*Template i gatshem per register*/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+
+.container {
+  width: 100%;
+  height: 100vh;
+  background: #231f20;
+  overflow-x: hidden;
+}
+
+.mainBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.centeredBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 600px; /* E zvogëlova pak gjerësinë pasi tani është vetëm një formë */
+  height: auto;
+  padding: 40px 0;
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 3px 15px 32px 10px rgba(66, 66, 67, 0.37);
+  backdrop-filter: blur(10px); /* Shtova pak më shumë blur për efekt xhami */
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  position: relative;
+}
+
+.signupForm {
+  width: 100%;
+  display: block;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.mainSignupBox {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.signupVisibility {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: runningInMainSignup 1s 1;
+}
+
+.signupTitle {
+  font-size: 28px;
+  margin-bottom: 20px;
+  color: #231f20;
+  font-weight: bold;
+}
+
+.signupFormInput {
+  width: 100%;
+  text-align: center;
+}
+
+.input {
+  padding: 10px 40px; /* Rregulluar për hapësirë më të mirë */
+}
+
+input {
+  padding: 12px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+input:focus {
+  outline: none;
+  border-color: rgb(110, 97, 166);
+  box-shadow: 2px 4px 12px rgba(110, 97, 166, 0.2);
+}
+
+.signupBtn {
+  border-radius: 5px;
+  border: 0;
+  outline: none;
+  width: 140px; /* Pak më i gjerë butoni */
+  height: 42px;
+  background: rgb(110, 97, 166);
+  cursor: pointer;
+  transition: all 0.5s ease;
+  color: #fff;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.signupBtn:hover {
+  background: rgb(151, 79, 215);
+  transform: scale(1.05);
+}
+
+.btnBox {
+  padding: 20px 0;
+}
+
+.message-display {
+  margin: 10px 0;
+  padding: 8px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.message-display.success {
+  color: #2e7d32;
+  background-color: #e8f5e9;
+}
+
+.message-display.error {
+  color: #d32f2f;
+  background-color: #ffebee;
+}
+
+@keyframes runningInMainSignup {
+  0% {
+    transform: translateX(50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0px);
+    opacity: 1;
+  }
+}
+
+@media screen and (max-width: 650px) {
+  .centeredBox {
+    width: 90%;
+    margin: 0 5%;
+  }
+  .input {
+    padding: 10px 20px;
+  }
+}

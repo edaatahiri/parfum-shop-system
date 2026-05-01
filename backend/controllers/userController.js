@@ -1,4 +1,62 @@
 const prisma = require("../config/db");
+const bcrypt = require("bcryptjs");
+
+exports.register = async (req, res) => {
+  try {
+    const { emri, mbiemri, email, password, phone_number } = req.body;
+
+    if (!emri || !mbiemri || !email || !password) {
+      return res
+        .status(400)
+        .json({
+          error:
+            "Te gjitha fushat perveq numrit te telefonit jane te detyrueshme!",
+        });
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res
+        .status(400)
+        .json({ error: "Formati i email-it nuk eshte i vlefshem." });
+    }
+
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ error: "Fjalekalimi duhet te kete te pakten 6 karaktere." });
+    }
+
+    const userExists = await prisma.users.findUnique({
+      where: { email },
+    });
+    if (userExists) {
+      return res
+        .status(400)
+        .json({ error: "Ky email eshte i regjistruar paraprakisht." });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const newUser = await prisma.users.create({
+      data: {
+        emri,
+        mbiemri,
+        email,
+        password_hash: hashedPassword,
+        phone_number,
+        statusi: "Active",
+      },
+    });
+
+    res
+      .status(201)
+      .json({ message: "Perdoruesi u krijua me sukses!", userId: newUser.id });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Gabim gjate regjistrimit." });
+  }
+};
 
 exports.createUser = async (req, res) => {
   try {

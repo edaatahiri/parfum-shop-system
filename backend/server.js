@@ -1,5 +1,5 @@
-const express = require("express");
 const cors = require("cors");
+const express = require("express");
 
 const refreshTokensRoutes = require("./routes/refreshTokensRoutes");
 const userTokensRoutes = require("./routes/userTokensRoutes");
@@ -33,7 +33,7 @@ app.use("/api/refresh-tokens", refreshTokensRoutes);
 app.use("/api/user-tokens", userTokensRoutes);
 app.use("/api/user-claims", userClaimsRoutes);
 app.use("/api/kategorite", kategoriRoutes);
-app.use("/api/markat", markaRoutes);
+app.use("/api/marka", markaRoutes);
 app.use("/api/klientet", klientRoutes);
 app.use("/api/parfumet", parfumRoutes);
 app.use("/api/users", userRoutes);
