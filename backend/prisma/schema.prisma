@@ -16,7 +16,7 @@ model Parfum {
   gjinia_target String
   volumi_ml     Int
   cmimi         Float
-  sasia_stok    Int
+  sasia_stok    Int @default(0)
   pershkrimi    String?
   notat_ere     String?
 

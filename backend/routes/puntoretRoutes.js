@@ -4,7 +4,7 @@ import {
   getPuntoriById,
   createPuntori,
   updatePuntori,
-  deletePuntori
+  deletePuntori,
 } from "../controllers/puntoretController.js";
 
 const router = express.Router();
