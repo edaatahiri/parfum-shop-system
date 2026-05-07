@@ -23,6 +23,7 @@ const mostraRoutes = require("./routes/mostraRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const wishlistRoutes = require("./routes/wishlistRoutes");
 const userRoleRoutes = require("./routes/userRoleRoutes");
+const loginRoutes = require("./routes/loginRoutes");
 
 const app = express();
 
@@ -43,6 +44,7 @@ app.use("/api/mostrat", mostraRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/user-roles", userRoleRoutes);
+app.use("/api", loginRoutes);
 app.use("/api/furnitoret", furnitoretRoutes);
 app.use("/api/puntoret", puntoretRoutes);
 app.use("/api/shitjet", shitjetRoutes);
