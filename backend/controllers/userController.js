@@ -3,36 +3,30 @@ const bcrypt = require("bcryptjs");
 
 exports.register = async (req, res) => {
   try {
-    const { emri, mbiemri, email, password, phone_number } = req.body;
+    const { emri, mbiemri, email, password_hash, phone_number, role } =
+      req.body;
 
-    if (!emri || !mbiemri || !email || !password) {
-      return res
-        .status(400)
-        .json({
-          error:
-            "Te gjitha fushat perveq numrit te telefonit jane te detyrueshme!",
-        });
+    if (!emri || !mbiemri || !email || !password_hash) {
+      return res.status(400).json({
+        error: "All fields except phone number are required! ",
+      });
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return res
-        .status(400)
-        .json({ error: "Formati i email-it nuk eshte i vlefshem." });
+      return res.status(400).json({ error: "The email format is invalid!" });
     }
 
-    if (password.length < 6) {
+    if (password_hash.length < 6) {
       return res
         .status(400)
-        .json({ error: "Fjalekalimi duhet te kete te pakten 6 karaktere." });
+        .json({ error: "Password must be at least 6 characters!" });
     }
 
     const userExists = await prisma.users.findUnique({
       where: { email },
     });
     if (userExists) {
-      return res
-        .status(400)
-        .json({ error: "Ky email eshte i regjistruar paraprakisht." });
+      return res.status(400).json({ error: "This email is already in use!" });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -46,6 +40,11 @@ exports.register = async (req, res) => {
         password_hash: hashedPassword,
         phone_number,
         statusi: "Active",
+        userRoles: {
+          create: {
+            role_id: role === "Admin" ? 1 : 2,
+          },
+        },
       },
     });
 
