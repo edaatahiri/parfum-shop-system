@@ -3,6 +3,7 @@ import "./App.css";
 import axios from "axios";
 import ParfumCard from "./components/ParfumCard";
 import Register from "./components/Register";
+import Login from "./components/Login";
 
 function App() {
   const [parfumet, setParfumet] = useState([]);
@@ -27,6 +28,7 @@ function App() {
     </div>*/
     <>
       <Register></Register>
+       <Login></Login>
     </>
   );
 }
