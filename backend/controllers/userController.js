@@ -1,34 +1,48 @@
 const prisma = require("../config/db");
 const bcrypt = require("bcryptjs");
 
+
 exports.register = async (req, res) => {
   try {
-    const { emri, mbiemri, email, password_hash, phone_number, role } =
-      req.body;
+    const {
+      emri,
+      mbiemri,
+      email,
+      password,
+      phone_number,
+      role,
+    } = req.body;
 
-    if (!emri || !mbiemri || !email || !password_hash) {
+    if (!emri || !mbiemri || !email || !password) {
       return res.status(400).json({
-        error: "All fields except phone number are required! ",
+        error: "All fields except phone number are required!",
       });
     }
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return res.status(400).json({ error: "The email format is invalid!" });
+      return res.status(400).json({
+        error: "Invalid email format!",
+      });
     }
 
-    if (password_hash.length < 6) {
-      return res
-        .status(400)
-        .json({ error: "Password must be at least 6 characters!" });
+    if (password.length < 6) {
+      return res.status(400).json({
+        error: "Password must be at least 6 characters!",
+      });
     }
 
     const userExists = await prisma.users.findUnique({
       where: { email },
     });
+
     if (userExists) {
-      return res.status(400).json({ error: "This email is already in use!" });
+      return res.status(400).json({
+        error: "Email already in use!",
+      });
     }
 
+    
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -38,7 +52,7 @@ exports.register = async (req, res) => {
         mbiemri,
         email,
         password_hash: hashedPassword,
-        phone_number,
+        phone_number: phone_number || null,
         statusi: "Active",
         userRoles: {
           create: {
@@ -48,92 +62,16 @@ exports.register = async (req, res) => {
       },
     });
 
-    res
-      .status(201)
-      .json({ message: "Perdoruesi u krijua me sukses!", userId: newUser.id });
+    return res.status(201).json({
+      message: "User created successfully!",
+      userId: newUser.id,
+    });
+
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Gabim gjate regjistrimit." });
-  }
-};
+    console.log(error);
 
-exports.createUser = async (req, res) => {
-  try {
-    const user = await prisma.users.create({
-      data: {
-        emri: req.body.emri,
-        mbiemri: req.body.mbiemri,
-        email: req.body.email,
-        password_hash: req.body.password_hash,
-        phone_number: req.body.phone_number,
-        statusi: req.body.statusi || "Active",
-        email_confirmed:
-          req.body.email_confirmed === "true" ||
-          req.body.email_confirmed === true,
-        lockout_enabled:
-          req.body.lockout_enabled === "true" ||
-          req.body.lockout_enabled === true,
-        access_failed_count: parseInt(req.body.access_failed_count) || 0,
-        data_krijimit: req.body.data_krijimit
-          ? new Date(req.body.data_krijimit)
-          : new Date(),
-      },
+    return res.status(500).json({
+      error: "Server error during registration",
     });
-    res.status(201).json(user);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-};
-
-exports.getAllUsers = async (req, res) => {
-  try {
-    const users = await prisma.users.findMany();
-    res.status(200).json(users);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-exports.updateUser = async (req, res) => {
-  try {
-    const updated = await prisma.users.update({
-      where: { id: parseInt(req.params.id) },
-      data: {
-        emri: req.body.emri,
-        mbiemri: req.body.mbiemri,
-        email: req.body.email,
-        password_hash: req.body.password_hash,
-        phone_number: req.body.phone_number,
-        statusi: req.body.statusi,
-        access_failed_count: req.body.access_failed_count
-          ? parseInt(req.body.access_failed_count)
-          : undefined,
-        lockout_enabled:
-          req.body.lockout_enabled !== undefined
-            ? req.body.lockout_enabled === "true" ||
-              req.body.lockout_enabled === true
-            : undefined,
-        email_confirmed:
-          req.body.email_confirmed !== undefined
-            ? req.body.email_confirmed === "true" ||
-              req.body.email_confirmed === true
-            : undefined,
-        data_krijimit: req.body.data_krijimit
-          ? new Date(req.body.data_krijimit)
-          : undefined,
-      },
-    });
-    res.status(200).json(updated);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-};
-
-exports.deleteUser = async (req, res) => {
-  try {
-    await prisma.users.delete({ where: { id: parseInt(req.params.id) } });
-    res.status(200).json({ message: "Përdoruesi u fshi me sukses" });
-  } catch (err) {
-    res.status(400).json({ error: err.message });
   }
 };
