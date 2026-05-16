@@ -122,3 +122,130 @@
   background: #fee;
   color: #a00;
 }
+
+.form-select {
+  flex: 1;
+  min-width: 150px;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  background-color: white;
+  outline: none;
+  cursor: pointer;
+}
+.form-select:focus {
+  border-color: #000;
+}
+
+.form-notification {
+  background-color: #e6f4ea;
+  color: #137333;
+  padding: 12px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  border: 1px solid #ceead6;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.add-product-section {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 40px;
+}
+
+.add-product-section h2 {
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 20px;
+  color: #222;
+}
+
+.add-perfume-form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.add-perfume-form input[type="text"],
+.add-perfume-form input[type="number"],
+.add-perfume-form .form-select,
+.add-perfume-form textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #fff;
+  color: #333;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.add-perfume-form input:focus,
+.add-perfume-form .form-select:focus,
+.add-perfume-form textarea:focus {
+  border-color: #000;
+}
+
+.add-perfume-form input[name="notat_ere"],
+.add-perfume-form textarea {
+  grid-column: span 2;
+}
+
+.form-buttons-container {
+  grid-column: span 2;
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.add-btn {
+  flex: 1;
+  background-color: #000;
+  color: #fff;
+  padding: 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.add-btn:hover {
+  background-color: #333;
+}
+
+.cancel-btn {
+  padding: 14 px 25px;
+  background-color: #f1f1f1;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.cancel-btn:hover {
+  background-color: #e5e5e5;
+  border-color: #ccc;
+}
