@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import "./Register.css";
 
 const Register = () => {
@@ -7,7 +6,7 @@ const Register = () => {
     emri: "",
     mbiemri: "",
     email: "",
-    password_hash: "",
+    password: "",
     phone_number: "",
     role: "User",
   });
@@ -22,7 +21,20 @@ const Register = () => {
     e.preventDefault();
     setMessage({ text: "", type: "" });
 
-    if (formData.password_hash.length < 6) {
+    if (
+      !formData.emri ||
+      !formData.mbiemri ||
+      !formData.email ||
+      !formData.password
+    ) {
+      setMessage({
+        text: "ALL FIELDS EXCEPT PHONE NUMBER ARE REQUIRED!",
+        type: "error",
+      });
+      return;
+    }
+
+    if (formData.password.length < 6) {
       setMessage({
         text: "Password is too short(min 6 characters)!",
         type: "error",
@@ -45,12 +57,15 @@ const Register = () => {
           emri: "",
           mbiemri: "",
           email: "",
-          password_hash: "",
+          password: "",
           phone_number: "",
           role: "User",
         });
       } else {
-        setMessage({ text: result.error, type: "error" });
+        setMessage({
+          text: result.error || "Registration failed!",
+          type: "error",
+        });
       }
     } catch (err) {
       setMessage({ text: "Connection error with the server!", type: "error" });
@@ -100,9 +115,9 @@ const Register = () => {
           <div className="form-group">
             <input
               type="password"
-              name="password_hash"
+              name="password"
               placeholder="Password"
-              value={formData.password_hash}
+              value={formData.password}
               onChange={handleChange}
             />
           </div>

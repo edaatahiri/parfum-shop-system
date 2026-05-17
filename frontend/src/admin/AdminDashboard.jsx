@@ -14,6 +14,9 @@ const AdminDashboard = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
 
+  const [showModal, setShowModal] = useState(false);
+  const [perfumeToDelete, setPerfumeToDelete] = useState(null);
+
   const [newPerfume, setNewPerfume] = useState({
     emri: "",
     gjinia_target: "Unisex",
@@ -113,26 +116,31 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleDeletePerfume = async (id) => {
-    if (
-      window.confirm("A jeni te sigurte qe deshironi ta fshini kete parfum?")
-    ) {
-      try {
-        await axios.delete(`http://localhost:5000/api/parfumet/${id}`);
-        setNotification("Product deleted successfully!");
-        fetchData();
+  const handleDeletePerfume = (id) => {
+    setPerfumeToDelete(id);
+    setShowModal(true);
+  };
+  const confirmDeletePerfume = async () => {
+    try {
+      await axios.delete(
+        `http://localhost:5000/api/parfumet/${perfumeToDelete}`,
+      );
+      setNotification("Product deleted successfully!");
+      setShowModal(false);
+      setPerfumeToDelete(null);
+      fetchData();
 
-        setTimeout(() => {
-          setNotification("");
-        }, 3000);
-      } catch (err) {
-        console.error("Error deleting perfume:", err);
-        setNotification("Error deleting product. Please try again.");
+      setTimeout(() => {
+        setNotification("");
+      }, 3000);
+    } catch (err) {
+      console.error("Error deleting perfume: ", err);
+      setNotification("Error deleting product. Please try again.");
+      setShowModal(false);
 
-        setTimeout(() => {
-          setNotification("");
-        }, 3000);
-      }
+      setTimeout(() => {
+        setNotification("");
+      }, 3000);
     }
   };
 
@@ -347,6 +355,28 @@ const AdminDashboard = () => {
           </table>
         </section>
       </main>
+      {showModal && (
+        <div className="custom-modal-overlay">
+          <div className="custom-modal">
+            <h3>Confirm Deletion</h3>
+            <p>Are you sure you want to delete this perfume?</p>
+            <div className="modal-buttons">
+              <button
+                className="modal-confirm-btn"
+                onClick={confirmDeletePerfume}
+              >
+                Confirm
+              </button>
+              <button
+                className="modal-cancel-btn"
+                onClick={() => setShowModal(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
