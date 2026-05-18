@@ -1,10 +1,23 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./Shop.css";
+import { useNavigate } from "react-router-dom";
 
 const Shop = () => {
   const [perfumes, setPerfumes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  const loggedInUser = JSON.parse(localStorage.getItem("user"));
+  
+  const isAdmin = 
+    (loggedInUser && loggedInUser.role && loggedInUser.role.toString().toLowerCase() === "admin") ||
+    (loggedInUser && loggedInUser.email === "et72862@ubt-uni.net") || 
+    (loggedInUser && loggedInUser.email === "rozafe.shkodra@gmail.com");
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    window.location.reload(); 
+  };
 
   useEffect(() => {
     const link = document.createElement("link");
@@ -51,13 +64,46 @@ const Shop = () => {
         </div>
         <div className="nav-contact">
           <div className="nav-auth-links">
-            <a href="#login" className="auth-link">
-              Login
-            </a>
+            {isAdmin && (
+              <button 
+                onClick={() => navigate("/admin")}
+                className="auth-link"
+                style={{
+                  background: "#b89453", 
+                  color: "white", 
+                  border: "none", 
+                  padding: "5px 12px", 
+                  borderRadius: "4px", 
+                  cursor: "pointer",
+                  marginRight: "15px",
+                  fontWeight: "bold"
+                }}
+              >
+                ⚙️ Dashboard
+              </button>
+            )}
+
+            {loggedInUser ? (
+              <>
+                <span className="auth-link" style={{ cursor: "default", textTransform: "none" }}>
+                  Hi, {loggedInUser.email.split('@')[0]} {/* Shfaq vetëm emrin para @ */}
+                </span>
+                <span className="auth-divider"></span>
+                <a href="#logout" onClick={handleLogout} className="auth-link">
+                  Logout
+                </a>
+              </>
+            ) : (
+              <>
+                <a href="/login" onClick={(e) => { e.preventDefault(); navigate("/login"); }} className="auth-link">
+                  Login
+                </a>
             <span className="auth-divider"></span>
             <a href="#register" className="auth-link">
               Register
             </a>
+            </>
+            )}
           </div>
           <div className="nav-icons">
             <i className="fas fa-shopping-bag"></i>
