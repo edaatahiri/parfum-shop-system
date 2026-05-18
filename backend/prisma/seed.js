@@ -9,6 +9,7 @@ async function main() {
     where: { id: 1 },
     update: {},
     create: {
+      id: 1,
       emertimi: "Admin",
       pershkrimi: "Administrator i Sistemit",
       normalized_name: "ADMIN",
@@ -19,6 +20,7 @@ async function main() {
     where: { id: 2 },
     update: {},
     create: {
+      id: 2,
       emertimi: "User",
       pershkrimi: "Perdorues i thjeshte",
       normalized_name: "USER",
@@ -66,10 +68,10 @@ async function main() {
   });
 
   const marka = await prisma.markat.upsert({
-    where: { emri: "Chanel" },
+    where: { emri: "Channel" },
     update: {},
     create: {
-      emri: "Chanel",
+      emri: "Channel",
       shteti_origjines: "France",
       website: "www.chanel.com",
     },
@@ -80,7 +82,7 @@ async function main() {
     update: {},
     create: {
       parfum_id: 1,
-      emri: "Chanel No. 5",
+      emri: "Channel No. 5",
       gjinia_target: "Femer",
       volumi_ml: 100,
       cmimi: 125.5,
