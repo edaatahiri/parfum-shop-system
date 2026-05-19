@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./Shop.css";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Shop = () => {
   const [perfumes, setPerfumes] = useState([]);
@@ -126,7 +127,7 @@ const Shop = () => {
             <a href="#new">New Scent</a>
           </li>
           <li>
-            <a href="#catalog">Catalog</a>
+            <Link to="/catalog">Catalog</Link>
           </li>
           <li>
             <a href="#faq">FAQ</a>

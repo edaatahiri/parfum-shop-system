@@ -519,3 +519,282 @@ body {
 .perfume-image-wrapper:hover .bestsellers-dynamic-img {
   transform: scale(1.05);
 }
+
+
+
+
+
+
+
+
+
+
+/* ==========================================================================
+   FAQA E KATALOGUT (CATALOG PAGE STYLES)
+   ========================================================================== */
+
+.catalog-container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 40px 80px 40px;
+  display: flex;
+  gap: 40px;
+  font-family: "Cormorant Garamond", serif;
+}
+
+/* Headeri i Katalogut */
+.catalog-header {
+  text-align: center;
+  margin: 60px 0;
+}
+
+.catalog-title {
+  font-family: "Playfair Display", serif;
+  font-size: 3rem;
+  font-weight: 400;
+  font-style: italic;
+  color: #722f37;
+  margin-bottom: 10px;
+}
+
+.catalog-subtitle {
+  font-family: "Inter", sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 3px;
+  color: #999;
+  text-transform: uppercase;
+}
+
+/* Paneli i Filtrave (Majtas) */
+.filter-sidebar {
+  width: 25%;
+  background-color: white;
+  border: 1px solid #e6e1da;
+  padding: 30px;
+  height: fit-content;
+  position: sticky;
+  top: 40px;
+}
+
+.filter-section-title {
+  font-family: "Playfair Display", serif;
+  font-size: 1.4rem;
+  color: #222;
+  margin-bottom: 25px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e6e1da;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.filter-group {
+  margin-bottom: 30px;
+}
+
+.filter-label {
+  font-family: "Inter", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  display: block;
+  margin-bottom: 12px;
+}
+
+/* Inputet dhe Radios */
+.search-input {
+  width: 100%;
+  padding: 10px 15px;
+  background-color: #faf7f2;
+  border: 1px solid #e6e1da;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.1rem;
+  color: #222;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #722f37;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  font-size: 1.15rem;
+  color: #444;
+  cursor: pointer;
+}
+
+.radio-option input {
+  accent-color: #722f37;
+  width: 16px;
+  height: 16px;
+}
+
+.price-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.price-range-slider {
+  width: 100%;
+  accent-color: #722f37;
+  cursor: pointer;
+}
+
+.clear-filters-btn {
+  width: 100%;
+  padding: 12px;
+  background: none;
+  border: 1px solid #e6e1da;
+  font-family: "Inter", sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.clear-filters-btn:hover {
+  background-color: #722f37;
+  color: white;
+  border-color: #722f37;
+}
+
+/* Gridi i Parfumeve (Djathtas) */
+.products-column {
+  width: 75%;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-cols: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 30px;
+}
+
+.perfume-card {
+  background-color: white;
+  border: 1px solid #e6e1da;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.perfume-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(114, 47, 55, 0.05);
+}
+
+.card-image-wrapper {
+  height: 280px;
+  background-color: #faf7f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 20px;
+  border-bottom: 1px solid #e6e1da;
+}
+
+.no-image-text {
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+  color: #ccc;
+  text-transform: uppercase;
+}
+
+.card-gender-tag {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+  background-color: white;
+  color: #722f37;
+  font-family: "Inter", sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border: 1px solid #e6e1da;
+}
+
+.card-content {
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
+}
+
+.card-title {
+  font-family: "Playfair Display", serif;
+  font-size: 1.6rem;
+  font-weight: 400;
+  color: #222;
+  margin-bottom: 5px;
+}
+
+.card-volume {
+  font-family: "Inter", sans-serif;
+  font-size: 0.7rem;
+  color: #999;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.card-notes {
+  font-size: 1.05rem;
+  font-style: italic;
+  color: #666;
+  margin-top: 15px;
+  line-height: 1.4;
+}
+
+.card-footer {
+  margin-top: 25px;
+  padding-top: 15px;
+  border-top: 1px solid #faf7f2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-price {
+  font-family: "Playfair Display", serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #222;
+}
+
+.card-button {
+  background-color: #722f37;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  font-family: "Inter", sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.card-button:hover {
+  background-color: #551e24;
+}
+
+/* Loading dhe Empty State */
+.catalog-status-text {
+  text-align: center;
+  font-size: 1.4rem;
+  color: #888;
+  font-style: italic;
+  padding: 100px 0;
+  width: 100%;
+}

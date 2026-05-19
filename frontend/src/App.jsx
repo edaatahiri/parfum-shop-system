@@ -4,6 +4,7 @@ import Register from "./components/Register";
 import Login from "./components/Login";
 import AdminDashboard from "./admin/AdminDashboard";
 import Shop from "./components/Shop";
+import Catalog from "./components/Catalog";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<Shop />} />
           <Route path="/admin" element={<AdminDashboard />}></Route>
+          <Route path="/catalog" element={<Catalog />} />
         </Routes>
       </Router>
     </>
