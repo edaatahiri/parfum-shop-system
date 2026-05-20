@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { act, useEffect, useState } from "react";
 import axios from "axios";
 import "./AdminDashboard.css";
 
 const AdminDashboard = () => {
+  const [activeTab, setActiveTab] = useState("dashboard");
   const [perfumes, setPerfumes] = useState([]);
   const [adminName, setAdminName] = useState("Admin");
 
@@ -98,6 +99,7 @@ const AdminDashboard = () => {
           perfumeData,
         );
         setNotification("Product updated successfully!");
+        setActiveTab("products");
       } else {
         await axios.post("http://localhost:5000/api/parfumet", perfumeData);
         setNotification("Product added successfully!");
@@ -158,6 +160,7 @@ const AdminDashboard = () => {
       kategoria_id: perfume.kategoria_id,
       marka_id: perfume.marka_id,
     });
+    setActiveTab("dashboard");
   };
 
   return (
@@ -165,195 +168,333 @@ const AdminDashboard = () => {
       <nav className="sidebar">
         <div className="sidebar-logo">PARFUM ADMIN</div>
         <ul>
-          <li className="active">Dashboard</li>
-          <li>Products</li>
-          <li>Orders</li>
-          <li>Users</li>
+          <li
+            className={activeTab === "dashboard" ? "active" : ""}
+            onClick={() => setActiveTab("dashboard")}
+          >
+            Dashboard
+          </li>
+          <li
+            className={activeTab === "products" ? "active" : ""}
+            onClick={() => setActiveTab("products")}
+          >
+            Products
+          </li>
+          <li
+            className={activeTab === "orders" ? "active" : ""}
+            onClick={() => setActiveTab("orders")}
+          >
+            Orders
+          </li>
+          <li
+            className={activeTab === "users" ? "active" : ""}
+            onClick={() => setActiveTab("users")}
+          >
+            Users
+          </li>
           <li onClick={() => (window.location.href = "/")}>Back to Shop</li>
         </ul>
       </nav>
 
       <main className="main-content">
         <header className="main-header">
-          <h1>Dashboard Overview</h1>
+          <h1>
+            {activeTab === "dashboard"
+              ? "Dashboard Overview"
+              : activeTab.toUpperCase()}
+          </h1>
           <div className="admin-profile">Welcome,{adminName}</div>
         </header>
 
-        <section className="stats-grid">
-          <div className="stat-card">
-            <h3>Total Products</h3>
-            <p className="stat-number">{perfumes.length}</p>
-          </div>
-          <div className="stat-card">
-            <h3>Active Orders</h3>
-            <p className="stat-number">0</p>
-          </div>
-          <div className="stat-card">
-            <h3>Total Users</h3>
-            <p className="stat-number">156</p>
-          </div>
-        </section>
+        {notification && (
+          <div className="form-notification">{notification}</div>
+        )}
 
-        <section className="add-product-section">
-          <h2>{isEditing ? "Edit Perfume" : "Add New Perfume"}</h2>
-          {notification && (
-            <div className="form-notification">{notification}</div>
-          )}
-          <form onSubmit={handleFormSubmit} className="add-perfume-form">
-            <input
-              type="text"
-              name="emri"
-              placeholder="Perfume Name"
-              value={newPerfume.emri}
-              onChange={handleInputChange}
-              required
-            />
-            <select
-              name="gjinia_target"
-              value={newPerfume.gjinia_target}
-              onChange={handleInputChange}
-              required
-              className="form-select"
-            >
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Unisex">Unisex</option>
-            </select>
-            <input
-              type="number"
-              name="volumi_ml"
-              placeholder="Volume (ml)"
-              value={newPerfume.volumi_ml}
-              onChange={handleInputChange}
-              required
-            />
-            <input
-              type="number"
-              step="0.01"
-              name="cmimi"
-              placeholder="Price ($)"
-              value={newPerfume.cmimi}
-              onChange={handleInputChange}
-              required
-            />
-            <input
-              type="number"
-              name="sasia_stok"
-              placeholder="Stock"
-              value={newPerfume.sasia_stok}
-              onChange={handleInputChange}
-              required
-            />
-            <select
-              name="kategoria_id"
-              value={newPerfume.kategoria_id}
-              onChange={handleInputChange}
-              required
-              className="form-select"
-            >
-              <option value="">Select Category</option>
-              {categories.map((kat) => (
-                <option key={kat.kategori_id} value={kat.kategori_id}>
-                  {kat.emri}
-                </option>
-              ))}
-            </select>
+        {activeTab === "dashboard" && (
+          <>
+            <section className="stats-grid">
+              <div className="stat-card">
+                <h3>Total Products</h3>
+                <p className="stat-number">{perfumes.length}</p>
+              </div>
+              <div className="stat-card">
+                <h3>Active Orders</h3>
+                <p className="stat-number">0</p>
+              </div>
+              <div className="stat-card">
+                <h3>Total Users</h3>
+                <p className="stat-number">156</p>
+              </div>
+            </section>
 
-            <select
-              name="marka_id"
-              value={newPerfume.marka_id}
-              onChange={handleInputChange}
-              required
-              className="form-select"
-            >
-              <option value="">Select Brand</option>
-              {brands.map((b) => (
-                <option key={b.marka_id} value={b.marka_id}>
-                  {b.emri}
-                </option>
-              ))}
-            </select>
-
-            <input
-              type="text"
-              name="notat_ere"
-              placeholder="Scent Notes (e.g. Vanilla, Jasmin)"
-              value={newPerfume.notat_ere}
-              onChange={handleInputChange}
-            />
-            <textarea
-              name="pershkrimi"
-              placeholder="Perfume Description..."
-              value={newPerfume.pershkrimi}
-              onChange={handleInputChange}
-              rows="4"
-            ></textarea>
-
-            <div className="form-buttons-container">
-              <button type="submit" className="add-btn">
-                {isEditing ? "Update Product" : "Add Product"}
-              </button>
-              {isEditing && (
-                <button
-                  type="button"
-                  className="cancel-btn"
-                  onClick={handleCancelEdit}
-                >
-                  Cancel
-                </button>
+            <section className="add-product-section">
+              <h2>{isEditing ? "Edit Perfume" : "Add New Perfume"}</h2>
+              {notification && (
+                <div className="form-notification">{notification}</div>
               )}
-            </div>
-          </form>
-        </section>
+              <form onSubmit={handleFormSubmit} className="add-perfume-form">
+                <input
+                  type="text"
+                  name="emri"
+                  placeholder="Perfume Name"
+                  value={newPerfume.emri}
+                  onChange={handleInputChange}
+                  required
+                />
+                <select
+                  name="gjinia_target"
+                  value={newPerfume.gjinia_target}
+                  onChange={handleInputChange}
+                  required
+                  className="form-select"
+                >
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Unisex">Unisex</option>
+                </select>
+                <input
+                  type="number"
+                  name="volumi_ml"
+                  placeholder="Volume (ml)"
+                  value={newPerfume.volumi_ml}
+                  onChange={handleInputChange}
+                  required
+                />
+                <input
+                  type="number"
+                  step="0.01"
+                  name="cmimi"
+                  placeholder="Price ($)"
+                  value={newPerfume.cmimi}
+                  onChange={handleInputChange}
+                  required
+                />
+                <input
+                  type="number"
+                  name="sasia_stok"
+                  placeholder="Stock"
+                  value={newPerfume.sasia_stok}
+                  onChange={handleInputChange}
+                  required
+                />
+                <select
+                  name="kategoria_id"
+                  value={newPerfume.kategoria_id}
+                  onChange={handleInputChange}
+                  required
+                  className="form-select"
+                >
+                  <option value="">Select Category</option>
+                  {categories.map((kat) => (
+                    <option key={kat.kategori_id} value={kat.kategori_id}>
+                      {kat.emri}
+                    </option>
+                  ))}
+                </select>
 
-        <section className="recent-products">
-          <h2>Product Inverntory</h2>
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Brand</th>
-                <th>Price</th>
-                <th>Stock</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {perfumes.length > 0 ? (
-                perfumes.map((p) => (
-                  <tr key={p.parfum_id}>
-                    <td>#{p.parfum_id}</td>
-                    <td>{p.emri}</td>
-                    <td>{p.marka?.emri || "N/A"}</td>
-                    <td>${p.cmimi}</td>
-                    <td>{p.sasia_stok}</td>
-                    <td>
-                      <button
-                        className="edit-btn"
-                        onClick={() => handleEditClick(p)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="delete-btn"
-                        onClick={() => handleDeletePerfume(p.parfum_id)}
-                      >
-                        Delete
-                      </button>
+                <select
+                  name="marka_id"
+                  value={newPerfume.marka_id}
+                  onChange={handleInputChange}
+                  required
+                  className="form-select"
+                >
+                  <option value="">Select Brand</option>
+                  {brands.map((b) => (
+                    <option key={b.marka_id} value={b.marka_id}>
+                      {b.emri}
+                    </option>
+                  ))}
+                </select>
+
+                <input
+                  type="text"
+                  name="notat_ere"
+                  placeholder="Scent Notes (e.g. Vanilla, Jasmin)"
+                  value={newPerfume.notat_ere}
+                  onChange={handleInputChange}
+                />
+                <textarea
+                  name="pershkrimi"
+                  placeholder="Perfume Description..."
+                  value={newPerfume.pershkrimi}
+                  onChange={handleInputChange}
+                  rows="4"
+                ></textarea>
+
+                <div className="form-buttons-container">
+                  <button type="submit" className="add-btn">
+                    {isEditing ? "Update Product" : "Add Product"}
+                  </button>
+                  {isEditing && (
+                    <button
+                      type="button"
+                      className="cancel-btn"
+                      onClick={handleCancelEdit}
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
+              </form>
+            </section>
+          </>
+        )}
+
+        {activeTab === "products" && (
+          <section className="recent-products animated-fade">
+            <div className="section-header-flex">
+              <h2>Product Inverntory</h2>
+              <button
+                className="luxury-shortcut-btn"
+                onClick={() => setActiveTab("dashboard")}
+              >
+                {" "}
+                + Add Product
+              </button>
+            </div>
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Brand</th>
+                  <th>Price</th>
+                  <th>Stock</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {perfumes.length > 0 ? (
+                  perfumes.map((p) => (
+                    <tr key={p.parfum_id}>
+                      <td>#{p.parfum_id}</td>
+                      <td className="table-perfume-title">{p.emri}</td>
+                      <td>{p.marka?.emri || "N/A"}</td>
+                      <td className="table-price">${p.cmimi}</td>
+                      <td>
+                        <span
+                          className={`stock-indicator ${p.sasia_stok === 0 ? "out" : p.sasia_stok < 5 ? "low" : "good"}`}
+                        >
+                          {p.sasia_stok} pcs
+                        </span>
+                      </td>
+                      <td>
+                        <div className="table-actions">
+                          <button
+                            className="edit-btn"
+                            onClick={() => handleEditClick(p)}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            className="delete-btn"
+                            onClick={() => handleDeletePerfume(p.parfum_id)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="6"
+                      style={{
+                        textAlign: "center",
+                        padding: "30px",
+                        color: "#888",
+                      }}
+                    >
+                      No products found in database.
                     </td>
                   </tr>
-                ))
-              ) : (
+                )}
+              </tbody>
+            </table>
+          </section>
+        )}
+
+        {activeTab === "orders" && (
+          <section className="recent-product animated-fade">
+            <div className="section-header-flex">
+              <h2>Customer Orders</h2>
+              <div className="orders-count-badge">Total: 3 Porosi</div>
+            </div>
+            <table className="admin-table">
+              <thead>
                 <tr>
-                  <td colSpan="6" style={{ textAlign: "center" }}>
-                    No products found in database.
+                  <th>Order ID</th>
+                  <th>Customer</th>
+                  <th>Date</th>
+                  <th>Total Price</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>#ORD-9412</td>
+                  <td className="table-perfume-title">Eda Tahiri</td>
+                  <td>May 20, 2026</td>
+                  <td className="table-price">$125.00</td>
+                  <td>
+                    <span className="order-status pending">Pending</span>
+                  </td>
+                  <td>
+                    <div className="table-actions">
+                      <button className="edit-btn">View</button>
+                      <button className="edit-btn" style={{ color: "#137333" }}>
+                        Ship
+                      </button>
+                    </div>
                   </td>
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </section>
+                <tr>
+                  <td>#ORD-9381</td>
+                  <td className="table-perfume-title">Rozafe Shkodra</td>
+                  <td>May 19,2026</td>
+                  <td className="table-price">$85.50</td>
+                  <td>
+                    <span className="order-status shipped">Shipped</span>
+                  </td>
+                  <td>
+                    <div className="table-actions">
+                      <button className="edit-btn">View</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>#ORD-9210</td>
+                  <td className="table-perfume-title">Filan Fisteku</td>
+                  <td>May 15, 2026</td>
+                  <td className="table-price">$210.00</td>
+                  <td>
+                    <span className="order-status delivered">Delivered</span>
+                  </td>
+                  <td>
+                    <div className="table-actions">
+                      <button
+                        className="edit-btn"
+                        disabled
+                        style={{ opacity: 0.5 }}
+                      >
+                        Archived
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+        )}
+
+        {activeTab === "users" && (
+          <div className="empty-secion-card">
+            <h3>USERS Managment coming soon.</h3>
+          </div>
+        )}
       </main>
       {showModal && (
         <div className="custom-modal-overlay">

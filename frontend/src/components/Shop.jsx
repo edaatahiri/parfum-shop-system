@@ -10,14 +10,16 @@ const Shop = () => {
   const navigate = useNavigate();
 
   const loggedInUser = JSON.parse(localStorage.getItem("user"));
-  
-  const isAdmin = 
-    (loggedInUser && loggedInUser.role && loggedInUser.role.toString().toLowerCase() === "admin") ||
-    (loggedInUser && loggedInUser.email === "et72862@ubt-uni.net") || 
+
+  const isAdmin =
+    (loggedInUser &&
+      loggedInUser.role &&
+      loggedInUser.role.toString().toLowerCase() === "admin") ||
+    (loggedInUser && loggedInUser.email === "et72862@ubt-uni.net") ||
     (loggedInUser && loggedInUser.email === "rozafe.shkodra@gmail.com");
   const handleLogout = () => {
     localStorage.removeItem("user");
-    window.location.reload(); 
+    window.location.reload();
   };
 
   useEffect(() => {
@@ -66,18 +68,18 @@ const Shop = () => {
         <div className="nav-contact">
           <div className="nav-auth-links">
             {isAdmin && (
-              <button 
+              <button
                 onClick={() => navigate("/admin")}
                 className="auth-link"
                 style={{
-                  background: "#b89453", 
-                  color: "white", 
-                  border: "none", 
-                  padding: "5px 12px", 
-                  borderRadius: "4px", 
+                  background: "#b89453",
+                  color: "white",
+                  border: "none",
+                  padding: "5px 12px",
+                  borderRadius: "4px",
                   cursor: "pointer",
                   marginRight: "15px",
-                  fontWeight: "bold"
+                  fontWeight: "bold",
                 }}
               >
                 ⚙️ Dashboard
@@ -86,8 +88,12 @@ const Shop = () => {
 
             {loggedInUser ? (
               <>
-                <span className="auth-link" style={{ cursor: "default", textTransform: "none" }}>
-                  Hi, {loggedInUser.email.split('@')[0]} {/* Shfaq vetëm emrin para @ */}
+                <span
+                  className="auth-link"
+                  style={{ cursor: "default", textTransform: "none" }}
+                >
+                  Hi, {loggedInUser.email.split("@")[0]}{" "}
+                  {/* Shfaq vetëm emrin para @ */}
                 </span>
                 <span className="auth-divider"></span>
                 <a href="#logout" onClick={handleLogout} className="auth-link">
@@ -96,14 +102,21 @@ const Shop = () => {
               </>
             ) : (
               <>
-                <a href="/login" onClick={(e) => { e.preventDefault(); navigate("/login"); }} className="auth-link">
+                <a
+                  href="/login"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate("/login");
+                  }}
+                  className="auth-link"
+                >
                   Login
                 </a>
-            <span className="auth-divider"></span>
-            <a href="#register" className="auth-link">
-              Register
-            </a>
-            </>
+                <span className="auth-divider"></span>
+                <a href="#register" className="auth-link">
+                  Register
+                </a>
+              </>
             )}
           </div>
           <div className="nav-icons">
@@ -116,9 +129,6 @@ const Shop = () => {
         <ul>
           <li>
             <a href="#about">About Us</a>
-          </li>
-          <li>
-            <a href="#philosophy">Our Philosophy</a>
           </li>
           <li>
             <a href="#bestsellers">Best Sellers</a>
@@ -218,7 +228,7 @@ const Shop = () => {
                   )}
                   <div className="perfume-img-box">
                     <img
-                      src={`/images/${p.emri.toLowerCase().trim().replace(/\s+/g, "-")}.avif`}
+                      src={`/images/${p.emri.toLowerCase().trim().replace(/\s+/g, "-")}.jpeg`}
                       alt={p.emri}
                       className="bestsellers-dynamic-img"
                       onError={(e) => {
