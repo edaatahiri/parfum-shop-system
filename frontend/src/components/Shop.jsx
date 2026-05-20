@@ -134,7 +134,7 @@ const Shop = () => {
             <a href="#bestsellers">Best Sellers</a>
           </li>
           <li>
-            <a href="#new">New Scent</a>
+            <Link to="/new-scent">New Scent</Link>
           </li>
           <li>
             <Link to="/catalog">Catalog</Link>
@@ -143,7 +143,7 @@ const Shop = () => {
             <a href="#faq">FAQ</a>
           </li>
           <li>
-            <a href="#testimonals">Testimonals</a>
+            <Link to="/testimonials">Testimonials</Link>
           </li>
         </ul>
       </nav>

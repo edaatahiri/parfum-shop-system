@@ -151,6 +151,25 @@ await prisma.parfum.upsert({
   });
 
 
+await prisma.parfum.upsert({
+  where: { parfum_id: 5 },
+  update: {},
+  create: {
+    parfum_id: 5,
+    emri: "Férox",
+    gjinia_target: "Femer",
+    volumi_ml: 100,
+    cmimi: 145.0,
+    sasia_stok: 10,
+    pershkrimi: "Layers of Scent Unfolding Like a Story.",
+    notat_ere: "Jasmine, Rose, Green tea, Vanilla, Sandalwood, Musk",
+    kategoria_id: kategoria.kategori_id,
+    marka_id: marka.marka_id,
+  },
+});
+
+
+
 
 
   console.log("Seeding përfundoi me sukses!");
