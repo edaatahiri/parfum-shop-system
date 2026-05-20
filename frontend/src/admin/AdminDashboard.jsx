@@ -18,6 +18,10 @@ const AdminDashboard = () => {
   const [showModal, setShowModal] = useState(false);
   const [perfumeToDelete, setPerfumeToDelete] = useState(null);
 
+  const [orders, setOrders] = useState([]);
+
+  const [users, setUsers] = useState([]);
+
   const [newPerfume, setNewPerfume] = useState({
     emri: "",
     gjinia_target: "Unisex",
@@ -32,19 +36,54 @@ const AdminDashboard = () => {
 
   const fetchData = async () => {
     try {
-      const perfumesRes = await axios.get("http://localhost:5000/api/parfumet");
+      const token = localStorage.getItem("token");
 
-      const brandsRes = await axios.get("http://localhost:5000/api/marka");
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const perfumesRes = await axios.get(
+        "http://localhost:5000/api/parfumet",
+        config,
+      );
+
+      const brandsRes = await axios.get(
+        "http://localhost:5000/api/marka",
+        config,
+      );
 
       const categoriesRes = await axios.get(
         "http://localhost:5000/api/kategorite",
+        config,
+      );
+
+      const ordersRes = await axios.get(
+        "http://localhost:5000/api/shitjet",
+        config,
+      );
+
+      const usersRes = await axios.get(
+        "http://localhost:5000/api/users",
+        config,
       );
 
       setPerfumes(perfumesRes.data);
       setBrands(brandsRes.data);
       setCategories(categoriesRes.data);
+      setOrders(ordersRes.data);
+      setUsers(usersRes.data);
     } catch (err) {
-      console.error("Error fetching perfumes: ", err);
+      console.error("Error fetching data: ", err);
+      if (
+        err.response &&
+        (err.response.status === 401 || err.response.status === 403)
+      ) {
+        setNotification("Access denied! Please log in again.");
+      } else {
+        setNotification("An error occurred while loading dashboard data.");
+      }
     }
   };
 
@@ -82,28 +121,52 @@ const AdminDashboard = () => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      const perfumeData = {
-        emri: newPerfume.emri,
-        gjinia_target: newPerfume.gjinia_target,
-        volumi_ml: newPerfume.volumi_ml,
-        cmimi: newPerfume.cmimi,
-        sasia_stok: newPerfume.sasia_stok,
-        pershkrimi: newPerfume.pershkrimi,
-        notat_ere: newPerfume.notat_ere,
-        kategoria_id: newPerfume.kategoria_id,
-        marka_id: newPerfume.marka_id,
+      const token = localStorage.getItem("token");
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       };
+
+      const perfumeData = {
+        ...newPerfume,
+        volumi_ml: parseInt(newPerfume.volumi_ml),
+        cmimi: parseFloat(newPerfume.cmimi),
+        sasia_stok: parseInt(newPerfume.sasia_stok),
+        kategoria_id: parseInt(newPerfume.kategoria_id),
+        marka_id: parseInt(newPerfume.marka_id),
+      };
+
       if (isEditing) {
         await axios.put(
           `http://localhost:5000/api/parfumet/${editId}`,
           perfumeData,
+          config,
         );
         setNotification("Product updated successfully!");
         setActiveTab("products");
+        setIsEditing(false);
+        setEditId(null);
       } else {
-        await axios.post("http://localhost:5000/api/parfumet", perfumeData);
+        await axios.post(
+          "http://localhost:5000/api/parfumet",
+          perfumeData,
+          config,
+        );
         setNotification("Product added successfully!");
       }
+
+      setNewPerfume({
+        emri: "",
+        gjinia_target: "Unisex",
+        volumi_ml: "",
+        cmimi: "",
+        sasia_stok: "",
+        pershkrimi: "",
+        notat_ere: "",
+        kategoria_id: "",
+        marka_id: "",
+      });
 
       handleCancelEdit();
       fetchData();
@@ -124,8 +187,16 @@ const AdminDashboard = () => {
   };
   const confirmDeletePerfume = async () => {
     try {
+      const token = localStorage.getItem("token");
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
       await axios.delete(
         `http://localhost:5000/api/parfumet/${perfumeToDelete}`,
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       setNotification("Product deleted successfully!");
       setShowModal(false);
@@ -219,11 +290,11 @@ const AdminDashboard = () => {
               </div>
               <div className="stat-card">
                 <h3>Active Orders</h3>
-                <p className="stat-number">0</p>
+                <p className="stat-number">{orders.length}</p>
               </div>
               <div className="stat-card">
                 <h3>Total Users</h3>
-                <p className="stat-number">156</p>
+                <p className="stat-number">{users.length}</p>
               </div>
             </section>
 
@@ -420,7 +491,9 @@ const AdminDashboard = () => {
           <section className="recent-product animated-fade">
             <div className="section-header-flex">
               <h2>Customer Orders</h2>
-              <div className="orders-count-badge">Total: 3 Porosi</div>
+              <div className="orders-count-badge">
+                Total: {orders.length} Orders
+              </div>
             </div>
             <table className="admin-table">
               <thead>
@@ -434,66 +507,116 @@ const AdminDashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>#ORD-9412</td>
-                  <td className="table-perfume-title">Eda Tahiri</td>
-                  <td>May 20, 2026</td>
-                  <td className="table-price">$125.00</td>
-                  <td>
-                    <span className="order-status pending">Pending</span>
-                  </td>
-                  <td>
-                    <div className="table-actions">
-                      <button className="edit-btn">View</button>
-                      <button className="edit-btn" style={{ color: "#137333" }}>
-                        Ship
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>#ORD-9381</td>
-                  <td className="table-perfume-title">Rozafe Shkodra</td>
-                  <td>May 19,2026</td>
-                  <td className="table-price">$85.50</td>
-                  <td>
-                    <span className="order-status shipped">Shipped</span>
-                  </td>
-                  <td>
-                    <div className="table-actions">
-                      <button className="edit-btn">View</button>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>#ORD-9210</td>
-                  <td className="table-perfume-title">Filan Fisteku</td>
-                  <td>May 15, 2026</td>
-                  <td className="table-price">$210.00</td>
-                  <td>
-                    <span className="order-status delivered">Delivered</span>
-                  </td>
-                  <td>
-                    <div className="table-actions">
-                      <button
-                        className="edit-btn"
-                        disabled
-                        style={{ opacity: 0.5 }}
-                      >
-                        Archived
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                {orders.length > 0 ? (
+                  orders.map((order) => (
+                    <tr key={order.shitje_id}>
+                      <td>#SALE-{order.shitje_id}</td>
+                      <td className="table-perfume-title">
+                        {order.klient
+                          ? `${order.klient.emri} ${order.klient.mbiemri}`
+                          : "Unknown Customes"}
+                      </td>
+                      <td>
+                        {new Date(order.data_shitjes).toLocaleDateString()}
+                      </td>
+                      <td>{order.metoda_pageses}</td>
+                      <td className="table-price">
+                        ${order.shuma_totale.toFixed(2)}
+                      </td>
+                      <td>
+                        <div className="table-actions">
+                          <button
+                            className="edit-btn"
+                            onClick={() =>
+                              alert(
+                                `Sasia e artikujve: ${order.detajet?.length || 0}`,
+                              )
+                            }
+                          >
+                            View Details
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="6"
+                      style={{
+                        textAlign: "center",
+                        padding: "30px",
+                        color: "#888",
+                      }}
+                    >
+                      No orders found.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </section>
         )}
 
         {activeTab === "users" && (
-          <div className="empty-secion-card">
-            <h3>USERS Managment coming soon.</h3>
-          </div>
+          <section className="recent-product animated-fade">
+            <div className="section-header-flex">
+              <h2>Registered Users</h2>
+              <div className="orders-count-badge">
+                Total: {users.length} Users
+              </div>
+            </div>
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>User ID</th>
+                  <th>Full Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Status</th>
+                  <th>Created At</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.length > 0 ? (
+                  users.map((user) => (
+                    <tr key={user.id}>
+                      <td>#{user.id}</td>
+                      <td className="table-perfume-title">
+                        {user.emri} {user.mbiemri}
+                      </td>
+                      <td>{user.email}</td>
+                      <td>{user.phone_number}</td>
+                      <td>
+                        <span
+                          className={`order-status ${user.statusi === "Active" ? "delivered" : "pending"}`}
+                        >
+                          {user.statusi}
+                        </span>
+                      </td>
+                      <td>
+                        {new Date(user.data_krijimit).toLocaleDateString()}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="6"
+                      style={{
+                        textAlign: "center",
+                        padding: "30px",
+                        color: "#888",
+                      }}
+                    >
+                      {" "}
+                      No users found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </section>
         )}
       </main>
       {showModal && (

@@ -1,10 +1,9 @@
 const prisma = require("../config/db");
 
-
 exports.createShitje = async (req, res) => {
   try {
     const data = await prisma.shitjet.create({
-      data: req.body
+      data: req.body,
     });
 
     res.status(201).json(data);
@@ -13,14 +12,21 @@ exports.createShitje = async (req, res) => {
   }
 };
 
-
 exports.getShitjet = async (req, res) => {
   try {
     const data = await prisma.shitjet.findMany({
       include: {
         klient: true,
-        punetor: true
-      }
+        punetor: true,
+        detajet: {
+          include: {
+            parfum: true,
+          },
+        },
+      },
+      orderBy: {
+        data_shitjes: "desc",
+      },
     });
 
     res.json(data);
@@ -28,7 +34,6 @@ exports.getShitjet = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
 
 exports.getShitjeById = async (req, res) => {
   try {
@@ -38,8 +43,8 @@ exports.getShitjeById = async (req, res) => {
       where: { shitje_id: id },
       include: {
         klient: true,
-        punetor: true
-      }
+        punetor: true,
+      },
     });
 
     res.json(data);
@@ -47,7 +52,6 @@ exports.getShitjeById = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
 
 exports.updateShitje = async (req, res) => {
   try {
@@ -55,7 +59,7 @@ exports.updateShitje = async (req, res) => {
 
     const data = await prisma.shitjet.update({
       where: { shitje_id: id },
-      data: req.body
+      data: req.body,
     });
 
     res.json(data);
@@ -64,13 +68,12 @@ exports.updateShitje = async (req, res) => {
   }
 };
 
-
 exports.deleteShitje = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
 
     await prisma.shitjet.delete({
-      where: { shitje_id: id }
+      where: { shitje_id: id },
     });
 
     res.json({ message: "Deleted" });

@@ -202,6 +202,45 @@ const Shop = () => {
         </div>
       </section>
 
+      <section className="about-luxury-section">
+        <div className="about-luxury-container">
+          <div className="about-text-column">
+            <span className="about-subtitle">ABOUT US</span>
+            <h2 className="about-main-title">
+              We live to <br />
+              discover the <br />
+              exceptional
+            </h2>
+            <p className="about-description">
+              We believe that a perfume is more than just a fragrance—it is an
+              invisible sensory biography, an extension of your identity, and a
+              silent statement of elegance. Our curated collection brings
+              together the finest ingredients from around the world to create
+              deeply personal and unforgettable olfactory journeys.
+            </p>
+          </div>
+
+          <div className="about-image-column">
+            <div className="about-image-wrapper">
+              <img
+                src="https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&q=80&w=600"
+                alt="Luxury Perfume"
+                className="about-luxury-img"
+              />
+            </div>
+
+            <div className="about-section-wrapper">
+              <button
+                className="about-see-more-btn"
+                onClick={() => navigate("/about")}
+              >
+                LEARN MORE <span className="arrow-icon">&rarr;</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section id="bestsellers" className="bestsellers-section">
         <div className="section-header-luxury">
           <span className="luxury-subtitle">- BEST SELLERS -</span>

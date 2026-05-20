@@ -18,9 +18,9 @@ const loginUser = async (req, res) => {
       include: {
         userRoles: {
           include: {
-            role: true
-          }
-        }
+            role: true,
+          },
+        },
       },
     });
 
@@ -32,7 +32,7 @@ const loginUser = async (req, res) => {
 
     // Kjo është pjesa kryesore: krahason fjalëkalimin e thjeshtë me hash-in nga DB
     const isPasswordValid = await bcrypt.compare(password, user.password_hash);
-    
+
     if (!isPasswordValid) {
       return res.status(400).json({
         message: "Password gabim",
@@ -47,10 +47,9 @@ const loginUser = async (req, res) => {
       user: {
         id: user.id,
         email: user.email,
-        role: userRoleName, 
+        role: userRoleName,
       },
     });
-
   } catch (error) {
     console.log("LOGIN ERROR:", error);
     return res.status(500).json({
