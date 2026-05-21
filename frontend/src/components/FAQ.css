@@ -1,0 +1,230 @@
+@import url('https://fonts.googleapis.com/css2?family=Marcellus&family=Montserrat:wght@300;400;500;700&display=swap');
+
+/* Kontejneri i ri i jashtëm që e shtyn butonin krejt në cep të ekranit */
+.faq-outer-back-container {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  padding-left: 40px; /* Kjo e rreshton butonin krejt anash majtas ekranit */
+  margin-top: 40px;    /* Hapësirë nga tavani i faqes */
+  box-sizing: border-box;
+}
+
+/* Stilimi i saktë i katrorit të artë si në foto */
+.faq-back-btn {
+  background-color: #b89453;
+  color: #000000;
+  border: none;
+  padding: 12px 26px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  font-weight: 700; /* Bold i plotë dhe i trashë */
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(184, 148, 83, 0.2);
+  transition: all 0.3s ease;
+}
+
+.faq-back-btn:hover {
+  background-color: #a38144;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(184, 148, 83, 0.35);
+}
+
+/* Wrapperi kryesor i përmbajtjes - mbetet stabil në mes */
+.faq-wrapper {
+  max-width: 1200px;
+  margin: 40px auto 80px auto; /* Ulur pak pasi butoni u nxor jashtë */
+  padding: 0 30px;
+  font-family: 'Montserrat', sans-serif;
+  color: #1a1a1a;
+  box-sizing: border-box;
+}
+
+/* Headeri mbretëror i titullit */
+.faq-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.faq-subtitle {
+  font-size: 12px;
+  letter-spacing: 4px;
+  color: #b89453;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.faq-main-title {
+  font-family: 'Marcellus', serif;
+  font-size: 38px;
+  font-weight: 400;
+  color: #111;
+  letter-spacing: 1px;
+}
+
+.faq-main-title span {
+  font-style: italic;
+  font-family: 'Marcellus', serif;
+  color: #b89453;
+}
+
+/* Grid sistemi stabil për dy kolonat */
+.faq-content-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 80px;
+  align-items: center;
+}
+
+@media (max-width: 968px) {
+  .faq-content-grid {
+    grid-template-columns: 1fr;
+    gap: 50px;
+  }
+  .faq-outer-back-container {
+    padding-left: 20px;
+    margin-top: 20px;
+  }
+}
+
+/* Seksioni i majtë (Pyetjet) */
+.faq-left-column h3 {
+  font-family: 'Marcellus', serif;
+  font-size: 30px;
+  font-weight: 400;
+  margin-bottom: 6px;
+  letter-spacing: 1px;
+}
+
+.faq-left-column .we-got-answers {
+  font-style: italic;
+  color: #b89453;
+  font-size: 14px;
+  margin-bottom: 25px;
+  display: block;
+  letter-spacing: 1px;
+}
+
+.faq-intro-text {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.8;
+  margin-bottom: 40px;
+  font-weight: 300;
+}
+
+/* Accordion Premium */
+.faq-accordion {
+  border-top: 1px solid #e5dfd3;
+}
+
+.faq-item {
+  border-bottom: 1px solid #e5dfd3;
+  padding: 22px 10px;
+  transition: all 0.4s ease;
+}
+
+.faq-item.active {
+  background-color: #faf8f5;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-left: 3px solid #b89453;
+}
+
+.faq-question-btn {
+  width: 100%;
+  background: none;
+  border: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  font-size: 15px;
+  font-weight: 400;
+  color: #222;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.3s ease;
+  font-family: 'Montserrat', sans-serif;
+  letter-spacing: 0.5px;
+}
+
+.faq-item.active .faq-question-btn {
+  color: #b89453;
+  font-weight: 500;
+}
+
+.faq-toggle-icon {
+  font-size: 20px;
+  color: #b89453;
+  font-weight: 300;
+  transition: transform 0.4s ease;
+}
+
+.faq-item.active .faq-toggle-icon {
+  transform: rotate(180deg);
+}
+
+/* Pjesa e përgjigjes */
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.4s ease;
+}
+
+.faq-answer p {
+  color: #555;
+  font-size: 13.5px;
+  line-height: 1.8;
+  margin: 0;
+  font-weight: 300;
+}
+
+.faq-item.active .faq-answer {
+  max-height: 200px;
+  padding-top: 15px;
+}
+
+/* Kolona e djathtë me foton */
+.faq-image-column {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.faq-img-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 450px;
+  border-radius: 4px 120px 4px 120px; 
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(184, 148, 83, 0.15);
+  border: 1px solid rgba(184, 148, 83, 0.2);
+}
+
+.faq-luxury-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  transition: transform 0.8s ease;
+}
+
+.faq-img-wrapper:hover .faq-luxury-img {
+  transform: scale(1.05);
+}
+
+
+
+
+
+
+
+
+
+
+
+

@@ -7,6 +7,7 @@ import Shop from "./components/Shop";
 import Catalog from "./components/Catalog";
 import NewScent from "./components/NewScent";
 import Testimonials from "./components/Testimonials";
+import FAQ from "./components/FAQ";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/catalog" element={<Catalog />} />
           <Route path="/new-scent" element={<NewScent />} />
           <Route path="/testimonials" element={<Testimonials />} />
+          <Route path="/faq" element={<FAQ />} />
         </Routes>
       </Router>
     </>
