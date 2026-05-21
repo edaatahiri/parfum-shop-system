@@ -22,6 +22,13 @@ const Shop = () => {
     window.location.reload();
   };
 
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   useEffect(() => {
     const link = document.createElement("link");
     link.rel = "stylesheet";
@@ -62,7 +69,11 @@ const Shop = () => {
             <i className="fab fa-youtube"></i>
           </a>
         </div>
-        <div className="nav-logo">
+        <div
+          className="nav-logo"
+          onClick={() => navigate("/")}
+          style={{ cursor: "pointer" }}
+        >
           <h1>- Maison de Parfum</h1>
         </div>
         <div className="nav-contact">
@@ -93,7 +104,6 @@ const Shop = () => {
                   style={{ cursor: "default", textTransform: "none" }}
                 >
                   Hi, {loggedInUser.email.split("@")[0]}{" "}
-                  {/* Shfaq vetëm emrin para @ */}
                 </span>
                 <span className="auth-divider"></span>
                 <a href="#logout" onClick={handleLogout} className="auth-link">
@@ -128,13 +138,13 @@ const Shop = () => {
       <nav className="main-menu">
         <ul>
           <li>
-            <a href="#about">About Us</a>
+            <a href="#about-section">About Us</a>
           </li>
           <li>
             <a href="#bestsellers">Best Sellers</a>
           </li>
           <li>
-            <Link to="/new-scent">New Scent</Link>
+            <a href="#new-scent">New Scent</a>
           </li>
           <li>
             <Link to="/catalog">Catalog</Link>
@@ -167,7 +177,7 @@ const Shop = () => {
             <span>
               Meet Our <strong>Signature</strong> Scents
             </span>
-            <small>FROM $29.99</small>
+            <small>FROM $59.99</small>
           </div>
         </div>
       </header>
@@ -202,7 +212,7 @@ const Shop = () => {
         </div>
       </section>
 
-      <section className="about-luxury-section">
+      <section id="about-section" className="about-luxury-section">
         <div className="about-luxury-container">
           <div className="about-text-column">
             <span className="about-subtitle">ABOUT US</span>
@@ -293,9 +303,18 @@ const Shop = () => {
             <i className="fas fa-chevron-right"></i>
           </button>
         </div>
+
+        <div className="bestsellers-action-wrapper">
+          <button
+            className="bestsellers-see-more-btn"
+            onClick={() => navigate("/catalog")}
+          >
+            SEE ALL PERFUMES <span className="arrow-icon">&rarr;</span>
+          </button>
+        </div>
       </section>
 
-      <section id="new" className="new-scent-luxury-section">
+      <section id="new-scent" className="new-scent-luxury-section">
         <div className="section-header-luxury">
           <span className="luxury-subtitle">- NEW SCENT -</span>
           <h2 className="luxury-title">
@@ -363,6 +382,63 @@ const Shop = () => {
           </div>
         </div>
       </section>
+      <footer className="main-footer-luxury">
+        <div className="footer-content-luxury">
+          <div className="footer-column-luxury brand-info">
+            <h3>- Maison de Parfum</h3>
+            <p>
+              Invisible sensory biographies, crafted to become an extension of
+              your unique identity and a silent statement of timeless elegance.
+            </p>
+          </div>
+
+          <div className="footer-column-luxury quick-links">
+            <h5>Discover</h5>
+            <ul>
+              <li>
+                <a href="#about">About Us</a>
+              </li>
+              <li>
+                <a href="#bestsellers">Best Sellers</a>
+              </li>
+              <li>
+                <Link to="/catalog">The Catalog</Link>
+              </li>
+            </ul>
+          </div>
+
+          <div className="footer-column-luxury contact-info">
+            <h5>Boutique</h5>
+            <p>
+              <i className="fas fa-map-marker-alt"></i> Prishtina, Kosova
+            </p>
+            <p>
+              <i className="fas fa-envelope"></i> info@maisondeparfum.net
+            </p>
+            <p>
+              <i className="fas fa-phone"></i> +383 49 123 456
+            </p>
+          </div>
+        </div>
+
+        <div className="footer-bottom-luxury">
+          <p>
+            &copy; {new Date().getFullYear()} Maison de Parfum. All Rights
+            Reserved.
+          </p>
+          <div className="footer-bottom-socials">
+            <a href="#facebook">
+              <i className="fab fa-facebook-f"></i>
+            </a>
+            <a href="#instagram">
+              <i className="fab fa-instagram"></i>
+            </a>
+            <a href="#youtube">
+              <i className="fab fa-youtube"></i>
+            </a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

@@ -5,7 +5,9 @@
   margin: 0;
   padding: 0;
 }
-
+html {
+  scroll-behavior: smooth;
+}
 body {
   background-color: #fdfbf7;
   color: #222;
@@ -24,7 +26,13 @@ body {
   padding: 20px 40px;
   background-color: #fdfbf7;
 }
-
+.main-menu ul li a:focus,
+.main-menu ul li a:active,
+.main-menu ul li a:hover {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
 .nav-socials a {
   color: #000;
   margin-right: 15px;
@@ -56,6 +64,32 @@ body {
   gap: 8px;
   font-family: "Cormorant Garamond", serif;
   font-size: 1.05rem;
+}
+
+.nac-scroll-btn,
+.footer-scroll-btn {
+  background: none;
+  border: none;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #000;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.3s;
+}
+.nav-scroll-btn:hover {
+  color: #722f37;
+}
+
+.footer-scroll-btn {
+  color: #a3a3a3;
+  font-size: 1.1rem;
+  text-align: left;
+}
+
+.footer-scroll-btn:hover {
+  color: #b89453;
 }
 
 .auth-link {
@@ -520,10 +554,6 @@ body {
   transform: scale(1.05);
 }
 
-/* ==========================================================================
-   FAQA E KATALOGUT (CATALOG PAGE STYLES)
-   ========================================================================== */
-
 .catalog-container {
   max-width: 1300px;
   margin: 0 auto;
@@ -533,7 +563,6 @@ body {
   font-family: "Cormorant Garamond", serif;
 }
 
-/* Headeri i Katalogut */
 .catalog-header {
   text-align: center;
   margin: 60px 0;
@@ -556,7 +585,6 @@ body {
   text-transform: uppercase;
 }
 
-/* Paneli i Filtrave (Majtas) */
 .filter-sidebar {
   width: 25%;
   background-color: white;
@@ -593,7 +621,6 @@ body {
   margin-bottom: 12px;
 }
 
-/* Inputet dhe Radios */
 .search-input {
   width: 100%;
   padding: 10px 15px;
@@ -658,7 +685,6 @@ body {
   border-color: #722f37;
 }
 
-/* Gridi i Parfumeve (Djathtas) */
 .products-column {
   width: 75%;
 }
@@ -782,7 +808,6 @@ body {
   background-color: #551e24;
 }
 
-/* Loading dhe Empty State */
 .catalog-status-text {
   text-align: center;
   font-size: 1.4rem;
@@ -792,7 +817,6 @@ body {
   width: 100%;
 }
 
-/* About us section */
 .about-luxury-section {
   background-color: #ffffff;
   padding: 100px 40px;
@@ -900,5 +924,157 @@ body {
   }
   .about-action-wrapper {
     justify-content: center;
+  }
+}
+
+/*Pjesa e bestsellers*/
+.bestsellers-action-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.bestsellers-see-more-btn {
+  background: none;
+  border: 1px solid #631d24;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #631d24;
+  cursor: pointer;
+  padding: 12px 30px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+.bestsellers-see-more-btn:hover {
+  background-color: #631d24;
+  color: #ffffff;
+}
+
+.bestsellers-see-more-btn .arrow-icon {
+  transition: transform 0.3s ease;
+}
+
+.bestsellers-see-more-btn:hover .arrow-icon {
+  transform: translateX(5px);
+}
+
+/*footeri*/
+.main-footer-luxury {
+  background-color: #0d0d0d;
+  color: #e6e1da;
+  padding: 80px 40px 30px 40px;
+  font-family: "Cormorant Garamond", serif;
+  border-top: 2px solid #722f37;
+}
+
+.footer-content-luxury {
+  max-width: 1300px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 60px;
+  padding-bottom: 50px;
+  border-bottom: 1px solid rgba(230, 225, 218, 0.08);
+}
+
+.footer-column-luxury h3 {
+  font-family: "Playfair Display", serif;
+  font-size: 1.8rem;
+  font-weight: 400;
+  color: #b89453;
+  margin-bottom: 20px;
+}
+
+.footer-column-luxury h5 {
+  font-family: "Playfair Display", serif;
+  font-size: 1.15rem;
+  font-weight: 400;
+  letter-spacing: 1.5px;
+  color: #ffffff;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+.footer-column-luxury p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #a3a3a3;
+}
+
+.brand-info p {
+  max-width: 420px;
+}
+
+.footer-column-luxury ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-column-luxury ul li a {
+  color: #a3a3a3;
+  text-decoration: none;
+  font-size: 1.1rem;
+  transition: color 0.3s ease;
+}
+
+.footer-column-luxury ul li a:hover {
+  color: #b89453;
+}
+
+.contact-info p {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.contact-info i {
+  color: #b89453;
+  width: 15px;
+}
+
+.footer-bottom-luxury {
+  max-width: 1300px;
+  margin: 30px auto 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+  color: #666666;
+}
+
+.footer-bottom-socials {
+  display: flex;
+  gap: 20px;
+}
+
+.footer-bottom-socials a {
+  color: #666666;
+  font-size: 1.05rem;
+  transition: color 0.3s ease;
+}
+
+.footer-bottom-socials a:hover {
+  color: #b89453;
+}
+
+@media (max-width: 768px) {
+  .footer-content-luxury {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .footer-bottom-luxury {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
   }
 }

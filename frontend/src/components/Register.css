@@ -131,3 +131,32 @@
 .form-group input:focus:invalid {
   border-bottom: 1px solid #a00;
 }
+.input-error {
+  border-color: #fc4a4a !important;
+}
+.error-text {
+  color: #fc4a4a;
+  font-size: 12px;
+  display: block;
+  margin-top: 4px;
+  text-align: left;
+  font-weight: 500;
+}
+.message-box {
+  padding: 12px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}
+.error-msg {
+  background-color: #ffebe9;
+  color: #fc4a4a;
+  border: 1px solid #ffc1bd;
+}
+.success-msg {
+  background-color: #e6f6ec;
+  color: #249e57;
+  border: 1px solid #a3e2bc;
+}

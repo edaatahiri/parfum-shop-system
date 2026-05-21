@@ -12,31 +12,52 @@ const Register = () => {
   });
 
   const [message, setMessage] = useState({ text: "", type: "" });
+  const [fieldErrors, setFieldErrors] = useState({});
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (fieldErrors[e.target.name]) {
+      setFieldErrors({ ...fieldErrors, [e.target.name]: "" });
+    }
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{6,}$/;
+
+    if (!formData.emri.trim()) errors.emri = "First Name is required!";
+    if (!formData.mbiemri.trim()) errors.mbiemri = "Last Name is required!";
+
+    if (!formData.email.trim()) {
+      errors.email = "Email Address is required!";
+    } else if (!emailRegex.test(formData.email)) {
+      errors.email =
+        "Please enter a valid email address(e.g. name@example.com)!";
+    }
+
+    if (!formData.password) {
+      errors.password = "Password is required!";
+    } else if (!passwordRegex.test(formData.password)) {
+      errors.password =
+        "Password must be at least 6 characters, contain 1 uppercase letter and 1 number!";
+    }
+
+    if (formData.phone_number && !/^\d+$/.test(formData.phone_number)) {
+      errors.phone_number = "Phone number must contain digits only!";
+    }
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage({ text: "", type: "" });
 
-    if (
-      !formData.emri ||
-      !formData.mbiemri ||
-      !formData.email ||
-      !formData.password
-    ) {
+    if (!validateForm()) {
       setMessage({
-        text: "ALL FIELDS EXCEPT PHONE NUMBER ARE REQUIRED!",
-        type: "error",
-      });
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      setMessage({
-        text: "Password is too short(min 6 characters)!",
+        test: "PLEASE FIX THE ERRORS BELOW BEFORE SUBMITTING!",
         type: "error",
       });
       return;
@@ -51,8 +72,16 @@ const Register = () => {
 
       const result = await response.json();
 
-      if (response.ok) {
-        setMessage({ text: "Account created successfully!", type: "success" });
+      if (!response.ok) {
+        setMessage({
+          text: data.error || "SOMETHING WENT WRONG!",
+          type: "error",
+        });
+      } else {
+        setMessage({
+          text: "REGISTRATION SUCCESSFUL! YOU CAN NOW LOGIN.",
+          type: "success",
+        });
         setFormData({
           emri: "",
           mbiemri: "",
@@ -61,14 +90,13 @@ const Register = () => {
           phone_number: "",
           role: "User",
         });
-      } else {
-        setMessage({
-          text: result.error || "Registration failed!",
-          type: "error",
-        });
+        setFieldErrors({});
       }
-    } catch (err) {
-      setMessage({ text: "Connection error with the server!", type: "error" });
+    } catch (error) {
+      setMessage({
+        text: "SERVER ERROR! PLEASE TRY AGAIN LATER.",
+        type: "error",
+      });
     }
   };
 
@@ -79,12 +107,14 @@ const Register = () => {
         <p>Join our exclusive perfume collection</p>
 
         {message.text && (
-          <div className={`message-container show ${message.type}`}>
+          <div
+            className={`message-box ${message.type === "error" ? "error-msg" : "success-msg"}`}
+          >
             {message.text}
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           <div className="form-group">
             <input
               type="text"
@@ -92,8 +122,13 @@ const Register = () => {
               placeholder="First Name"
               value={formData.emri}
               onChange={handleChange}
+              className={fieldErrors.emri ? "input-error" : ""}
             />
+            {fieldErrors.emri && (
+              <span className="error-text">{fieldErrors.emri}</span>
+            )}
           </div>
+
           <div className="form-group">
             <input
               type="text"
@@ -101,8 +136,13 @@ const Register = () => {
               placeholder="Last Name"
               value={formData.mbiemri}
               onChange={handleChange}
+              className={fieldErrors.mbiemri ? "input-error" : ""}
             />
+            {fieldErrors.mbiemri && (
+              <span className="error-text">{fieldErrors.mbiemri}</span>
+            )}
           </div>
+
           <div className="form-group">
             <input
               type="email"
@@ -110,8 +150,13 @@ const Register = () => {
               placeholder="Email Address"
               value={formData.email}
               onChange={handleChange}
+              className={fieldErrors.email ? "input-error" : ""}
             />
+            {fieldErrors.email && (
+              <span className="error-text">{fieldErrors.email}</span>
+            )}
           </div>
+
           <div className="form-group">
             <input
               type="password"
@@ -119,8 +164,13 @@ const Register = () => {
               placeholder="Password"
               value={formData.password}
               onChange={handleChange}
+              className={fieldErrors.password ? "input-error" : ""}
             />
+            {fieldErrors.password && (
+              <span className="error-text">{fieldErrors.password}</span>
+            )}
           </div>
+
           <div className="form-group">
             <input
               type="text"
@@ -128,7 +178,11 @@ const Register = () => {
               placeholder="Phone Number"
               value={formData.phone_number}
               onChange={handleChange}
+              className={fieldErrors.phone_number ? "input-error" : ""}
             />
+            {fieldErrors.phone_number && (
+              <span className="error-text">{fieldErrors.phone_number}</span>
+            )}
           </div>
 
           <button type="submit" className="register-button">
