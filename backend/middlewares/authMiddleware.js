@@ -21,15 +21,25 @@ const verifyToken = (req, res, next) => {
   }
 };
 
+
 const isAdmin = (req, res, next) => {
-  if (!req.user || req.user.role !== "Admin") {
+ 
+  if (!req.user || !req.user.role) {
+    return res
+      .status(403)
+      .json({ error: "E ndaluar! Nuk u gjet asnjë rol për këtë përdorues." });
+  }
+
+  
+  if (req.user.role.trim().toLowerCase() === "admin") {
+    next(); 
+  } else {
     return res
       .status(403)
       .json({
         error: "E ndaluar! Kjo zone lejohet vetem per Administratoret.",
       });
   }
-  next();
 };
 
 module.exports = { verifyToken, isAdmin };

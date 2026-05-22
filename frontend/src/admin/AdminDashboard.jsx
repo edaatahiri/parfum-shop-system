@@ -36,18 +36,27 @@ const AdminDashboard = () => {
 
   const fetchData = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token"); 
 
+      // Nëse nuk ka token fare në browser
+      if (!token) {
+        setNotification("Qasja u refuzua! Nuk u gjet asnje token.");
+        return;
+      }
+
+      // KORRIGJIMI KRYESOR: Shtojmë Bearer para token-it
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       };
 
-      const perfumesRes = await axios.get(
-        "http://localhost:5000/api/parfumet",
-        config,
-      );
+      // Nëse gjen token, e pastrojmë njoftimin e vjetër që mos të rrijë në ekran
+      setNotification("");
+
+      const perfumesRes = await axios.get("http://localhost:5000/api/parfumet", config);
+       
+      
 
       const brandsRes = await axios.get(
         "http://localhost:5000/api/marka",
