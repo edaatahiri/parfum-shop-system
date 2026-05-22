@@ -1,5 +1,7 @@
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Register from "./components/Register";
 import Login from "./components/Login";
 import AdminDashboard from "./admin/AdminDashboard";
@@ -9,6 +11,7 @@ import Testimonials from "./components/Testimonials";
 import FAQ from "./components/FAQ";
 import AboutStore from "./components/AboutStore";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Wishlist from "./components/Wishlist";
 
 function App() {
   return (
@@ -26,12 +29,26 @@ function App() {
               </ProtectedRoute>
             }
           ></Route>
+          <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/catalog" element={<Catalog />} />
           <Route path="/testimonials" element={<Testimonials />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/about-store" element={<AboutStore />} />
         </Routes>
       </Router>
+
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </>
   );
 }

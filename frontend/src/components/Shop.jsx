@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import axios from "axios";
 import "./Shop.css";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +8,9 @@ import { Link } from "react-router-dom";
 const Shop = () => {
   const [perfumes, setPerfumes] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [wishlistItems, setWishlistItems] = useState([]);
+
   const navigate = useNavigate();
 
   const loggedInUser = JSON.parse(localStorage.getItem("user"));
@@ -26,6 +30,77 @@ const Shop = () => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const handleWishlistToggle = async (parfumId) => {
+    if (!loggedInUser || !loggedInUser.id) {
+      console.log("User is not logged in:", loggedInUser);
+      toast.warning(
+        "You should be logged in to add products to your wishlist! 🔒",
+      );
+      return;
+    }
+
+    const kId = loggedInUser.klient_id || loggedInUser.id;
+
+    if (!kId) {
+      toast.error(
+        "Error: Your Id was not found in the session! Please re-login!",
+      );
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/wishlist/toggle",
+        {
+          user_id: parseInt(loggedInUser.id),
+          parfum_id: parseInt(parfumId),
+        },
+      );
+
+      if (response.status === 200 || response.status === 201) {
+        if (response.data.action === "added") {
+          toast.success("Added to your wishlist!");
+          setWishlistItems((prev) => [...prev, parfumId]);
+        } else if (response.data.action === "removed") {
+          toast.info("Removed from your wishlist!");
+          setWishlistItems((prev) => prev.filter((id) => id !== parfumId));
+        }
+      }
+    } catch (error) {
+      console.error("Gabim gjate ndryshimit te wishlist:", error);
+      const serverError = error.response?.data?.error || "Diqka shkoi keq";
+      toast.error("Error: " + serverError);
+    }
+  };
+
+  const handleWishlistClick = async (perfumeId) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/wishlist/toggle",
+        {
+          perfumeId: perfumeId,
+        },
+        { withCredentials: true },
+      );
+
+      if (response.data.message === "U hoq nga wishlist") {
+        toast.info("U hoq nga wishlist! 💔");
+      } else {
+        toast.success("U shtua në wishlist! ❤️");
+      }
+    } catch (error) {
+      console.error("Gabim gjate ndryshimit te wishlist:", error);
+
+      if (error.response && error.response.status === 404) {
+        toast.error(
+          "Gabim: Nuk u gjet asnjë profil klienti për këtë përdorues!",
+        );
+      } else {
+        toast.error("Diçka shkoi keq gjatë përpunimit të wishlist.");
+      }
     }
   };
 
@@ -55,6 +130,26 @@ const Shop = () => {
     fetchShopPerfumes();
   }, []);
 
+  useEffect(() => {
+    const fetchUserWishlist = async () => {
+      if (loggedInUser?.id) {
+        try {
+          const res = await axios.get(
+            `http://localhost:5000/api/wishlist/klienti/${loggedInUser.id}`,
+          );
+
+          if (Array.isArray(res.data)) {
+            const ids = res.data.map((item) => item.parfum_id);
+            setWishlistItems(ids);
+          }
+        } catch (err) {
+          console.error("Gabim gjatë marrjes së wishlist:", err);
+        }
+      }
+    };
+    fetchUserWishlist();
+  }, []);
+
   return (
     <div className="homepage-wrapper">
       <div className="top-navbar">
@@ -65,8 +160,8 @@ const Shop = () => {
           <a href="#instagram">
             <i className="fab fa-instagram"></i>
           </a>
-          <a href="#youtube">
-            <i className="fab fa-youtube"></i>
+          <a href="#twitter">
+            <i className="fab fa-twitter"></i>
           </a>
         </div>
         <div
@@ -155,6 +250,9 @@ const Shop = () => {
           <li>
             <Link to="/testimonials">Testimonials</Link>
           </li>
+          <li>
+            <Link to="/wishlist">Wishlist</Link>
+          </li>
         </ul>
       </nav>
 
@@ -169,7 +267,12 @@ const Shop = () => {
             More than fragrance - each bottle hold a memory, a moment, <br />a
             mood waiting to unfold on your skin.
           </p>
-          <button className="hero-btn">FIND YOUR SCENT &rarr;</button>
+          <button
+            className="hero-btn"
+            onClick={() => scrollToSection("bestsellers")}
+          >
+            FIND YOUR SCENT &rarr;
+          </button>
         </div>
 
         <div className="hero-perfume-display">
@@ -269,35 +372,57 @@ const Shop = () => {
           </button>
 
           <div className="perfume-grid-luxury">
-            {perfumes.slice(0, 5).map((p) => (
-              <div key={p.parfum_id} className="perfume-card-luxury">
-                <div className="perfume-image-wrapper">
-                  {p.sasia_stok < 5 && (
-                    <span className="badge-limited">Limited</span>
-                  )}
-                  <div className="perfume-img-box">
-                    <img
-                      src={`/images/${p.emri.toLowerCase().trim().replace(/\s+/g, "-")}.jpeg`}
-                      alt={p.emri}
-                      className="bestsellers-dynamic-img"
-                      onError={(e) => {
-                        e.target.style.display = "none";
-                        if (e.target.nextSibling) {
-                          e.target.nextSibling.style.display = "block";
-                        }
+            {loading ? (
+              <p style={{ color: "#b89453", fontStyle: "italic" }}>
+                Loading the perfumes...
+              </p>
+            ) : (
+              perfumes.slice(0, 5).map((p) => (
+                <div key={p.parfum_id} className="perfume-card-luxury">
+                  <div className="perfume-image-wrapper">
+                    {p.sasia_stok < 5 && (
+                      <span className="badge-limited">Limited</span>
+                    )}
+                    <button
+                      className="wishlist-btn-luxury"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleWishlistToggle(p.parfum_id);
                       }}
-                    />
+                      title="Add to your wishlist"
+                    >
+                      <i
+                        className={
+                          wishlistItems.includes(p.parfum_id)
+                            ? "fas fa-heart"
+                            : "far fa-heart"
+                        }
+                      ></i>
+                    </button>
+                    <div className="perfume-img-box">
+                      <img
+                        src={`/images/${p.emri.toLowerCase().trim().replace(/\s+/g, "-")}.jpeg`}
+                        alt={p.emri}
+                        className="bestsellers-dynamic-img"
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                          if (e.target.nextSibling) {
+                            e.target.nextSibling.style.display = "block";
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div className="perfume-meta-luxury">
+                    <h3 className="perfume-title-luxury">
+                      {p.emri.toUpperCase()}
+                    </h3>
+                    <p className="perfume-price-luxury">{p.cmimi}$</p>
+                    <button className="buy-now-btn">Buy Now</button>
                   </div>
                 </div>
-                <div className="perfume-meta-luxury">
-                  <h3 className="perfume-title-luxury">
-                    {p.emri.toUpperCase()}
-                  </h3>
-                  <p className="perfume-price-luxury">{p.cmimi}$</p>
-                  <button className="buy-now-btn">Buy Now</button>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
           <button className="slider-arrow arrow-right">
             <i className="fas fa-chevron-right"></i>

@@ -26,7 +26,7 @@ model Parfum {
   kategoria Kategoria @relation(fields: [kategoria_id], references: [kategori_id])
   marka     Markat    @relation(fields: [marka_id], references: [marka_id])
 
-  mostrats        Mostrat[]
+  mostrat        Mostrat[]
   detajetShitjes  Detajet_Shitjes[]
   detajetPorosise Detajet_Porosise_Furnitorit[]
   reviews Reviews[]
@@ -53,6 +53,9 @@ model Klientet {
   adresa            String
   data_regjistrimit DateTime @default(now())
   piket_besnikerise Int      @default(0)
+
+  user_id Int? @unique
+  user Users? @relation(fields: [user_id], references: [id])
 
   shitjet Shitjet[]
   reviews Reviews[]
@@ -104,6 +107,8 @@ model Users {
   access_failed_count Int      @default(0)
   data_krijimit       DateTime @default(now())
   statusi             String   @default("Active")
+
+  klientProfile Klientet?
 
   userRoles     UserRoles[]
   userClaims    UserClaims[]
