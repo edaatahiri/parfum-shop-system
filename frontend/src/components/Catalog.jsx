@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./Shop.css";
@@ -8,6 +9,8 @@ const Catalog = () => {
   const [selectedGender, setSelectedGender] = useState("All");
   const [maxPrice, setMaxPrice] = useState(250);
   const [loading, setLoading] = useState(true);
+  const [selectedPerfume, setSelectedPerfume] = useState(null);
+
 
   useEffect(() => {
     fetch("http://localhost:5000/api/parfumet")
@@ -181,7 +184,12 @@ const Catalog = () => {
 
                     <div className="card-footer">
                       <span className="card-price">{parfum.cmimi} €</span>
-                      <button className="card-button">Shiko Detajet</button>
+                      <button 
+                                className="card-button" 
+                                onClick={() => setSelectedPerfume(parfum)}
+                                                                           >
+                                               Shiko Detajet
+                           </button>
                     </div>
                   </div>
 
@@ -190,7 +198,142 @@ const Catalog = () => {
             </div>
           )}
         </main>
+{/* POP-UP MODAL PËR DETAJET E PARFUMIT */}
+      {selectedPerfume && (
+        <div className="custom-modal-overlay" style={{
+          position: "fixed", top: 0, left: 0, width: "100%", height: "100%",
+          backgroundColor: "rgba(0, 0, 0, 0.7)", display: "flex",
+          justifyContent: "center", alignItems: "center", zIndex: 1000,
+          backdropFilter: "blur(8px)"
+        }}>
+          <div className="perfume-glass-card" style={{
+            maxWidth: "500px", width: "90%", padding: "25px", position: "relative",
+            animation: "fadeIn 0.3s ease"
+          }}>
+            
+            {/* KËTU: Butoni X lart është hequr plotësisht për të mos krijuar rrëmujë vizuale */}
 
+            <h3 style={{ color: "#fff", marginBottom: "15px", fontSize: "1.8rem" }}>{selectedPerfume.emri}</h3>
+            
+            <p style={{ color: "#ddd", fontSize: "0.95rem", lineHeight: "1.5", marginBottom: "15px" }}>
+              {selectedPerfume.pershkrimi || "Ky parfum luksoz sjell një aromë të jashtëzakonshme dhe jetëgjatësi në lëkurën tuaj."}
+            </p>
+
+            <div style={{ borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: "15px", color: "#fff", marginBottom: "20px" }}>
+              <p><strong>Notat:</strong> {selectedPerfume.notat_ere || "Nuk ka shënime"}</p>
+              <p><strong>Gjinia:</strong> {selectedPerfume.gjinia_target}</p>
+              <p><strong>Volumi:</strong> {selectedPerfume.volumi_ml} ML</p>
+              <p>
+                <strong>Stoku:</strong> {selectedPerfume.sasia_stok > 0 ? (
+                  <span style={{ color: "#4BB543" }}>Në Stok ({selectedPerfume.sasia_stok} copë)</span>
+                ) : (
+                  <span style={{ color: "#ff4d4d" }}>I Shitur (Pa stok)</span>
+                )}
+              </p>
+            </div>
+
+            {/* CARD FOOTER I RREGULLUAR: Çmimi majtas, butonat djathtas të rreshtuar bukur */}
+            <div className="card-footer" style={{ 
+              paddingTop: "15px", 
+              borderTop: "1px solid rgba(255,255,255,0.1)",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center"
+            }}>
+              <span className="card-price" style={{ fontSize: "1.6rem" }}>{selectedPerfume.cmimi} €</span>
+              
+              <div style={{ display: "flex", gap: "10px" }}>
+                {/* BUTONI ANULO */}
+                <button 
+                  className="card-button"
+                  onClick={() => setSelectedPerfume(null)}
+                  style={{ 
+                    backgroundColor: "rgba(255, 255, 255, 0.1)", 
+                    color: "#fff",
+                    border: "1px solid rgba(255, 255, 255, 0.2)",
+                    padding: "8px 15px"
+                  }}
+                >
+                  Anulo
+                </button>
+
+                {/* BUTONI SHTO NË SHPORTË - I LIDHUR ME BACKEND */}
+               <button 
+                  className="card-button"
+                  disabled={selectedPerfume.sasia_stok === 0}
+                  onClick={async () => {
+                    try {
+                      // 1. Marrim token-in dhe përdoruesin e kyçur VETËM NJË HERË
+                      const token = localStorage.getItem("token");
+                      const loggedInUser = JSON.parse(localStorage.getItem("user"));
+
+                      if (!token || !loggedInUser) {
+                        alert("Duhet të jeni të kyçur (Login) që të bëni porosi!");
+                        return;
+                      }
+
+                      // 2. Përgatitim konfigurimin e sigurisë VETËM NJË HERË
+                      const config = {
+                        headers: {
+                          Authorization: `Bearer ${token}`,
+                        },
+                      };
+
+                      // 3. Përgatitim të dhënat për faturën e madhe të shitjes
+                    // 3. Përgatitim të dhënat për faturën e madhe të shitjes
+                      // Kemi shtuar zbritja: 0 që Prisma të mos ankohet më!
+                    
+                      const shitjaData = {
+                        data_shitjes: new Date(),
+                        shuma_totale: parseFloat(selectedPerfume.cmimi),
+                        zbritja: 0,
+                        metodapageses: "Cash",
+                        metoda_pageses: "Cash",
+                        metodaPageses: "Cash"
+                      };
+
+                     // 4. Krijojmë shitjen e madhe (Faturën)
+                      const shitjeRes = await axios.post("http://localhost:5000/api/shitjet", shitjaData, config);
+                      
+                      // Marrim ID-në e shitjes duke kontrolluar të gjitha emërtimet e mundshme që mund të kthejë backend-i
+                      const eShtunaShitjeId = shitjeRes.data.shitjeId || shitjeRes.data.shitje_id || shitjeRes.data.id;
+
+                      // 5. Krijojmë rreshtin te Detajet e Shitjes me emrat ekzaktë të Prisma-s
+                      const detajiData = {
+                        parfumetId: selectedPerfume.parfum_id || selectedPerfume.id, 
+                        sasia: 1, 
+                        cmimi: parseFloat(selectedPerfume.cmimi),
+                        shitjeId: eShtunaShitjeId // U ndryshua nga shitjetId në shitjeId sipas gabimit të fundit!
+                      };
+
+                      await axios.post("http://localhost:5000/api/detajetShitjes", detajiData, config);
+
+                      
+
+                      // Sukses i plotë
+                      alert(`Porosia për "${selectedPerfume.emri}" u realizua me sukses! Stoku u përditësua.`);
+                      setSelectedPerfume(null); // Mbyllim dritaren
+
+                      // Rifreskojmë faqen që të shihet stoku i ri i zbritur në katalog
+                      window.location.reload();
+
+                    } catch (err) {
+                      console.error("Gabim gjatë realizimit të shitjes:", err);
+                      alert("Diçka shkoi keq: " + (err.response?.data?.error || err.message));
+                    }
+                  }}
+                  style={{ 
+                    opacity: selectedPerfume.sasia_stok === 0 ? 0.5 : 1,
+                    padding: "8px 15px"
+                  }}
+                >
+                  {selectedPerfume.sasia_stok > 0 ? "Shto në Shportë" : "Pa Stok"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       </div>
     </div>
   );
