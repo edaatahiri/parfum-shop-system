@@ -275,7 +275,7 @@ const Catalog = () => {
                       // 2. Përgatitim konfigurimin e sigurisë VETËM NJË HERË
                       const config = {
                         headers: {
-                          Authorization: `Bearer ${token}`,
+                          authorization: `Bearer ${token}`,
                         },
                       };
 

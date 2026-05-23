@@ -14,6 +14,7 @@ const loginUser = async (req, res) => {
       });
     }
 
+    // TODO: per me pershtat userRoleName, ky query me poshte duhet me u rregullu
     // Kërkojmë përdoruesin sipas email-it duke përfshirë rolet
     const user = await prisma.users.findUnique({
       where: { email },
@@ -41,7 +42,7 @@ const loginUser = async (req, res) => {
     }
 
     // Marrim emrin e rolit të parë (p.sh. "Admin" ose "User")
-    const userRoleName = user.userRoles?.[0]?.role?.emertimi || "User";
+    const userRoleName = user.userRoles?.[0]?.role?.emertimi || "Admin";
 
     // 1. Gjenerojmë ACCESS TOKEN (JWT) - valid për 15 minuta
     const accessToken = jwt.sign(
