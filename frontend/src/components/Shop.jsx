@@ -10,6 +10,7 @@ const Shop = () => {
   const [loading, setLoading] = useState(true);
 
   const [wishlistItems, setWishlistItems] = useState([]);
+  const [showWishlistBanner, setShowWishlistBanner] = useState(false);
 
   const navigate = useNavigate();
 
@@ -35,18 +36,8 @@ const Shop = () => {
 
   const handleWishlistToggle = async (parfumId) => {
     if (!loggedInUser || !loggedInUser.id) {
-      console.log("User is not logged in:", loggedInUser);
       toast.warning(
         "You should be logged in to add products to your wishlist! 🔒",
-      );
-      return;
-    }
-
-    const kId = loggedInUser.klient_id || loggedInUser.id;
-
-    if (!kId) {
-      toast.error(
-        "Error: Your Id was not found in the session! Please re-login!",
       );
       return;
     }
@@ -62,45 +53,16 @@ const Shop = () => {
 
       if (response.status === 200 || response.status === 201) {
         if (response.data.action === "added") {
-          toast.success("Added to your wishlist!");
           setWishlistItems((prev) => [...prev, parfumId]);
+
+          setShowWishlistBanner(true);
+          setTimeout(() => setShowWishlistBanner(false), 5000);
         } else if (response.data.action === "removed") {
-          toast.info("Removed from your wishlist!");
           setWishlistItems((prev) => prev.filter((id) => id !== parfumId));
         }
       }
     } catch (error) {
       console.error("Gabim gjate ndryshimit te wishlist:", error);
-      const serverError = error.response?.data?.error || "Diqka shkoi keq";
-      toast.error("Error: " + serverError);
-    }
-  };
-
-  const handleWishlistClick = async (perfumeId) => {
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/api/wishlist/toggle",
-        {
-          perfumeId: perfumeId,
-        },
-        { withCredentials: true },
-      );
-
-      if (response.data.message === "U hoq nga wishlist") {
-        toast.info("U hoq nga wishlist! 💔");
-      } else {
-        toast.success("U shtua në wishlist! ❤️");
-      }
-    } catch (error) {
-      console.error("Gabim gjate ndryshimit te wishlist:", error);
-
-      if (error.response && error.response.status === 404) {
-        toast.error(
-          "Gabim: Nuk u gjet asnjë profil klienti për këtë përdorues!",
-        );
-      } else {
-        toast.error("Diçka shkoi keq gjatë përpunimit të wishlist.");
-      }
     }
   };
 
@@ -135,7 +97,7 @@ const Shop = () => {
       if (loggedInUser?.id) {
         try {
           const res = await axios.get(
-            `http://localhost:5000/api/wishlist/klienti/${loggedInUser.id}`,
+            `http://localhost:5000/api/wishlist/${loggedInUser.id}`,
           );
 
           if (Array.isArray(res.data)) {
@@ -250,9 +212,6 @@ const Shop = () => {
           <li>
             <Link to="/testimonials">Testimonials</Link>
           </li>
-          <li>
-            <Link to="/wishlist">Wishlist</Link>
-          </li>
         </ul>
       </nav>
 
@@ -286,32 +245,52 @@ const Shop = () => {
       </header>
 
       <section className="categories-section">
-        <div className="category-card">
+        <div
+          className="category-card"
+          onClick={() => {
+            localStorage.setItem("kategoriaEzgjedhur", "Femra");
+            navigate("/catalog");
+          }}
+          style={{ cursor: "pointer" }}
+        >
           <div className="category-image img-women"></div>
-          <a href="#women" className="category-link">
-            Women &rarr;
-          </a>
+          <span className="category-link">Women &rarr;</span>
         </div>
 
-        <div className="category-card">
+        <div
+          className="category-card"
+          onClick={() => {
+            localStorage.setItem("kategoriaEzgjedhur", "Meshkuj");
+            navigate("/catalog");
+          }}
+          style={{ cursor: "pointer" }}
+        >
           <div className="category-image img-men"></div>
-          <a href="#men" className="category-link">
-            Men &rarr;
-          </a>
+          <span className="category-link">Men &rarr;</span>
         </div>
 
-        <div className="category-card">
+        <div
+          className="category-card"
+          onClick={() => {
+            localStorage.setItem("kategoriaEzgjedhur", "Unisex");
+            navigate("/catalog");
+          }}
+          style={{ cursor: "pointer" }}
+        >
           <div className="category-image img-unisex"></div>
-          <a href="#unisex" className="category-link">
-            Unisex &rarr;
-          </a>
+          <span className="category-link">Unisex &rarr;</span>
         </div>
 
-        <div className="category-card">
+        <div
+          className="category-card"
+          onClick={() => {
+            localStorage.setItem("kategoriaEzgjedhur", "All");
+            navigate("/catalog");
+          }}
+          style={{ cursor: "pointer" }}
+        >
           <div className="category-image img-new"></div>
-          <a href="#new" className="category-link">
-            New &rarr;
-          </a>
+          <span className="category-link">New &rarr;</span>
         </div>
       </section>
 
@@ -564,6 +543,25 @@ const Shop = () => {
           </div>
         </div>
       </footer>
+      {showWishlistBanner && (
+        <div className="wishlist-popup-banner">
+          <div className="banner-content">
+            <p>Product successfully added to your favorite list!</p>
+            <button
+              className="banner-btn"
+              onClick={() => navigate("/wishlist")}
+            >
+              VIEW WISHLIST &rarr;
+            </button>
+            <button
+              className="banner-close"
+              onClick={() => setShowWishlistBanner(false)}
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
