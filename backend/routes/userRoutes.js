@@ -19,4 +19,6 @@ router.get("/", verifyToken, async (req, res) => {
   }
 });
 
+router.get("/profile", verifyToken, userController.getProfile);
+
 module.exports = router;

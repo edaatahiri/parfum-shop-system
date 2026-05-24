@@ -12,6 +12,7 @@ import FAQ from "./components/FAQ";
 import AboutStore from "./components/AboutStore";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Wishlist from "./components/Wishlist";
+import UserProfile from "./components/UserProfile";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
               </ProtectedRoute>
             }
           ></Route>
+          <Route path="/profile" element={<UserProfile />} />
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/catalog" element={<Catalog />} />
           <Route path="/testimonials" element={<Testimonials />} />

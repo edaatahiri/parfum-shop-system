@@ -1067,6 +1067,11 @@ body {
   color: #b89453;
 }
 
+.user-profile-link:hover {
+  color: #8c6f3c !important;
+  text-decoration: underline;
+}
+
 @media (max-width: 768px) {
   .footer-content-luxury {
     grid-template-columns: 1fr;

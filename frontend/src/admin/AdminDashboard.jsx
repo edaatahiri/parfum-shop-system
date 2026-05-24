@@ -43,26 +43,42 @@ const AdminDashboard = () => {
     marka_id: "",
   });
 
+  const [samples, setSamples] = useState([]);
+  const [newSample, setNewSample] = useState({
+    parfum_id: "",
+    sasia_stok: "",
+    volumi_ml: "2",
+    statusi: "Available",
+  });
+
   const fetchData = async () => {
     setLoading(true);
     setError(null);
     try {
       setNotification("");
 
-      const [perfumesRes, brandsRes, categoriesRes, ordersRes, usersRes] =
-        await Promise.all([
-          API.get("/parfumet"),
-          API.get("/marka"),
-          API.get("/kategorite"),
-          API.get("/shitjet"),
-          API.get("/users"),
-        ]);
+      const [
+        perfumesRes,
+        brandsRes,
+        categoriesRes,
+        ordersRes,
+        usersRes,
+        samplesRes,
+      ] = await Promise.all([
+        API.get("/parfumet"),
+        API.get("/marka"),
+        API.get("/kategorite"),
+        API.get("/shitjet"),
+        API.get("/users"),
+        API.get("/mostrat"),
+      ]);
 
       setPerfumes(perfumesRes.data);
       setBrands(brandsRes.data);
       setCategories(categoriesRes.data);
       setOrders(ordersRes.data);
       setUsers(usersRes.data);
+      setSamples(samplesRes.data);
 
       const lowStockCount = perfumesRes.data.filter(
         (p) => p.sasia_stok < 5,
@@ -169,6 +185,43 @@ const AdminDashboard = () => {
     } catch (err) {
       console.error("Error saving perfume:", err);
       setNotification("Error saving product. Please try again.");
+      setTimeout(() => setNotification(""), 3000);
+    }
+  };
+
+  const handleSampleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewSample({
+      ...newSample,
+      [name]: value,
+    });
+  };
+
+  const handleSampleFormSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const sampleData = {
+        parfum_id: parseInt(newSample.parfum_id),
+        sasia_stok: parseInt(newSample.sasia_stok),
+        volumi_ml: parseInt(newSample.volumi_ml),
+        statusi: newSample.statusi,
+      };
+
+      await API.post("/mostrat", sampleData);
+      setNotification("Sample added successfully!");
+
+      setNewSample({
+        parfum_id: "",
+        sasia_stok: "",
+        volumi_ml: "2",
+        statusi: "Available",
+      });
+
+      fetchData();
+      setTimeout(() => setNotification(""), 3000);
+    } catch (err) {
+      console.error("Error saving sample:", err);
+      setNotification("Error saving sample.Please try again.");
       setTimeout(() => setNotification(""), 3000);
     }
   };
@@ -425,6 +478,66 @@ const AdminDashboard = () => {
                       Cancel
                     </button>
                   )}
+                </div>
+              </form>
+            </section>
+            <section
+              className="add-product-section"
+              style={{ marginTop: "40px" }}
+            >
+              <h2>Add Perfume Sample</h2>
+              <form
+                onSubmit={handleSampleFormSubmit}
+                className="add-perfume-form"
+              >
+                <select
+                  name="parfum_id"
+                  value={newSample.parfum_id}
+                  onChange={handleSampleInputChange}
+                  required
+                  className="form-select"
+                >
+                  <option value="">Select Perfume for Sample</option>
+                  {perfumes.map((p) => (
+                    <option key={p.parfum_id} value={p.parfum_id}>
+                      {p.emri} ({p.marka?.emri || "No Brand"})
+                    </option>
+                  ))}
+                </select>
+
+                <input
+                  type="number"
+                  name="volumi_ml"
+                  placeholder="Volume (ml) - e.g. 2"
+                  value={newSample.volumi_ml}
+                  onChange={handleSampleInputChange}
+                  required
+                />
+
+                <input
+                  type="number"
+                  name="sasia_stok"
+                  placeholder="Sample Stock Quantity"
+                  value={newSample.sasia_stok}
+                  onChange={handleSampleInputChange}
+                  required
+                />
+
+                <select
+                  name="statusi"
+                  value={newSample.statusi}
+                  onChange={handleSampleInputChange}
+                  required
+                  className="form-select"
+                >
+                  <option value="Disponueshem">Disponueshem</option>
+                  <option value="Jo Disponueshem">Jo Disponueshem</option>
+                </select>
+
+                <div className="form-buttons-container">
+                  <button type="submit" className="add-btn">
+                    Add Sample Gift
+                  </button>
                 </div>
               </form>
             </section>

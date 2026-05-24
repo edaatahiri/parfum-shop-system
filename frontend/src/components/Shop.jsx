@@ -162,12 +162,22 @@ const Shop = () => {
 
             {loggedInUser ? (
               <>
-                <span
-                  className="auth-link"
-                  style={{ cursor: "default", textTransform: "none" }}
+                <Link
+                  to="/profile"
+                  className="auth-link user-profile-link"
+                  style={{
+                    textTransform: "none",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    color: "#b89453",
+                    fontWeight: "500",
+                  }}
+                  title="Take a look at your profile"
                 >
-                  Hi, {loggedInUser.email.split("@")[0]}{" "}
-                </span>
+                  <i className="fas fa-user-circle text-lg"></i>
+                  Hi,{loggedInUser.email.split("@")[0]}
+                </Link>
                 <span className="auth-divider"></span>
                 <a href="#logout" onClick={handleLogout} className="auth-link">
                   Logout
