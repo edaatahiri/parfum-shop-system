@@ -30,7 +30,13 @@ exports.updateMarka = async (req, res) => {
   try {
     const updated = await prisma.markat.update({
       where: { marka_id: parseInt(req.params.id) },
-      data: req.body,
+      data: {
+        emri: req.body.emri,
+        shteti_origjines: req.body.shteti_origjines,
+        website: req.body.website,
+        pershkrimi: req.body.pershkrimi,
+        logoja: req.body.logoja,
+      },
     });
     res.json(updated);
   } catch (err) {
@@ -45,6 +51,11 @@ exports.deleteMarka = async (req, res) => {
     });
     res.json({ message: "Marka u fshi" });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res
+      .status(400)
+      .json({
+        error:
+          "Nuk mund të fshihet kjo markë sepse ka parfume të lidhura me të.",
+      });
   }
 };

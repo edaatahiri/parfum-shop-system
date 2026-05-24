@@ -3,7 +3,13 @@ const prisma = require("../config/db");
 exports.createRole = async (req, res) => {
   try {
     const i_ri = await prisma.roles.create({
-      data: req.body,
+      data: {
+        emertimi: req.body.emertimi,
+        pershkrimi: req.body.pershkrimi,
+        normalized_name: req.body.emertimi
+          ? req.body.emertimi.toUpperCase()
+          : undefined,
+      },
     });
     res.status(201).json(i_ri);
   } catch (err) {
@@ -24,7 +30,13 @@ exports.updateRole = async (req, res) => {
   try {
     const updated = await prisma.roles.update({
       where: { id: parseInt(req.params.id) },
-      data: req.body,
+      data: {
+        emertimi: req.body.emertimi,
+        pershkrimi: req.body.pershkrimi,
+        normalized_name: req.body.emertimi
+          ? req.body.emertimi.toUpperCase()
+          : undefined,
+      },
     });
     res.status(200).json(updated);
   } catch (err) {
@@ -34,10 +46,18 @@ exports.updateRole = async (req, res) => {
 
 exports.deleteRole = async (req, res) => {
   try {
+    const roleId = parseInt(req.params.id);
+
+    if (roleId === 1 || roleId === 2) {
+      return res
+        .status(400)
+        .json({ error: "Rolet kryesore të sistemit nuk mund të fshihen!" });
+    }
+
     await prisma.roles.delete({
-      where: { id: parseInt(req.params.id) },
+      where: { id: roleId },
     });
-    res.status(200).json({ message: "Roli u fshi!" });
+    res.status(200).json({ message: "Roli u fshi me sukses!" });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }

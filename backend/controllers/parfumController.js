@@ -37,7 +37,10 @@ exports.updateParfum = async (req, res) => {
     const updated = await prisma.parfum.update({
       where: { parfum_id: parseInt(req.params.id) },
       data: {
-        ...req.body,
+        emri: req.body.emri,
+        gjinia_target: req.body.gjinia_target,
+        pershkrimi: req.body.pershkrimi,
+        notat_ere: req.body.notat_ere,
         volumi_ml: req.body.volumi_ml
           ? parseInt(req.body.volumi_ml)
           : undefined,
@@ -64,6 +67,11 @@ exports.deleteParfum = async (req, res) => {
     });
     res.json({ message: "Parfumi u fshi" });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res
+      .status(400)
+      .json({
+        error:
+          "Nuk mund të fshihet ky parfum sepse është i lidhur me shitje ose të dhëna të tjera në sistem.",
+      });
   }
 };

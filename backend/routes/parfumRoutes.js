@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const parfumController = require("../controllers/parfumController");
+const { verifyToken } = require("../middlewares/authMiddleware");
 
-router.post("/", parfumController.createParfum);
 router.get("/", parfumController.getAllParfumet);
-router.put("/:id", parfumController.updateParfum);
-router.delete("/:id", parfumController.deleteParfum);
+router.post("/", verifyToken, parfumController.createParfum);
+router.put("/:id", verifyToken, parfumController.updateParfum);
+router.delete("/:id", verifyToken, parfumController.deleteParfum);
 
 module.exports = router;

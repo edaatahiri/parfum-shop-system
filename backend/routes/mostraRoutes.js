@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const mostraController = require("../controllers/mostraController");
+const { verifyToken } = require("../middlewares/authMiddleware");
 
-router.post("/", mostraController.createMostra);
 router.get("/", mostraController.getAllMostrat);
-router.put("/:id", mostraController.updateMostra);
-router.delete("/:id", mostraController.deleteMostra);
+router.post("/", verifyToken, mostraController.createMostra);
+router.put("/:id", verifyToken, mostraController.updateMostra);
+router.delete("/:id", verifyToken, mostraController.deleteMostra);
 
 module.exports = router;

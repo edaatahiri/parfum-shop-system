@@ -57,7 +57,7 @@ const Register = () => {
 
     if (!validateForm()) {
       setMessage({
-        test: "PLEASE FIX THE ERRORS BELOW BEFORE SUBMITTING!",
+        text: "PLEASE FIX THE ERRORS BELOW BEFORE SUBMITTING!",
         type: "error",
       });
       return;
@@ -74,7 +74,7 @@ const Register = () => {
 
       if (!response.ok) {
         setMessage({
-          text: data.error || "SOMETHING WENT WRONG!",
+          text: result.error || "SOMETHING WENT WRONG!",
           type: "error",
         });
       } else {

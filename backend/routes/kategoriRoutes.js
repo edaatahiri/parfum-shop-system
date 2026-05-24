@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const kategoriController = require("../controllers/kategoriController");
+const { verifyToken } = require("../middlewares/authMiddleware");
 
-router.post("/", kategoriController.createKategoria);
 router.get("/", kategoriController.getAllKategorite);
-router.put("/:id", kategoriController.updateKategoria);
-router.delete("/:id", kategoriController.deleteKategoria);
+router.post("/", verifyToken, kategoriController.createKategoria);
+router.put("/:id", verifyToken, kategoriController.updateKategoria);
+router.delete("/:id", verifyToken, kategoriController.deleteKategoria);
 
 module.exports = router;

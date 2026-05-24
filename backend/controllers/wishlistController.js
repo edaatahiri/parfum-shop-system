@@ -31,8 +31,8 @@ exports.toggleWishlist = async (req, res) => {
     });
 
     if (existingItem) {
-      await prisma.wishlist.deleteMany({
-        where: { klient_id: klient_id, parfum_id: parfum_id },
+      await prisma.wishlist.delete({
+        where: { id: existingItem.id },
       });
       return res
         .status(200)

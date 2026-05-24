@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const ofertatController = require("../controllers/ofertatController");
+const { verifyToken } = require("../middlewares/authMiddleware");
 
-router.post("/", ofertatController.createOferta);
 router.get("/", ofertatController.getAllOfertat);
-router.put("/:id", ofertatController.updateOferta);
-router.delete("/:id", ofertatController.deleteOferta);
+router.post("/", verifyToken, ofertatController.createOferta);
+router.put("/:id", verifyToken, ofertatController.updateOferta);
+router.delete("/:id", verifyToken, ofertatController.deleteOferta);
 
 module.exports = router;

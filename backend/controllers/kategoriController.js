@@ -28,6 +28,7 @@ exports.updateKategoria = async (req, res) => {
     const updated = await prisma.kategoria.update({
       where: { kategori_id: parseInt(req.params.id) },
       data: req.body,
+      pershkrimi: req.body.pershkrimi,
     });
     res.json(updated);
   } catch (err) {
@@ -42,6 +43,11 @@ exports.deleteKategoria = async (req, res) => {
     });
     res.json({ message: "Kategoria u fshi" });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res
+      .status(400)
+      .json({
+        error:
+          "Nuk mund të fshihet kjo kategori sepse përmban parfume të lidhura me të.",
+      });
   }
 };

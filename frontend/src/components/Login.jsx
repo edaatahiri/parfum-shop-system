@@ -5,13 +5,12 @@ import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState(""); 
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
-   
     if (!email.trim() || !password.trim()) {
       alert("Ju lutem plotësoni të gjitha fushat në formë!");
       return;
@@ -23,23 +22,34 @@ function Login() {
         password,
       });
 
-      
-      const { user, accessToken } = res.data;
+      /*e re*/
+      const { user, accessToken, token } = res.data;
+      const finalToken = accessToken || token;
 
-      
+      const userRole = user.userRoles?.[0]?.role?.emertimi || "User";
+
+      const userToStore = {
+        id: user.id,
+        emri: user.emri,
+        mbiemri: user.mbiemri,
+        email: user.email,
+        role: userRole,
+      };
+
       localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("token", accessToken); 
+      localStorage.setItem("token", finalToken);
+      localStorage.setItem("userName", user.emri);
 
-    
-      if (user.role && user.role.toString().toLowerCase() === "admin") {
+      if (userRole.trim().toLowerCase() === "admin") {
         navigate("/admin");
       } else {
-        navigate("/"); 
+        navigate("/");
       }
-      
+      /*deri qetu*/
     } catch (err) {
       alert(err.response?.data?.message || "Login failed");
-    }}
+    }
+  };
 
   return (
     <div className="login-wrapper">
@@ -61,7 +71,7 @@ function Login() {
               type="password"
               placeholder="Password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)} 
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
 
@@ -75,4 +85,3 @@ function Login() {
 }
 
 export default Login;
-

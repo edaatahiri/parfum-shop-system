@@ -8,7 +8,9 @@ exports.createKlient = async (req, res) => {
         mbiemri: req.body.mbiemri,
         telefoni: req.body.telefoni,
         email: req.body.email,
-        data_lindjes: new Date(req.body.data_lindjes),
+        data_lindjes: req.body.data_lindjes
+          ? new Date(req.body.data_lindjes)
+          : null,
         gjinia: req.body.gjinia,
         adresa: req.body.adresa,
         data_regjistrimit: req.body.data_regjistrimit
@@ -37,7 +39,12 @@ exports.updateKlient = async (req, res) => {
     const updated = await prisma.klientet.update({
       where: { id: parseInt(req.params.id) },
       data: {
-        ...req.body,
+        emri: req.body.emri,
+        mbiemri: req.body.mbiemri,
+        telefoni: req.body.telefoni,
+        email: req.body.email,
+        gjinia: req.body.gjinia,
+        adresa: req.body.adresa,
         data_lindjes: req.body.data_lindjes
           ? new Date(req.body.data_lindjes)
           : undefined,
@@ -60,6 +67,11 @@ exports.deleteKlient = async (req, res) => {
     await prisma.klientet.delete({ where: { id: parseInt(req.params.id) } });
     res.json({ message: "Klienti u fshi" });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res
+      .status(400)
+      .json({
+        error:
+          "Nuk mund të fshihet ky klient sepse është i lidhur me porosi ose vlerësime në sistem.",
+      });
   }
 };

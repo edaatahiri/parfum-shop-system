@@ -1,6 +1,6 @@
 import React, { act, useEffect, useState } from "react";
-import axios from "axios";
 import "./AdminDashboard.css";
+import API from "../axiosConfig";
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -22,6 +22,15 @@ const AdminDashboard = () => {
 
   const [users, setUsers] = useState([]);
 
+  const [stats, setStats] = useState({
+    totalParfumes: 0,
+    totalUsers: 0,
+    totalSales: 0,
+    lowStockAlerts: 0,
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const [newPerfume, setNewPerfume] = useState({
     emri: "",
     gjinia_target: "Unisex",
@@ -35,56 +44,43 @@ const AdminDashboard = () => {
   });
 
   const fetchData = async () => {
+    setLoading(true);
+    setError(null);
     try {
-      const token = localStorage.getItem("token"); 
-
-      // Nëse nuk ka token fare në browser
-      if (!token) {
-        setNotification("Qasja u refuzua! Nuk u gjet asnje token.");
-        return;
-      }
-
-      // KORRIGJIMI KRYESOR: Shtojmë Bearer para token-it
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-
-      // Nëse gjen token, e pastrojmë njoftimin e vjetër që mos të rrijë në ekran
       setNotification("");
 
-      const perfumesRes = await axios.get("http://localhost:5000/api/parfumet", config);
-       
-      
-
-      const brandsRes = await axios.get(
-        "http://localhost:5000/api/marka",
-        config,
-      );
-
-      const categoriesRes = await axios.get(
-        "http://localhost:5000/api/kategorite",
-        config,
-      );
-
-      const ordersRes = await axios.get(
-        "http://localhost:5000/api/shitjet",
-        config,
-      );
-
-      const usersRes = await axios.get(
-        "http://localhost:5000/api/users",
-        config,
-      );
+      const [perfumesRes, brandsRes, categoriesRes, ordersRes, usersRes] =
+        await Promise.all([
+          API.get("/parfumet"),
+          API.get("/marka"),
+          API.get("/kategorite"),
+          API.get("/shitjet"),
+          API.get("/users"),
+        ]);
 
       setPerfumes(perfumesRes.data);
       setBrands(brandsRes.data);
       setCategories(categoriesRes.data);
       setOrders(ordersRes.data);
       setUsers(usersRes.data);
+
+      const lowStockCount = perfumesRes.data.filter(
+        (p) => p.sasia_stok < 5,
+      ).length;
+      const totalSalesSum = ordersRes.data.reduce(
+        (sum, order) => sum + (order.shuma_totale || 0),
+        0,
+      );
+
+      setStats({
+        totalParfumes: perfumesRes.data.length,
+        totalUsers: usersRes.data.length,
+        totalSales: totalSalesSum,
+        lowStockAlerts: lowStockCount,
+      });
     } catch (err) {
       console.error("Error fetching data: ", err);
+      setError("Dështoi ngarkimi i të dhënave nga serveri.");
       if (
         err.response &&
         (err.response.status === 401 || err.response.status === 403)
@@ -93,6 +89,8 @@ const AdminDashboard = () => {
       } else {
         setNotification("An error occurred while loading dashboard data.");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -130,13 +128,6 @@ const AdminDashboard = () => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("token");
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-
       const perfumeData = {
         ...newPerfume,
         volumi_ml: parseInt(newPerfume.volumi_ml),
@@ -147,21 +138,13 @@ const AdminDashboard = () => {
       };
 
       if (isEditing) {
-        await axios.put(
-          `http://localhost:5000/api/parfumet/${editId}`,
-          perfumeData,
-          config,
-        );
+        await API.put(`/parfumet/${editId}`, perfumeData);
         setNotification("Product updated successfully!");
         setActiveTab("products");
         setIsEditing(false);
         setEditId(null);
       } else {
-        await axios.post(
-          "http://localhost:5000/api/parfumet",
-          perfumeData,
-          config,
-        );
+        await API.post("/parfumet", perfumeData);
         setNotification("Product added successfully!");
       }
 
@@ -196,17 +179,7 @@ const AdminDashboard = () => {
   };
   const confirmDeletePerfume = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-
-      await axios.delete(
-        `http://localhost:5000/api/parfumet/${perfumeToDelete}`,
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
+      await API.delete(`/parfumet/${perfumeToDelete}`);
       setNotification("Product deleted successfully!");
       setShowModal(false);
       setPerfumeToDelete(null);
@@ -292,20 +265,57 @@ const AdminDashboard = () => {
 
         {activeTab === "dashboard" && (
           <>
-            <section className="stats-grid">
-              <div className="stat-card">
-                <h3>Total Products</h3>
-                <p className="stat-number">{perfumes.length}</p>
+            {loading ? (
+              <div
+                className="loading-spinner"
+                style={{
+                  textAlign: "center",
+                  padding: "30px",
+                  color: "#baa373",
+                }}
+              >
+                Duke ngarkuar të dhënat reale nga sistemi...
               </div>
-              <div className="stat-card">
-                <h3>Active Orders</h3>
-                <p className="stat-number">{orders.length}</p>
+            ) : error ? (
+              <div
+                className="error-message"
+                style={{ textAlign: "center", padding: "30px", color: "red" }}
+              >
+                {error}
               </div>
-              <div className="stat-card">
-                <h3>Total Users</h3>
-                <p className="stat-number">{users.length}</p>
-              </div>
-            </section>
+            ) : (
+              <section className="stats-grid">
+                <div className="stat-card">
+                  <h3>Total Products</h3>
+                  <p className="stat-number">{perfumes.length}</p>
+                </div>
+                <div className="stat-card">
+                  <h3>Active Orders</h3>
+                  <p className="stat-number">{orders.length}</p>
+                </div>
+                <div className="stat-card">
+                  <h3>Total Users</h3>
+                  <p className="stat-number">{users.length}</p>
+                </div>
+                <div className="stat-card">
+                  <h3>Total Sales</h3>
+                  <p className="stat-number" style={{ color: "#2ecc71" }}>
+                    ${stats.totalSales.toFixed(2)}
+                  </p>
+                </div>
+                <div className="stat-card">
+                  <h3>Low Stock Alerts</h3>
+                  <p
+                    className="stat-number"
+                    style={{
+                      color: stats.lowStockAlerts > 0 ? "#e74c3c" : "inherit",
+                    }}
+                  >
+                    {stats.lowStockAlerts} artikuj
+                  </p>
+                </div>
+              </section>
+            )}
 
             <section className="add-product-section">
               <h2>{isEditing ? "Edit Perfume" : "Add New Perfume"}</h2>

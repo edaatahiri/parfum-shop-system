@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { toast } from "react-toastify";
-import axios from "axios";
+import API from "../axiosConfig";
 import "./Shop.css";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -13,6 +13,7 @@ const Shop = () => {
   const [showWishlistBanner, setShowWishlistBanner] = useState(false);
 
   const navigate = useNavigate();
+  const bannerTimeoutRef = useRef(null);
 
   const loggedInUser = JSON.parse(localStorage.getItem("user"));
 
@@ -43,20 +44,21 @@ const Shop = () => {
     }
 
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/wishlist/toggle",
-        {
-          user_id: parseInt(loggedInUser.id),
-          parfum_id: parseInt(parfumId),
-        },
-      );
+      const response = await API.post("/wishlist/toggle", {
+        user_id: parseInt(loggedInUser.id),
+        parfum_id: parseInt(parfumId),
+      });
 
       if (response.status === 200 || response.status === 201) {
         if (response.data.action === "added") {
           setWishlistItems((prev) => [...prev, parfumId]);
 
           setShowWishlistBanner(true);
-          setTimeout(() => setShowWishlistBanner(false), 5000);
+          if (bannerTimeoutRef.current) clearTimeout(bannerTimeoutRef.current);
+          bannerTimeoutRef.current = setTimeout(
+            () => setShowWishlistBanner(false),
+            5000,
+          );
         } else if (response.data.action === "removed") {
           setWishlistItems((prev) => prev.filter((id) => id !== parfumId));
         }
@@ -65,6 +67,12 @@ const Shop = () => {
       console.error("Gabim gjate ndryshimit te wishlist:", error);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (bannerTimeoutRef.current) clearTimeout(bannerTimeoutRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     const link = document.createElement("link");
@@ -81,7 +89,7 @@ const Shop = () => {
   useEffect(() => {
     const fetchShopPerfumes = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/parfumet");
+        const res = await API.get("/parfumet");
         setPerfumes(res.data);
         setLoading(false);
       } catch (err) {
@@ -96,9 +104,7 @@ const Shop = () => {
     const fetchUserWishlist = async () => {
       if (loggedInUser?.id) {
         try {
-          const res = await axios.get(
-            `http://localhost:5000/api/wishlist/${loggedInUser.id}`,
-          );
+          const res = await API.get(`/wishlist/${loggedInUser.id}`);
 
           if (Array.isArray(res.data)) {
             const ids = res.data.map((item) => item.parfum_id);

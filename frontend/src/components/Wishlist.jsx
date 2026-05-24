@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import API from "../axiosConfig";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import "./Wishlist.css";
@@ -30,9 +30,7 @@ function Wishlist() {
     const fetchWishlist = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(
-          `http://localhost:5000/api/wishlist/${loggedInUser.id}`,
-        );
+        const response = await API.get(`/wishlist/${loggedInUser.id}`);
         setWishlistProducts(response.data);
       } catch (error) {
         console.error("Gabim gjate marrjes se wishlist:", error);
@@ -52,13 +50,10 @@ function Wishlist() {
   const handleRemove = async (parfumId) => {
     if (!loggedInUser) return;
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/wishlist/toggle",
-        {
-          user_id: parseInt(loggedInUser.id),
-          parfum_id: parseInt(parfumId),
-        },
-      );
+      const response = await API.post("/wishlist/toggle", {
+        user_id: parseInt(loggedInUser.id),
+        parfum_id: parseInt(parfumId),
+      });
 
       if (response.data.action === "removed") {
         setWishlistProducts((prev) =>
