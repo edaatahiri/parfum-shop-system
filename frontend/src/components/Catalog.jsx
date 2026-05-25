@@ -313,70 +313,71 @@ const Catalog = () => {
                   </button>
 
                   <button
-                    className="card-button"
-                    disabled={selectedPerfume.sasia_stok === 0}
-                    onClick={async () => {
-                      try {
-                        const token = localStorage.getItem("token");
-                        const loggedInUser = JSON.parse(localStorage.getItem("user"));
+  className="card-button"
+  disabled={selectedPerfume.sasia_stok === 0}
+  onClick={async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const loggedInUser = JSON.parse(localStorage.getItem("user"));
 
-                        if (!token || !loggedInUser) {
-                          alert("Duhet të jeni të kyçur (Login) që të bëni porosi!");
-                          return;
-                        }
+      if (!token || !loggedInUser) {
+        alert("Duhet të jeni të kyçur (Login) që të bëni porosi!");
+        return;
+      }
 
-                        const config = {
-                          headers: { authorization: `Bearer ${token}` },
-                        };
+     
+      const config = {
+        headers: { authorization: `Bearer ${token}` },
+      };
 
-                        const shitjaData = {
-                          data_shitjes: new Date(),
-                          shuma_totale: parseFloat(selectedPerfume.cmimi),
-                          zbritja: 0,
-                          metodapageses: "Cash",
-                          metoda_pageses: "Cash",
-                          metodaPageses: "Cash",
-                        };
+      
+      const shitjaData = {
+        data_shitjes: new Date(),
+        shuma_totale: parseFloat(selectedPerfume.cmimi),
+        zbritja: 0,
+        metoda_pageses: "Cash",
+      };
 
-                        const shitjeRes = await axios.post(
-                          "http://localhost:5000/api/shitjet",
-                          shitjaData,
-                          config
-                        );
+      const shitjeRes = await axios.post(
+        "http://localhost:5000/api/shitjet",
+        shitjaData,
+        config
+      );
 
-                        const eShtunaShitjeId =
-                          shitjeRes.data.shitjeId ||
-                          shitjeRes.data.shitje_id ||
-                          shitjeRes.data.id;
+      
+      const eShtunaShitjeId = shitjeRes.data.shitjeId || shitjeRes.data.id;
 
-                        const detajiData = {
-                          parfumetId: selectedPerfume.parfum_id || selectedPerfume.id,
-                          sasia: 1,
-                          cmimi: parseFloat(selectedPerfume.cmimi),
-                          shitjeId: eShtunaShitjeId,
-                        };
+      
+      const detajiData = {
+        parfumetId: selectedPerfume.parfum_id || selectedPerfume.id,
+        sasia: 1,
+        cmimi: parseFloat(selectedPerfume.cmimi),
+       shitjeld: eShtunaShitjeId,
+      };
 
-                        await axios.post(
-                          "http://localhost:5000/api/detajetShitjes",
-                          detajiData,
-                          config
-                        );
+      await axios.post(
+        "http://localhost:5000/api/detajetShitjes",
+        detajiData,
+        config
+      );
 
-                        alert(`Porosia për "${selectedPerfume.emri}" u realizua me sukses! Stoku u përditësua.`);
-                        setSelectedPerfume(null);
-                        window.location.reload();
-                      } catch (err) {
-                        console.error("Gabim gjatë realizimit të shitjes:", err);
-                        alert("Diçka shkoi keq: " + (err.response?.data?.error || err.message));
-                      }
-                    }}
-                    style={{
-                      opacity: selectedPerfume.sasia_stok === 0 ? 0.5 : 1,
-                      padding: "8px 15px",
-                    }}
-                  >
-                    {selectedPerfume.sasia_stok > 0 ? "Shto në Shportë" : "Pa Stok"}
-                  </button>
+      alert(`Porosia për "${selectedPerfume.emri}" u realizua me sukses!`);
+      setSelectedPerfume(null);
+      
+     
+      window.location.reload(); 
+    } catch (err) {
+      console.error("Gabim gjatë realizimit të shitjes:", err);
+      alert("Diçka shkoi keq: " + (err.response?.data?.error || err.message));
+    }
+  }}
+  style={{
+    opacity: selectedPerfume.sasia_stok === 0 ? 0.5 : 1,
+    padding: "8px 15px",
+  }}
+>
+  {selectedPerfume.sasia_stok > 0 ? "Shto në Shportë" : "Pa Stok"}
+</button>
                 </div>
               </div>
             </div>

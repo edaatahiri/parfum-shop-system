@@ -46,10 +46,16 @@ const loginUser = async (req, res) => {
 
     // 1. Gjenerojmë ACCESS TOKEN (JWT) - valid për 15 minuta
     const accessToken = jwt.sign(
-      { id: user.id, email: user.email, role: userRoleName },
-      process.env.JWT_SECRET,
-      { expiresIn: "15m" }
-    );
+  { 
+    id: user.id, 
+    email: user.email, 
+    role: userRoleName,
+    emri: user.emri,      // 
+    mbiemri: user.mbiemri // 
+  },
+  process.env.JWT_SECRET,
+  { expiresIn: "15m" }
+);
 
     // 2. Gjenerojmë REFRESH TOKEN (String i gjatë unik)
     const refreshTokenString = crypto.randomBytes(40).toString("hex");

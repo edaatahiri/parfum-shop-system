@@ -49,7 +49,7 @@ app.use("/api/furnitoret", furnitoretRoutes);
 app.use("/api/puntoret", puntoretRoutes);
 app.use("/api/shitjet", shitjetRoutes);
 app.use("/api/porosit-furnitoreve", porositFurnitoreveRoutes);
-app.use("/api/detajet-shitjes", detajetShitjesRoutes);
+app.use("/api/detajetshitjes", detajetShitjesRoutes);
 app.use("/api/detajet-porosis", detajetPorosisRoutes);
 
 app.get("/", (req, res) => {
