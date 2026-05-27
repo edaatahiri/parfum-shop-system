@@ -61,42 +61,42 @@ const Testimonials = () => {
     fetchReviews();
   }, []);
 
-  //funksioni handleSubmitReview i ri deri te defaultReviews
+  // Funksioni handleSubmitReview i rregulluar plotësisht këtu:
   const handleSubmitReview = async (e) => {
     e.preventDefault();
 
-    setFormMessage({ text: "", type: "" });
-
-    if (!loggedInUser || !loggedInUser.id) {
-      setFormMessage({
-        text: "🔒 You must be logged in to leave a review!",
-        type: "error",
-      });
-      return;
-    }
-
-    if (!komenti.trim()) {
-      setFormMessage({
-        text: "⚠️ Please write a review comment before submitting.",
-        type: "error",
-      });
+    if (!rating || !komenti.trim() || !selectedParfumId) {
+      alert("Ju lutem plotësoni të gjitha fushat!");
       return;
     }
 
     setSubmitting(true);
+    setFormMessage({ text: "", type: "" });
 
     try {
+      // 1. Marrim token-in nga localStorage
+      const token = localStorage.getItem("token");
+
+      // 2. Krijojmë konfigurimin për Axios me Header-in e duhur
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
       const reviewData = {
         rating: parseInt(rating),
         komenti: komenti,
-        klient_id: parseInt(loggedInUser.id),
+        klient_id: parseInt(loggedInUser?.id || 0),
         parfum_id: parseInt(selectedParfumId),
         data: new Date(),
       };
 
+      // 3. E dërgojmë 'config' si parametër të tretë te axios.post
       const response = await axios.post(
         "http://localhost:5000/api/reviews",
         reviewData,
+        config
       );
 
       if (response.status === 201) {
@@ -110,15 +110,18 @@ const Testimonials = () => {
 
         const resReviews = await axios.get("http://localhost:5000/api/reviews");
         setReviews(resReviews.data);
-
         setCurrentIndex(resReviews.data.length - 1);
 
         setTimeout(() => setFormMessage({ text: "", type: "" }), 5000);
       }
     } catch (error) {
-      console.error("Gabim gjatë dërgimit të review:", error);
+      console.error("Gabim i plotë nga API:", error.response?.data || error);
+      const serverErrorMessage = error.response?.data?.error || error.response?.data?.message;
+
       setFormMessage({
-        text: "❌ An error occurred. Please ensure your account is correctly linked as a Client in the database.",
+        text: serverErrorMessage 
+          ? `❌ Server Error: ${serverErrorMessage}` 
+          : "❌ An error occurred. Please ensure your account is correctly linked as a Client in the database.",
         type: "error",
       });
     } finally {
@@ -135,9 +138,9 @@ const Testimonials = () => {
         "Parfumi Férox është thjesht magjik! Aroma zgjat gjithë ditën dhe marr komplimente kudo që shkoj. Çdo shtresë e aromës shpaloset si një tregim i bukur.",
       rating: 5,
       fotoKlienti:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150", // Foto e sigurt nga rrjeti për vajzën
+        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150",
       fotoParfumi:
-        "https://images.unsplash.com/photo-1541643600914-78b084683601?w=500", // Parfumi i parë luksoz
+        "https://images.unsplash.com/photo-1541643600914-78b084683601?w=500",
     },
     {
       id: 2,
@@ -147,9 +150,9 @@ const Testimonials = () => {
         "Dior Sauvage nga ky dyqan është 100% origjinal. Shërbimi i shpejtë dhe paketimi super luksoz. Ka ndryshuar komplet mënyrën se si përdor parfumet.",
       rating: 5,
       fotoKlienti:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150", // Foto e sigurt për djalin
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150",
       fotoParfumi:
-        "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=500", // Parfumi i dytë luksoz
+        "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=500",
     },
     {
       id: 3,
@@ -430,7 +433,6 @@ const Testimonials = () => {
             </div>
           </div>
 
-          {/*Gjithashtu e re per me shtu perdoruesi review ne menyre dinamike */}
           {loggedInUser ? (
             <div
               style={{
