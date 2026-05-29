@@ -22,14 +22,21 @@ const AdminDashboard = () => {
 
   const [users, setUsers] = useState([]);
 
+  const [reviews, setReviews] = useState([]);
+
   const [stats, setStats] = useState({
     totalParfumes: 0,
     totalUsers: 0,
     totalSales: 0,
     lowStockAlerts: 0,
+    averageRating: 0,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const cleanRole = (localStorage.getItem("userRole") || "staff")
+    .trim()
+    .toLowerCase();
 
   const [newPerfume, setNewPerfume] = useState({
     emri: "",
@@ -57,43 +64,71 @@ const AdminDashboard = () => {
     try {
       setNotification("");
 
-      const [
-        perfumesRes,
-        brandsRes,
-        categoriesRes,
-        ordersRes,
-        usersRes,
-        samplesRes,
-      ] = await Promise.all([
-        API.get("/parfumet"),
-        API.get("/marka"),
-        API.get("/kategorite"),
-        API.get("/shitjet"),
-        API.get("/users"),
-        API.get("/mostrat"),
-      ]);
+      const perfumesRes = await API.get("/parfumet");
+      const brandsRes = await API.get("/marka");
+      const categoriesRes = await API.get("/kategorite");
+      const samplesRes = await API.get("/mostrat");
 
       setPerfumes(perfumesRes.data);
       setBrands(brandsRes.data);
       setCategories(categoriesRes.data);
-      setOrders(ordersRes.data);
-      setUsers(usersRes.data);
       setSamples(samplesRes.data);
 
-      const lowStockCount = perfumesRes.data.filter(
-        (p) => p.sasia_stok < 5,
-      ).length;
-      const totalSalesSum = ordersRes.data.reduce(
-        (sum, order) => sum + (order.shuma_totale || 0),
-        0,
-      );
+      if (cleanRole === "staff") {
+        let staffOrdersCount = 0;
+        try {
+          const ordersRes = await API.get("/shitjet");
+          setOrders(ordersRes.data);
+        } catch (e) {
+          console.warn(
+            "Orders endpoint is restricted for this role:",
+            e.message,
+          );
+        }
 
-      setStats({
-        totalParfumes: perfumesRes.data.length,
-        totalUsers: usersRes.data.length,
-        totalSales: totalSalesSum,
-        lowStockAlerts: lowStockCount,
-      });
+        setStats({
+          totalParfumes: perfumesRes.data.length,
+          totalUsers: 0,
+          totalSales: 0,
+          lowStockAlerts: perfumesRes.data.filter((p) => p.sasia_stok < 5)
+            .length,
+          averageRating: 0,
+        });
+      } else {
+        const [ordersRes, usersRes, reviewsRes] = await Promise.all([
+          API.get("/shitjet"),
+          API.get("/users"),
+          API.get("/reviews"),
+        ]);
+
+        setOrders(ordersRes.data);
+        setUsers(usersRes.data);
+        setReviews(reviewsRes.data);
+
+        const lowStockCount = perfumesRes.data.filter(
+          (p) => p.sasia_stok < 5,
+        ).length;
+        const totalSalesSum = ordersRes.data.reduce(
+          (sum, order) => sum + (order.shuma_totale || 0),
+          0,
+        );
+        const totalRating = reviewsRes.data.reduce(
+          (sum, rev) => sum + rev.rating,
+          0,
+        );
+        const avgRating =
+          reviewsRes.data.length > 0
+            ? (totalRating / reviewsRes.data.length).toFixed(1)
+            : 0;
+
+        setStats({
+          totalParfumes: perfumesRes.data.length,
+          totalUsers: usersRes.data.length,
+          totalSales: totalSalesSum,
+          lowStockAlerts: lowStockCount,
+          averageRating: avgRating,
+        });
+      }
     } catch (err) {
       console.error("Error fetching data: ", err);
       setError("Dështoi ngarkimi i të dhënave nga serveri.");
@@ -115,7 +150,11 @@ const AdminDashboard = () => {
     if (storedName) setAdminName(storedName);
 
     fetchData();
-  }, []);
+
+    if (cleanRole === "staff") {
+      setActiveTab("products");
+    }
+  }, [cleanRole]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -266,7 +305,15 @@ const AdminDashboard = () => {
       kategoria_id: perfume.kategoria_id,
       marka_id: perfume.marka_id,
     });
-    setActiveTab("dashboard");
+    if (cleanRole !== "staff") {
+      setActiveTab("dashboard");
+    } else {
+      setActiveTab("products");
+    }
+  };
+
+  const renderStars = (rating) => {
+    return "⭐".repeat(rating);
   };
 
   return (
@@ -274,12 +321,15 @@ const AdminDashboard = () => {
       <nav className="sidebar">
         <div className="sidebar-logo">PARFUM ADMIN</div>
         <ul>
-          <li
-            className={activeTab === "dashboard" ? "active" : ""}
-            onClick={() => setActiveTab("dashboard")}
-          >
-            Dashboard
-          </li>
+          {(cleanRole.toLowerCase() === "admin" ||
+            cleanRole.toLowerCase() === "manager") && (
+            <li
+              className={activeTab === "dashboard" ? "active" : ""}
+              onClick={() => setActiveTab("dashboard")}
+            >
+              Dashboard
+            </li>
+          )}
           <li
             className={activeTab === "products" ? "active" : ""}
             onClick={() => setActiveTab("products")}
@@ -292,12 +342,22 @@ const AdminDashboard = () => {
           >
             Orders
           </li>
-          <li
-            className={activeTab === "users" ? "active" : ""}
-            onClick={() => setActiveTab("users")}
-          >
-            Users
-          </li>
+          {cleanRole.toLowerCase() === "admin" && (
+            <>
+              <li
+                className={activeTab === "users" ? "active" : ""}
+                onClick={() => setActiveTab("users")}
+              >
+                Users
+              </li>
+              <li
+                className={activeTab === "reviews" ? "active" : ""}
+                onClick={() => setActiveTab("reviews")}
+              >
+                Customer Reviews
+              </li>
+            </>
+          )}
           <li onClick={() => (window.location.href = "/")}>Back to Shop</li>
         </ul>
       </nav>
@@ -307,9 +367,11 @@ const AdminDashboard = () => {
           <h1>
             {activeTab === "dashboard"
               ? "Dashboard Overview"
-              : activeTab.toUpperCase()}
+              : activeTab === "reviews"
+                ? "Customer Reviews & Ratings"
+                : activeTab.toUpperCase()}
           </h1>
-          <div className="admin-profile">Welcome,{adminName}</div>
+          <div className="admin-profile">Welcome,{cleanRole}</div>
         </header>
 
         {notification && (
@@ -365,6 +427,12 @@ const AdminDashboard = () => {
                     }}
                   >
                     {stats.lowStockAlerts} artikuj
+                  </p>
+                </div>
+                <div className="stat-card">
+                  <h3>Store Rating</h3>
+                  <p className="stat-number" style={{ color: "#f1c40f" }}>
+                    ⭐ {stats.averageRating} / 5
                   </p>
                 </div>
               </section>
@@ -530,8 +598,8 @@ const AdminDashboard = () => {
                   required
                   className="form-select"
                 >
-                  <option value="Disponueshem">Disponueshem</option>
-                  <option value="Jo Disponueshem">Jo Disponueshem</option>
+                  <option value="Disponueshem">Available</option>
+                  <option value="Jo Disponueshem">Not Available</option>
                 </select>
 
                 <div className="form-buttons-container">
@@ -743,6 +811,72 @@ const AdminDashboard = () => {
                     >
                       {" "}
                       No users found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </section>
+        )}
+
+        {activeTab === "reviews" && (
+          <section className="recent-product animated-fade">
+            <div className="section-header-flex">
+              <h2>Statisfied Clients (Reviews & Ratings)</h2>
+              <div className="orders-count-badge">
+                Total: {reviews.length} reviews
+              </div>
+            </div>
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Review ID</th>
+                  <th>Customer</th>
+                  <th>Perfume</th>
+                  <th>Rating</th>
+                  <th>Comment</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {reviews.length > 0 ? (
+                  reviews.map((rev) => (
+                    <tr key={rev.review_id}>
+                      <td>#{rev.review_id}</td>
+                      <td className="table-perfume-title">
+                        {rev.klient
+                          ? `${rev.klient.emri} ${rev.klient.mbiemri}`
+                          : `Klient ID #${rev.klient_id}`}
+                      </td>
+                      <td>{rev.parfumi?.emri || `Parfum #${rev.parfum_id}`}</td>
+                      <td style={{ letterSpacing: "2px" }}>
+                        {renderStars(rev.rating)}
+                      </td>
+                      <td
+                        style={{
+                          fontStyle: "italic",
+                          maxWidth: "250px",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        "{rev.komenti || "No Comment"}"
+                      </td>
+                      <td>{new Date(rev.data).toLocaleDateString()}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="6"
+                      style={{
+                        textAlign: "center",
+                        padding: "30px",
+                        color: "#888",
+                      }}
+                    >
+                      No reviews found.
                     </td>
                   </tr>
                 )}

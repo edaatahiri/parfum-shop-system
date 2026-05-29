@@ -15,16 +15,22 @@ const Shop = () => {
   const navigate = useNavigate();
   const bannerTimeoutRef = useRef(null);
 
-  const loggedInUser = JSON.parse(localStorage.getItem("user"));
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
+  const [role, setRole] = useState(
+    (localStorage.getItem("userRole") || "").trim().toLowerCase(),
+  );
 
-  const isAdmin =
-    (loggedInUser &&
-      loggedInUser.role &&
-      loggedInUser.role.toString().toLowerCase() === "admin") ||
-    (loggedInUser && loggedInUser.email === "et72862@ubt-uni.net") ||
-    (loggedInUser && loggedInUser.email === "rozafe.shkodra@gmail.com");
+  const hasDashboardAccess =
+    (user && ["admin", "manager"].includes(role)) ||
+    (user && user.email === "et72862@ubt-uni.net") ||
+    (user && user.email === "rozafe.shkodra@gmail.com");
   const handleLogout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("userRole");
+
+    setUser(null);
+    setRole("");
+
     window.location.reload();
   };
 
@@ -36,7 +42,7 @@ const Shop = () => {
   };
 
   const handleWishlistToggle = async (parfumId) => {
-    if (!loggedInUser || !loggedInUser.id) {
+    if (!user || !user.id) {
       toast.warning(
         "You should be logged in to add products to your wishlist! 🔒",
       );
@@ -45,7 +51,7 @@ const Shop = () => {
 
     try {
       const response = await API.post("/wishlist/toggle", {
-        user_id: parseInt(loggedInUser.id),
+        user_id: parseInt(user.id),
         parfum_id: parseInt(parfumId),
       });
 
@@ -102,9 +108,9 @@ const Shop = () => {
 
   useEffect(() => {
     const fetchUserWishlist = async () => {
-      if (loggedInUser?.id) {
+      if (user?.id) {
         try {
-          const res = await API.get(`/wishlist/${loggedInUser.id}`);
+          const res = await API.get(`/wishlist/${user.id}`);
 
           if (Array.isArray(res.data)) {
             const ids = res.data.map((item) => item.parfum_id);
@@ -141,7 +147,7 @@ const Shop = () => {
         </div>
         <div className="nav-contact">
           <div className="nav-auth-links">
-            {isAdmin && (
+            {hasDashboardAccess && (
               <button
                 onClick={() => navigate("/admin")}
                 className="auth-link"
@@ -160,7 +166,7 @@ const Shop = () => {
               </button>
             )}
 
-            {loggedInUser ? (
+            {user ? (
               <>
                 <Link
                   to="/profile"
@@ -176,7 +182,7 @@ const Shop = () => {
                   title="Take a look at your profile"
                 >
                   <i className="fas fa-user-circle text-lg"></i>
-                  Hi,{loggedInUser.email.split("@")[0]}
+                  Hi,{user.email.split("@")[0]}
                 </Link>
                 <span className="auth-divider"></span>
                 <a href="#logout" onClick={handleLogout} className="auth-link">

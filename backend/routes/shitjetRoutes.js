@@ -9,13 +9,13 @@ const {
 } = require("../controllers/shitjetController");
 
 // 1. Importojmë Middleware-at e sigurisë (Policët e derës)
-const { verifyToken, isAdmin } = require("../middlewares/authMiddleware");
+const { verifyToken, isManagment } = require("../middlewares/authMiddleware");
 
 const router = express.Router();
 
 // 2. I aplikojmë mbrojtjet te rrugët (Routes)
 // Vetëm Admini mund t'i shohë të gjitha shitjet në Dashboard
-router.get("/", verifyToken, isAdmin, getShitjet);
+router.get("/", verifyToken, isManagment, getShitjet);
 
 // Për të parë një shitje specifike (KORRIGJUAR: Nga "//:id" në "/:id")
 router.get("/:id", verifyToken, getShitjeById);

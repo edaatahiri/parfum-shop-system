@@ -26,7 +26,14 @@ function Login() {
       const { user, accessToken, token } = res.data;
       const finalToken = accessToken || token;
 
-      const userRole = user.userRoles?.[0]?.role?.emertimi || "User";
+      let userRole = "Client";
+      try {
+        const tokenPayload = JSON.parse(atob(finalToken.split(".")[1]));
+        userRole = tokenPayload.role || "Client";
+      } catch (decodeError) {
+        console.error("Error decoding token:", decodeError);
+        userRole = user.userRoles?.[0]?.role?.emertimi || "Client";
+      }
 
       const userToStore = {
         id: user.id,
@@ -36,16 +43,22 @@ function Login() {
         role: userRole,
       };
 
-      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("user", JSON.stringify(userToStore));
       localStorage.setItem("token", finalToken);
       localStorage.setItem("userName", user.emri);
+      localStorage.setItem("userRole", userRole);
 
-      if (userRole.trim().toLowerCase() === "admin") {
+      const lowerRole = userRole.trim().toLowerCase();
+
+      if (
+        lowerRole === "admin" ||
+        lowerRole === "manager" ||
+        lowerRole === "staff"
+      ) {
         navigate("/admin");
       } else {
         navigate("/");
       }
-      /*deri qetu*/
     } catch (err) {
       alert(err.response?.data?.message || "Login failed");
     }

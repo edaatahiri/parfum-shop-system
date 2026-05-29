@@ -21,25 +21,49 @@ const verifyToken = (req, res, next) => {
   }
 };
 
-
 const isAdmin = (req, res, next) => {
- 
   if (!req.user || !req.user.role) {
     return res
       .status(403)
-      .json({ error: "E ndaluar! Nuk u gjet asnjë rol për këtë përdorues." });
+      .json({ error: "E ndaluar! Nuk u gjet asnje rol per kete perdorues." });
   }
 
-  
   if (req.user.role.trim().toLowerCase() === "admin") {
-    next(); 
+    next();
   } else {
-    return res
-      .status(403)
-      .json({
-        error: "E ndaluar! Kjo zone lejohet vetem per Administratoret.",
-      });
+    return res.status(403).json({
+      error: "E ndaluar! Kjo zone lejohet vetem per Administratoret.",
+    });
   }
 };
 
-module.exports = { verifyToken, isAdmin };
+const isManagment = (req, res, next) => {
+  if (!req.user || !req.user.role) {
+    return res.status(403).json({ error: "E ndaluar! Nuk u gjet asnje rol." });
+  }
+
+  const role = req.user.role.trim().toLowerCase();
+  if (role === "admin" || role === "manager") {
+    next();
+  } else {
+    return res.status(403).json({
+      error: "E ndaluar! Kjo zone lejohet vetem per Admin dhe Manager.",
+    });
+  }
+};
+
+const isWorker = (req, res, next) => {
+  if (!req.user || !req.user.role) {
+    return res.status(403).json({ error: "No role found for this user." });
+  }
+
+  const role = req.user.role.trim().toLowerCase();
+
+  if (role === "admin" || role === "manager" || role === "staff") {
+    next();
+  } else {
+    return res.status(403).json({ error: "Only for the staff." });
+  }
+};
+
+module.exports = { verifyToken, isAdmin, isManagment, isWorker };

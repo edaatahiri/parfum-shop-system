@@ -21,9 +21,9 @@ const loginUser = async (req, res) => {
       include: {
         userRoles: {
           include: {
-            role: true
-          }
-        }
+            role: true,
+          },
+        },
       },
     });
 
@@ -42,24 +42,24 @@ const loginUser = async (req, res) => {
     }
 
     // Marrim emrin e rolit të parë (p.sh. "Admin" ose "User")
-    const userRoleName = user.userRoles?.[0]?.role?.emertimi || "Admin";
+    const userRoleName = user.userRoles?.[0]?.role?.emertimi || "Client";
 
     // 1. Gjenerojmë ACCESS TOKEN (JWT) - valid për 15 minuta
     const accessToken = jwt.sign(
-  { 
-    id: user.id, 
-    email: user.email, 
-    role: userRoleName,
-    emri: user.emri,      // 
-    mbiemri: user.mbiemri // 
-  },
-  process.env.JWT_SECRET,
-  { expiresIn: "15m" }
-);
+      {
+        id: user.id,
+        email: user.email,
+        role: userRoleName,
+        emri: user.emri, //
+        mbiemri: user.mbiemri, //
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m" },
+    );
 
     // 2. Gjenerojmë REFRESH TOKEN (String i gjatë unik)
     const refreshTokenString = crypto.randomBytes(40).toString("hex");
-   
+
     // Vendosim skadimin e Refresh Token për 7 ditë
     const expiresDate = new Date();
     expiresDate.setDate(expiresDate.getDate() + 7);
@@ -84,7 +84,6 @@ const loginUser = async (req, res) => {
         role: userRoleName,
       },
     });
-
   } catch (error) {
     console.log("LOGIN ERROR:", error);
     return res.status(500).json({
@@ -94,5 +93,3 @@ const loginUser = async (req, res) => {
 };
 
 module.exports = { loginUser };
-
-

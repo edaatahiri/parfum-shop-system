@@ -27,10 +27,33 @@ async function main() {
     },
   });
 
+  await prisma.roles.upsert({
+    where: { id: 3 },
+    update: {},
+    create: {
+      id: 3,
+      emertimi: "Manager",
+      pershkrimi: "Menaxher i Dyqanit",
+      normalized_name: "MANAGER",
+    },
+  });
+
+  await prisma.roles.upsert({
+    where: { id: 4 },
+    update: {},
+    create: {
+      id: 4,
+      emertimi: "Staff",
+      pershkrimi: "Staf Punonjes",
+      normalized_name: "STAFF",
+    },
+  });
+
   const hashedPassword = await bcrypt.hash("admin123", 10);
+
   await prisma.users.upsert({
     where: { email: "rozafe.shkodra@gmail.com" },
-    update: {password_hash: hashedPassword},
+    update: { password_hash: hashedPassword },
     create: {
       emri: "Rozafe",
       mbiemri: "Shkodra",
@@ -45,7 +68,7 @@ async function main() {
 
   await prisma.users.upsert({
     where: { email: "et72862@ubt-uni.net" },
-    update: { password_hash: hashedPassword},
+    update: { password_hash: hashedPassword },
     create: {
       emri: "eda",
       mbiemri: "tahiri",
@@ -54,6 +77,36 @@ async function main() {
       statusi: "Active",
       userRoles: {
         create: { role_id: 1 },
+      },
+    },
+  });
+
+  await prisma.users.upsert({
+    where: { email: "manager@parfum.com" },
+    update: { password_hash: hashedPassword },
+    create: {
+      emri: "Drita",
+      mbiemri: "Rashiti",
+      email: "manager@parfum.com",
+      password_hash: hashedPassword,
+      statusi: "Active",
+      userRoles: {
+        create: { role_id: 3 },
+      },
+    },
+  });
+
+  await prisma.users.upsert({
+    where: { email: "staff@parfum.com" },
+    update: { password_hash: hashedPassword },
+    create: {
+      emri: "Zana",
+      mbiemri: "Tahiri",
+      email: "staff@parfum.com",
+      password_hash: hashedPassword,
+      statusi: "Active",
+      userRoles: {
+        create: { role_id: 4 },
       },
     },
   });
@@ -94,8 +147,6 @@ async function main() {
     },
   });
 
-
-
   await prisma.parfum.upsert({
     where: { parfum_id: 2 },
     update: {},
@@ -106,7 +157,8 @@ async function main() {
       volumi_ml: 100,
       cmimi: 120.0,
       sasia_stok: 15,
-      pershkrimi: "Një aromë e egër dhe fisnike në të njëjtën kohë. Perfekte për mbrëmje.",
+      pershkrimi:
+        "Një aromë e egër dhe fisnike në të njëjtën kohë. Perfekte për mbrëmje.",
       notat_ere: "Bergamot, Piper i Zi, Dru Amber",
       kategoria_id: kategoria.kategori_id, // KORRIGJUAR: kategori_id
       marka_id: marka.marka_id,
@@ -131,9 +183,7 @@ async function main() {
     },
   });
 
-
-
-await prisma.parfum.upsert({
+  await prisma.parfum.upsert({
     where: { parfum_id: 4 },
     update: {},
     create: {
@@ -143,35 +193,30 @@ await prisma.parfum.upsert({
       volumi_ml: 50,
       cmimi: 150.0,
       sasia_stok: 8,
-      pershkrimi: "Një aromë luksoze, e errët dhe misterioze me nota të pasura dhe sensuale.",
+      pershkrimi:
+        "Një aromë luksoze, e errët dhe misterioze me nota të pasura dhe sensuale.",
       notat_ere: "Black Truffle, Ylang-Ylang, Black Orchid, Patchouli",
       kategoria_id: kategoria.kategori_id,
       marka_id: marka.marka_id,
     },
   });
 
-
-await prisma.parfum.upsert({
-  where: { parfum_id: 5 },
-  update: {},
-  create: {
-    parfum_id: 5,
-    emri: "Férox",
-    gjinia_target: "Femer",
-    volumi_ml: 100,
-    cmimi: 145.0,
-    sasia_stok: 10,
-    pershkrimi: "Layers of Scent Unfolding Like a Story.",
-    notat_ere: "Jasmine, Rose, Green tea, Vanilla, Sandalwood, Musk",
-    kategoria_id: kategoria.kategori_id,
-    marka_id: marka.marka_id,
-  },
-});
-
-
-
-
-
+  await prisma.parfum.upsert({
+    where: { parfum_id: 5 },
+    update: {},
+    create: {
+      parfum_id: 5,
+      emri: "Férox",
+      gjinia_target: "Femer",
+      volumi_ml: 100,
+      cmimi: 145.0,
+      sasia_stok: 10,
+      pershkrimi: "Layers of Scent Unfolding Like a Story.",
+      notat_ere: "Jasmine, Rose, Green tea, Vanilla, Sandalwood, Musk",
+      kategoria_id: kategoria.kategori_id,
+      marka_id: marka.marka_id,
+    },
+  });
   console.log("Seeding përfundoi me sukses!");
 }
 

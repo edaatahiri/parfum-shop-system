@@ -37,6 +37,11 @@ exports.register = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
+    let assignedRoleId = 4;
+    if (role === "Admin") assignedRoleId = 1;
+    else if (role === "Manager") assignedRoleId = 2;
+    else if (role === "Staff") assignedRoleId = 3;
+
     const newUser = await prisma.users.create({
       data: {
         emri,
@@ -47,7 +52,7 @@ exports.register = async (req, res) => {
         statusi: "Active",
         userRoles: {
           create: {
-            role_id: role === "Admin" ? 1 : 2,
+            role_id: assignedRoleId,
           },
         },
       },
