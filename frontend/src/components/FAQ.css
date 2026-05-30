@@ -1,16 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Marcellus&family=Montserrat:wght@300;400;500;700&display=swap');
 
-/* Kontejneri i ri i jashtëm që e shtyn butonin krejt në cep të ekranit */
+/* Kontejneri i jashtëm për butonin Kthehu */
 .faq-outer-back-container {
   width: 100%;
   display: flex;
   justify-content: flex-start;
-  padding-left: 40px; /* Kjo e rreshton butonin krejt anash majtas ekranit */
-  margin-top: 40px;    /* Hapësirë nga tavani i faqes */
+  padding-left: 40px;
+  margin-top: 40px;
   box-sizing: border-box;
 }
 
-/* Stilimi i saktë i katrorit të artë si në foto */
 .faq-back-btn {
   background-color: #b89453;
   color: #000000;
@@ -18,7 +17,7 @@
   padding: 12px 26px;
   font-family: 'Montserrat', sans-serif;
   font-size: 14px;
-  font-weight: 700; /* Bold i plotë dhe i trashë */
+  font-weight: 700;
   border-radius: 6px;
   cursor: pointer;
   box-shadow: 0 4px 15px rgba(184, 148, 83, 0.2);
@@ -31,20 +30,20 @@
   box-shadow: 0 6px 20px rgba(184, 148, 83, 0.35);
 }
 
-/* Wrapperi kryesor i përmbajtjes - mbetet stabil në mes */
+/* Wrapperi kryesor */
 .faq-wrapper {
-  max-width: 1200px;
-  margin: 40px auto 80px auto; /* Ulur pak pasi butoni u nxor jashtë */
-  padding: 0 30px;
+  max-width: 900px;
+  margin: 40px auto 80px auto;
+  padding: 0 20px;
   font-family: 'Montserrat', sans-serif;
   color: #1a1a1a;
   box-sizing: border-box;
 }
 
-/* Headeri mbretëror i titullit */
+/* Headeri */
 .faq-header {
   text-align: center;
-  margin-bottom: 60px;
+  margin-bottom: 50px;
 }
 
 .faq-subtitle {
@@ -71,154 +70,475 @@
   color: #b89453;
 }
 
-/* Grid sistemi stabil për dy kolonat */
-.faq-content-grid {
-  display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: 80px;
-  align-items: center;
+/* 🌟 STILIMI I RI: FRAGRANCE FINDER */
+.fragrance-finder-section {
+  margin-bottom: 70px;
 }
 
-@media (max-width: 968px) {
-  .faq-content-grid {
-    grid-template-columns: 1fr;
-    gap: 50px;
-  }
-  .faq-outer-back-container {
-    padding-left: 20px;
-    margin-top: 20px;
-  }
+.finder-card {
+  background: #fdfcf9;
+  border: 1px solid #e5dfd3;
+  padding: 45px 40px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(184, 148, 83, 0.05);
+  text-align: center;
 }
 
-/* Seksioni i majtë (Pyetjet) */
-.faq-left-column h3 {
+.finder-card h3 {
   font-family: 'Marcellus', serif;
-  font-size: 30px;
-  font-weight: 400;
-  margin-bottom: 6px;
+  font-size: 26px;
+  color: #111;
+  margin-bottom: 10px;
   letter-spacing: 1px;
 }
 
-.faq-left-column .we-got-answers {
-  font-style: italic;
-  color: #b89453;
-  font-size: 14px;
-  margin-bottom: 25px;
-  display: block;
-  letter-spacing: 1px;
-}
-
-.faq-intro-text {
+.finder-subtitle {
   font-size: 14px;
   color: #666;
-  line-height: 1.8;
-  margin-bottom: 40px;
+  margin-bottom: 35px;
   font-weight: 300;
 }
 
-/* Accordion Premium */
-.faq-accordion {
-  border-top: 1px solid #e5dfd3;
-}
-
-.faq-item {
-  border-bottom: 1px solid #e5dfd3;
-  padding: 22px 10px;
-  transition: all 0.4s ease;
-}
-
-.faq-item.active {
-  background-color: #faf8f5;
-  padding-left: 20px;
-  padding-right: 20px;
-  border-left: 3px solid #b89453;
-}
-
-.faq-question-btn {
-  width: 100%;
-  background: none;
-  border: none;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.quiz-step {
+  margin-bottom: 30px;
   text-align: left;
-  font-size: 15px;
-  font-weight: 400;
+  max-width: 550px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.quiz-step label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
   color: #222;
-  cursor: pointer;
-  padding: 0;
-  transition: all 0.3s ease;
-  font-family: 'Montserrat', sans-serif;
+  margin-bottom: 15px;
   letter-spacing: 0.5px;
 }
 
-.faq-item.active .faq-question-btn {
+.quiz-options {
+  display: flex;
+  gap: 20px;
+}
+
+.option-btn {
+  flex: 1;
+  background: #ffffff;
+  border: 1px solid #e5dfd3;
+  padding: 16px;
+  border-radius: 8px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #444;
+}
+
+.option-btn:hover {
+  border-color: #b89453;
+  background: #faf8f5;
+  color: #b89453;
+}
+
+.option-btn.selected {
+  background: #b89453;
+  color: #ffffff;
+  border-color: #b89453;
+  font-weight: 500;
+  box-shadow: 0 4px 15px rgba(184, 148, 83, 0.25);
+}
+
+.find-perfume-btn {
+  background: #111111;
+  color: #ffffff;
+  border: none;
+  padding: 16px 45px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 30px;
+  cursor: pointer;
+  margin-top: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  transition: all 0.3s ease;
+}
+
+.find-perfume-btn:hover:not(:disabled) {
+  background: #b89453;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(184, 148, 83, 0.3);
+}
+
+.find-perfume-btn:disabled {
+  background: #dcd7cd;
+  color: #9c968a;
+  cursor: not-allowed;
+}
+
+/* Zona e Rezultatit të Kuizit */
+.quiz-result-zone {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 8px;
+  border: 1px solid #e5dfd3;
+  margin-top: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.02);
+}
+
+.result-content {
+  display: flex;
+  align-items: center;
+  gap: 35px;
+  text-align: left;
+}
+
+.result-perfume-img {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 4px 40px 4px 40px;
+  border: 1px solid rgba(184, 148, 83, 0.2);
+}
+
+.match-tag {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #b89453;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.result-text h4 {
+  font-family: 'Marcellus', serif;
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #111;
+}
+
+.result-text p {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 20px;
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+.result-actions {
+  display: flex;
+  gap: 15px;
+}
+
+.buy-now-btn {
+  background: #b89453;
+  color: #ffffff;
+  border: none;
+  padding: 12px 24px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+
+.buy-now-btn:hover {
+  background-color: #a38144;
+}
+
+.retry-btn {
+  background: none;
+  border: 1px solid #ccbfa7;
+  color: #666;
+  padding: 12px 24px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.3s;
+}
+
+.retry-btn:hover {
+  border-color: #111;
+  color: #111;
+  background: #fafafa;
+}
+
+/* 🌟 SECKSIONI I PYETJEVE POSHTË */
+.faq-bottom-section {
+  margin-top: 50px;
+}
+
+.section-title-faq {
+  font-family: 'Marcellus', serif;
+  font-size: 26px;
+  text-align: center;
+  margin-bottom: 30px;
+  color: #111;
+  letter-spacing: 1px;
+}
+
+.faq-accordion-simple {
+  border-top: 1px solid #e5dfd3;
+}
+
+.faq-line-item {
+  border-bottom: 1px solid #e5dfd3;
+  transition: background-color 0.3s ease;
+}
+
+.faq-line-item.active {
+  background-color: #faf8f5;
+}
+
+.faq-line-trigger {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 24px 15px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  text-align: left;
+  cursor: pointer;
+  color: #222;
+  transition: color 0.3s ease;
+}
+
+.faq-line-item.active .faq-line-trigger {
   color: #b89453;
   font-weight: 500;
 }
 
-.faq-toggle-icon {
-  font-size: 20px;
+.faq-icon-arrow {
+  font-size: 18px;
   color: #b89453;
   font-weight: 300;
-  transition: transform 0.4s ease;
+  transition: transform 0.3s ease;
 }
 
-.faq-item.active .faq-toggle-icon {
-  transform: rotate(180deg);
-}
-
-/* Pjesa e përgjigjes */
-.faq-answer {
+.faq-line-content {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.4s ease;
+  padding: 0 15px;
 }
 
-.faq-answer p {
+.faq-line-item.active .faq-line-content {
+  max-height: 150px;
+  padding-bottom: 24px;
+}
+
+.faq-line-content p {
+  font-size: 14px;
   color: #555;
-  font-size: 13.5px;
-  line-height: 1.8;
+  line-height: 1.7;
   margin: 0;
   font-weight: 300;
 }
 
-.faq-item.active .faq-answer {
-  max-height: 200px;
-  padding-top: 15px;
+/* Animacionet */
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
 }
 
-/* Kolona e djathtë me foton */
-.faq-image-column {
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsiveness për telefona */
+@media (max-width: 768px) {
+  .quiz-options {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .result-content {
+    flex-direction: column;
+    text-align: center;
+  }
+  .result-actions {
+    justify-content: center;
+  }
+  .faq-outer-back-container {
+    padding-left: 20px;
+  }
+}
+
+
+
+
+
+.faq-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6); /* Errësim i sfondit mbrapa */
+  backdrop-filter: blur(4px); /* Efekt i bukur flou */
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 9999; /* Sigurohet që del mbi çdo gjë tjetër */
 }
 
-.faq-img-wrapper {
-  position: relative;
+.faq-modal-box {
+  background: #ffffff;
   width: 100%;
-  max-width: 450px;
-  border-radius: 4px 120px 4px 120px; 
-  overflow: hidden;
-  box-shadow: 0 20px 40px rgba(184, 148, 83, 0.15);
+  max-width: 650px;
+  padding: 40px;
+  border-radius: 12px;
+  border: 1px solid #e5dfd3;
+  position: relative;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+
+.close-modal-x {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #999;
+  transition: color 0.2s;
+}
+
+.close-modal-x:hover {
+  color: #111;
+}
+
+.modal-header-zone {
+  text-align: left;
+  border-bottom: 1px solid #f1ece5;
+  padding-bottom: 15px;
+  margin-bottom: 25px;
+}
+
+.modal-mini-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #b89453;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.modal-header-zone h3 {
+  font-family: 'Marcellus', serif;
+  font-size: 24px;
+  color: #111;
+  margin: 0;
+}
+
+.modal-body-content {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.modal-preview-img {
+  width: 150px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 4px;
   border: 1px solid rgba(184, 148, 83, 0.2);
 }
 
-.faq-luxury-img {
-  width: 100%;
-  height: auto;
-  display: block;
-  object-fit: cover;
-  transition: transform 0.8s ease;
+.modal-details h4 {
+  font-family: 'Marcellus', serif;
+  font-size: 22px;
+  margin: 0 0 10px 0;
+  color: #111;
 }
 
-.faq-img-wrapper:hover .faq-luxury-img {
-  transform: scale(1.05);
+.modal-details p {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  font-weight: 300;
 }
 
+.modal-note {
+  font-style: italic;
+  font-size: 13px;
+  color: #6d675b;
+  background-color: #faf8f4;
+  padding: 12px;
+  border-left: 2px solid #b89453;
+  margin: 0;
+}
 
+.modal-footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 35px;
+  border-top: 1px solid #f1ece5;
+  padding-top: 20px;
+}
 
+.modal-cancel-btn {
+  background: none;
+  border: 1px solid #ccbfa7;
+  color: #666;
+  padding: 12px 24px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.modal-cancel-btn:hover {
+  background: #f5f5f5;
+  color: #111;
+}
+
+.modal-confirm-btn {
+  background: #b89453;
+  color: #ffffff;
+  border: none;
+  padding: 12px 28px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.3s, transform 0.2s;
+  box-shadow: 0 4px 12px rgba(184, 148, 83, 0.2);
+}
+
+.modal-confirm-btn:hover {
+  background-color: #a38144;
+  transform: translateY(-1px);
+}
+
+/* Rregullim për pajisje më të vogla */
+@media (max-width: 600px) {
+  .modal-body-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .modal-note {
+    border-left: none;
+    border-top: 2px solid #b89453;
+  }
+  .modal-footer-actions {
+    flex-direction: column-reverse;
+  }
+}
 
 
 

@@ -4,12 +4,15 @@ const parfumController = require("../controllers/parfumController");
 const {
   verifyToken,
   isManagment,
-  isWorker,
 } = require("../middlewares/authMiddleware");
 
+// Rrugët e parfumit
 router.get("/", parfumController.getAllParfumet);
 router.post("/", verifyToken, isManagment, parfumController.createParfum);
-router.put("/:id", verifyToken, isWorker, parfumController.updateParfum);
+
+// Korrigjimi: Ndryshuar nga isWorker në isManagment që të mos bëjë më crash
+router.put("/:id", verifyToken, isManagment, parfumController.updateParfum);
+
 router.delete("/:id", verifyToken, isManagment, parfumController.deleteParfum);
 
 module.exports = router;

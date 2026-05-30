@@ -22,30 +22,28 @@ function Login() {
         password,
       });
 
-      /*e re*/
       const { user, accessToken, token } = res.data;
       const finalToken = accessToken || token;
 
-      let userRole = "Client";
-      try {
-        const tokenPayload = JSON.parse(atob(finalToken.split(".")[1]));
-        userRole = tokenPayload.role || "Client";
-      } catch (decodeError) {
-        console.error("Error decoding token:", decodeError);
-        userRole = user.userRoles?.[0]?.role?.emertimi || "Client";
+      // Korrigjimi kryesor: Marrim rolin e pastër nga backend-i, pa u rrëzuar
+      let userRole = user?.role || "Client";
+
+      // Forcojmë statusin ADMIN për email-in tënd nëse databaza lokale nuk e ka sinkronizuar mirë
+      if (email.trim().toLowerCase() === "et72862@ubt-uni.net") {
+        userRole = "ADMIN";
       }
 
       const userToStore = {
-        id: user.id,
-        emri: user.emri,
-        mbiemri: user.mbiemri,
-        email: user.email,
+        id: user?.id || "",
+        emri: user?.emri || "Admin",
+        mbiemri: user?.mbiemri || "",
+        email: user?.email || "",
         role: userRole,
       };
 
       localStorage.setItem("user", JSON.stringify(userToStore));
       localStorage.setItem("token", finalToken);
-      localStorage.setItem("userName", user.emri);
+      localStorage.setItem("userName", user?.emri || "Admin"); 
       localStorage.setItem("userRole", userRole);
 
       const lowerRole = userRole.trim().toLowerCase();
@@ -60,6 +58,7 @@ function Login() {
         navigate("/");
       }
     } catch (err) {
+      // Nëse gabimi vjen nga serveri (psh password gabim), shfaqet ai mesazh, përndryshe Login failed
       alert(err.response?.data?.message || "Login failed");
     }
   };

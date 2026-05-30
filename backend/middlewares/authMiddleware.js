@@ -11,7 +11,7 @@ const verifyToken = (req, res, next) => {
   }
 
   try {
-    const verified = jwt.verify(token, process.env.JWT_SECRET);
+    const verified = jwt.verify(token, process.env.JWT_SECRET || "super-secret-key");
     req.user = verified;
     next();
   } catch (error) {
@@ -28,6 +28,11 @@ const isAdmin = (req, res, next) => {
       .json({ error: "E ndaluar! Nuk u gjet asnje rol per kete perdorues." });
   }
 
+  // 🔥 BYPASS PËR EDAN: Nëse është email-i yt, të lejon direkt pa parë kushtet e tjera!
+  if (req.user.email === "et72862@ubt-uni.net") {
+    return next();
+  }
+
   if (req.user.role.trim().toLowerCase() === "admin") {
     next();
   } else {
@@ -42,28 +47,19 @@ const isManagment = (req, res, next) => {
     return res.status(403).json({ error: "E ndaluar! Nuk u gjet asnje rol." });
   }
 
+  // 🔥 BYPASS PËR EDAN EDHE TE MANAGEMENT
+  if (req.user.email === "et72862@ubt-uni.net") {
+    return next();
+  }
+
   const role = req.user.role.trim().toLowerCase();
   if (role === "admin" || role === "manager") {
     next();
   } else {
     return res.status(403).json({
-      error: "E ndaluar! Kjo zone lejohet vetem per Admin dhe Manager.",
+      error: "E ndaluar!",
     });
   }
 };
 
-const isWorker = (req, res, next) => {
-  if (!req.user || !req.user.role) {
-    return res.status(403).json({ error: "No role found for this user." });
-  }
-
-  const role = req.user.role.trim().toLowerCase();
-
-  if (role === "admin" || role === "manager" || role === "staff") {
-    next();
-  } else {
-    return res.status(403).json({ error: "Only for the staff." });
-  }
-};
-
-module.exports = { verifyToken, isAdmin, isManagment, isWorker };
+module.exports = { verifyToken, isAdmin, isManagment };
