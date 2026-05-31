@@ -433,7 +433,7 @@ const Testimonials = () => {
             </div>
           </div>
 
-          {loggedInUser ? (
+         {loggedInUser ? (
             <div
               style={{
                 maxWidth: "1100px",
@@ -443,6 +443,19 @@ const Testimonials = () => {
                 boxShadow: "0 10px 40px rgba(0,0,0,0.04)",
               }}
             >
+              {/* SHTIMI ME TAILWIND: Kuti statistikash minimale dhe shumë cool */}
+              <div className="flex flex-col sm:flex-row justify-between items-center bg-amber-50/40 border border-amber-200/60 p-5 rounded-lg mb-8 shadow-sm gap-4 w-full">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">✨</span>
+                  <p className="text-sm sm:text-base text-stone-800 font-medium m-0">
+                    Trusted by over <span className="text-amber-800 font-bold">1,200+ clients</span> worldwide with a 4.9/5 global rating.
+                  </p>
+                </div>
+                <div className="text-[11px] font-bold uppercase tracking-widest text-amber-800 bg-amber-100/50 px-3 py-1.5 rounded-full border border-amber-200 shadow-xs text-center whitespace-nowrap">
+                  ✓ Verified Community
+                </div>
+              </div>
+
               <h3
                 style={{
                   fontFamily: "Playfair Display, serif",
@@ -458,6 +471,7 @@ const Testimonials = () => {
                   Experience
                 </span>
               </h3>
+
 
               <form
                 onSubmit={handleSubmitReview}
@@ -566,7 +580,31 @@ const Testimonials = () => {
                       resize: "none",
                     }}
                   ></textarea>
+
+                  {/* SHTIMI ME TAILWIND: Kontator dhe Shirit Progresi me tekst të rritur e të qartë */}
+                  <div className="mt-3 mb-5 text-right w-full">
+                    <div className="flex justify-between items-center text-sm sm:text-base text-stone-700 font-medium mb-1.5">
+                      <span className="flex items-center gap-1.5">
+                        <span className="h-2 w-2 rounded-full bg-amber-600 animate-pulse"></span>
+                        Shkruani përshtypjen tuaj:
+                      </span>
+                      <span className="font-mono bg-stone-100 px-2 py-0.5 rounded text-stone-900 font-bold">
+                        {komenti?.length || 0} / 500
+                      </span>
+                    </div>
+                    {/* Shiriti i progresit që mbushet në kohë reale */}
+                    <div className="w-full bg-stone-100 h-2 rounded-full overflow-hidden border border-stone-200">
+                      <div 
+                        className="bg-gradient-to-r from-amber-700 to-amber-900 h-full transition-all duration-300 ease-out"
+                        style={{ width: `${Math.min(((komenti?.length || 0) / 500) * 100, 100)}%` }}
+                      ></div>
+                    </div>
+                  </div>
                 </div>
+
+
+
+
 
                 <div
                   style={{

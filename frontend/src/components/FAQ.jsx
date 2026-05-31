@@ -156,7 +156,7 @@ function FAQ() {
           </div>
         )}
 
-        {/* PYETJET E SHPESHTA */}
+    {/* PYETJET E SHPESHTA */}
         <div className="faq-bottom-section">
           <h3 className="section-title-faq">Pyetjet e Shpeshta</h3>
           <div className="faq-accordion-simple">
@@ -165,7 +165,14 @@ function FAQ() {
               return (
                 <div key={index} className={`faq-line-item ${isActive ? "active" : ""}`}>
                   <button className="faq-line-trigger" onClick={() => toggleAccordion(index)}>
-                    {item.question}
+                    {/* SHTIMI ME TAILWIND: Fokusimi te fillimi i rreshtit për pamje më të pastër */}
+                    <div className="flex items-center gap-3 text-left">
+                      {/* Badge e re minimaliste në fillim të pyetjes */}
+                      <span className="hidden sm:inline-flex items-center bg-amber-50 text-amber-700 text-[10px] font-bold tracking-widest uppercase px-2 py-0.5 rounded border border-amber-200 shadow-sm">
+                        Q&A
+                      </span>
+                      <span className="text-base sm:text-lg font-medium text-stone-900">{item.question}</span>
+                    </div>
                     <span className="faq-icon-arrow">{isActive ? "−" : "＋"}</span>
                   </button>
                   <div className="faq-line-content">

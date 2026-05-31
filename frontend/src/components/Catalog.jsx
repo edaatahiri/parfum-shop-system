@@ -56,15 +56,23 @@ const Catalog = () => {
     return `/images/${emriTeThjeshtuar}.jpeg`;
   };
 
-  return (
+return (
     <div className="homepage-wrapper">
+      {/* SHTIMI ME TAILWIND: Banner njoftimi që qëndron i fiksuar (sticky) gjatë scroll-it */}
+      <div className="sticky top-0 z-50 bg-amber-950 text-stone-100 text-center py-5 px-6 text-lg sm:text-xl font-semibold tracking-wide uppercase shadow-md w-full flex items-center justify-center gap-4">
+        <span>✨ Exclusive Weekend Offer: Use code <span className="underline font-bold text-amber-400">MAISON10</span> for 10% off</span>
+        <span className="bg-amber-800 text-amber-200 px-3 py-1 rounded-md text-sm font-bold shadow-sm">
+          Active
+        </span>
+      </div>
+
       {/* Navbar i ri i pastruar: Vetëm butoni i kthimit majtas si te FAQ */}
       <nav className="top-navbar" style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", padding: "20px 30px" }}>
         <div>
           <button
             onClick={() => navigate("/")}
             style={{
-              backgroundColor: "#b89453", // Ngjyra e artë luksoze
+              backgroundColor: "#b89453",
               color: "#000",
               border: "none",
               padding: "10px 22px",
@@ -85,6 +93,16 @@ const Catalog = () => {
           </button>
         </div>
       </nav>
+
+
+
+
+
+
+
+
+
+
 
       {/* Header */}
       <div className="catalog-header">
