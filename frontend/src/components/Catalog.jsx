@@ -6,12 +6,20 @@ import "./Shop.css";
 const Catalog = () => {
   const [parfumet, setParfumet] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedGender, setSelectedGender] = useState("All");
+  const [selectedGender, setSelectedGender] = useState(() => {
+    return localStorage.getItem("kategoriaEzgjedhur") || "All";
+  });
   const [maxPrice, setMaxPrice] = useState(250);
   const [loading, setLoading] = useState(true);
   const [selectedPerfume, setSelectedPerfume] = useState(null);
 
   const navigate = useNavigate(); // Hook-u për navigim
+
+  useEffect(() => {
+    return () => {
+      localStorage.removeItem("kategoriaEzgjedhur");
+    };
+  }, []);
 
   useEffect(() => {
     fetch("http://localhost:5000/api/parfumet")
@@ -32,9 +40,14 @@ const Catalog = () => {
       (parfum.pershkrimi &&
         parfum.pershkrimi.toLowerCase().includes(searchQuery.toLowerCase()));
 
+    const parfumGender = (parfum.gjinia_target || "").toLowerCase().trim();
+    const selected = selectedGender.toLowerCase().trim();
+
     const matchesGender =
-      selectedGender === "All" ||
-      parfum.gjinia_target.toLowerCase() === selectedGender.toLowerCase();
+      selected === "all" ||
+      parfum.gjinia_target.toLowerCase() === selectedGender.toLowerCase() ||
+      (selectedGender.toLowerCase() === "femra" &&
+        parfum.gjinia_target.toLowerCase() === "femer");
 
     const matchesPrice = parfum.cmimi <= maxPrice;
 
@@ -56,18 +69,30 @@ const Catalog = () => {
     return `/images/${emriTeThjeshtuar}.jpeg`;
   };
 
-return (
+  return (
     <div className="homepage-wrapper">
       {/* SHTIMI ME TAILWIND: Banner njoftimi që qëndron i fiksuar (sticky) gjatë scroll-it */}
       <div className="sticky top-0 z-50 bg-amber-950 text-stone-100 text-center py-5 px-6 text-lg sm:text-xl font-semibold tracking-wide uppercase shadow-md w-full flex items-center justify-center gap-4">
-        <span>✨ Exclusive Weekend Offer: Use code <span className="underline font-bold text-amber-400">MAISON10</span> for 10% off</span>
+        <span>
+          ✨ Exclusive Weekend Offer: Use code{" "}
+          <span className="underline font-bold text-amber-400">MAISON10</span>{" "}
+          for 10% off
+        </span>
         <span className="bg-amber-800 text-amber-200 px-3 py-1 rounded-md text-sm font-bold shadow-sm">
           Active
         </span>
       </div>
 
       {/* Navbar i ri i pastruar: Vetëm butoni i kthimit majtas si te FAQ */}
-      <nav className="top-navbar" style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", padding: "20px 30px" }}>
+      <nav
+        className="top-navbar"
+        style={{
+          display: "flex",
+          justifyContent: "flex-start",
+          alignItems: "center",
+          padding: "20px 30px",
+        }}
+      >
         <div>
           <button
             onClick={() => navigate("/")}
@@ -84,25 +109,15 @@ return (
               alignItems: "center",
               gap: "8px",
               boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-              transition: "all 0.3s ease"
+              transition: "all 0.3s ease",
             }}
-            onMouseOver={(e) => e.target.style.backgroundColor = "#a38144"}
-            onMouseOut={(e) => e.target.style.backgroundColor = "#b89453"}
+            onMouseOver={(e) => (e.target.style.backgroundColor = "#a38144")}
+            onMouseOut={(e) => (e.target.style.backgroundColor = "#b89453")}
           >
             ← Kthehu në Ballinë
           </button>
         </div>
       </nav>
-
-
-
-
-
-
-
-
-
-
 
       {/* Header */}
       <div className="catalog-header">
@@ -272,11 +287,24 @@ return (
                 animation: "fadeIn 0.3s ease",
               }}
             >
-              <h3 style={{ color: "#fff", marginBottom: "15px", fontSize: "1.8rem" }}>
+              <h3
+                style={{
+                  color: "#fff",
+                  marginBottom: "15px",
+                  fontSize: "1.8rem",
+                }}
+              >
                 {selectedPerfume.emri}
               </h3>
 
-              <p style={{ color: "#ddd", fontSize: "0.95rem", lineHeight: "1.5", marginBottom: "15px" }}>
+              <p
+                style={{
+                  color: "#ddd",
+                  fontSize: "0.95rem",
+                  lineHeight: "1.5",
+                  marginBottom: "15px",
+                }}
+              >
                 {selectedPerfume.pershkrimi ||
                   "Ky parfum luksoz sjell një aromë të jashtëzakonshme dhe jetëgjatësi në lëkurën tuaj."}
               </p>
@@ -289,13 +317,22 @@ return (
                   marginBottom: "20px",
                 }}
               >
-                <p><strong>Notat:</strong> {selectedPerfume.notat_ere || "Nuk ka shënime"}</p>
-                <p><strong>Gjinia:</strong> {selectedPerfume.gjinia_target}</p>
-                <p><strong>Volumi:</strong> {selectedPerfume.volumi_ml} ML</p>
+                <p>
+                  <strong>Notat:</strong>{" "}
+                  {selectedPerfume.notat_ere || "Nuk ka shënime"}
+                </p>
+                <p>
+                  <strong>Gjinia:</strong> {selectedPerfume.gjinia_target}
+                </p>
+                <p>
+                  <strong>Volumi:</strong> {selectedPerfume.volumi_ml} ML
+                </p>
                 <p>
                   <strong>Stoku:</strong>{" "}
                   {selectedPerfume.sasia_stok > 0 ? (
-                    <span style={{ color: "#4BB543" }}>Në Stok ({selectedPerfume.sasia_stok} copë)</span>
+                    <span style={{ color: "#4BB543" }}>
+                      Në Stok ({selectedPerfume.sasia_stok} copë)
+                    </span>
                   ) : (
                     <span style={{ color: "#ff4d4d" }}>I Shitur (Pa stok)</span>
                   )}
@@ -331,71 +368,82 @@ return (
                   </button>
 
                   <button
-  className="card-button"
-  disabled={selectedPerfume.sasia_stok === 0}
-  onClick={async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const loggedInUser = JSON.parse(localStorage.getItem("user"));
+                    className="card-button"
+                    disabled={selectedPerfume.sasia_stok === 0}
+                    onClick={async () => {
+                      try {
+                        const token = localStorage.getItem("token");
+                        const loggedInUser = JSON.parse(
+                          localStorage.getItem("user"),
+                        );
 
-      if (!token || !loggedInUser) {
-        alert("Duhet të jeni të kyçur (Login) që të bëni porosi!");
-        return;
-      }
+                        if (!token || !loggedInUser) {
+                          alert(
+                            "Duhet të jeni të kyçur (Login) që të bëni porosi!",
+                          );
+                          return;
+                        }
 
-     
-      const config = {
-        headers: { authorization: `Bearer ${token}` },
-      };
+                        const config = {
+                          headers: { authorization: `Bearer ${token}` },
+                        };
 
-      
-      const shitjaData = {
-        data_shitjes: new Date(),
-        shuma_totale: parseFloat(selectedPerfume.cmimi),
-        zbritja: 0,
-        metoda_pageses: "Cash",
-      };
+                        const shitjaData = {
+                          data_shitjes: new Date(),
+                          shuma_totale: parseFloat(selectedPerfume.cmimi),
+                          zbritja: 0,
+                          metoda_pageses: "Cash",
+                        };
 
-      const shitjeRes = await axios.post(
-        "http://localhost:5000/api/shitjet",
-        shitjaData,
-        config
-      );
+                        const shitjeRes = await axios.post(
+                          "http://localhost:5000/api/shitjet",
+                          shitjaData,
+                          config,
+                        );
 
-      
-      const eShtunaShitjeId = shitjeRes.data.shitjeId || shitjeRes.data.id;
+                        const eShtunaShitjeId =
+                          shitjeRes.data.shitjeId || shitjeRes.data.id;
 
-      
-      const detajiData = {
-        parfumetId: selectedPerfume.parfum_id || selectedPerfume.id,
-        sasia: 1,
-        cmimi: parseFloat(selectedPerfume.cmimi),
-       shitjeld: eShtunaShitjeId,
-      };
+                        const detajiData = {
+                          parfumetId:
+                            selectedPerfume.parfum_id || selectedPerfume.id,
+                          sasia: 1,
+                          cmimi: parseFloat(selectedPerfume.cmimi),
+                          shitjeld: eShtunaShitjeId,
+                        };
 
-      await axios.post(
-        "http://localhost:5000/api/detajetShitjes",
-        detajiData,
-        config
-      );
+                        await axios.post(
+                          "http://localhost:5000/api/detajetShitjes",
+                          detajiData,
+                          config,
+                        );
 
-      alert(`Porosia për "${selectedPerfume.emri}" u realizua me sukses!`);
-      setSelectedPerfume(null);
-      
-     
-      window.location.reload(); 
-    } catch (err) {
-      console.error("Gabim gjatë realizimit të shitjes:", err);
-      alert("Diçka shkoi keq: " + (err.response?.data?.error || err.message));
-    }
-  }}
-  style={{
-    opacity: selectedPerfume.sasia_stok === 0 ? 0.5 : 1,
-    padding: "8px 15px",
-  }}
->
-  {selectedPerfume.sasia_stok > 0 ? "Shto në Shportë" : "Pa Stok"}
-</button>
+                        alert(
+                          `Porosia për "${selectedPerfume.emri}" u realizua me sukses!`,
+                        );
+                        setSelectedPerfume(null);
+
+                        window.location.reload();
+                      } catch (err) {
+                        console.error(
+                          "Gabim gjatë realizimit të shitjes:",
+                          err,
+                        );
+                        alert(
+                          "Diçka shkoi keq: " +
+                            (err.response?.data?.error || err.message),
+                        );
+                      }
+                    }}
+                    style={{
+                      opacity: selectedPerfume.sasia_stok === 0 ? 0.5 : 1,
+                      padding: "8px 15px",
+                    }}
+                  >
+                    {selectedPerfume.sasia_stok > 0
+                      ? "Shto në Shportë"
+                      : "Pa Stok"}
+                  </button>
                 </div>
               </div>
             </div>

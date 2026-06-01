@@ -719,19 +719,26 @@ const AdminDashboard = () => {
                       <td>
                         {new Date(order.data_shitjes).toLocaleDateString()}
                       </td>
-                      <td>{order.metoda_pageses}</td>
                       <td className="table-price">
                         ${order.shuma_totale.toFixed(2)}
                       </td>
+                      <td>{order.metoda_pageses}</td>
                       <td>
                         <div className="table-actions">
                           <button
                             className="edit-btn"
-                            onClick={() =>
-                              alert(
-                                `Sasia e artikujve: ${order.detajet?.length || 0}`,
-                              )
-                            }
+                            onClick={() => {
+                              if (order.detajet && order.detajet.length > 0) {
+                                const emratEParfumeve = order.detajet
+                                  .map((d) =>
+                                    d.parfum ? d.parfum.emri : "Unknown",
+                                  )
+                                  .join(", ");
+                                alert(`Ordered perfumes: ${emratEParfumeve}`);
+                              } else {
+                                alert("No details for this perfume");
+                              }
+                            }}
                           >
                             View Details
                           </button>

@@ -62,16 +62,6 @@ const UserProfile = () => {
             <p className="user-phone">📞 {profile.phone_number}</p>
           )}
         </div>
-
-        <div className="loyalty-card">
-          <h3>Perfume Experts Club</h3>
-          <div className="points-badge">
-            <span>{klient ? klient.piket_besnikerise : 0}</span> Loyalty Points
-          </div>
-          <p className="loyalty-info">
-            Your points count automatically after every purchase.
-          </p>
-        </div>
       </div>
 
       <hr className="divider" />

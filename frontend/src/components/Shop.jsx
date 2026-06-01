@@ -205,9 +205,6 @@ const Shop = () => {
               </>
             )}
           </div>
-          <div className="nav-icons">
-            <i className="fas fa-shopping-bag"></i>
-          </div>
         </div>
       </div>
 
@@ -245,10 +242,7 @@ const Shop = () => {
             More than fragrance - each bottle hold a memory, a moment, <br />a
             mood waiting to unfold on your skin.
           </p>
-          <button
-            className="hero-btn"
-            onClick={() => scrollToSection("bestsellers")}
-          >
+          <button className="hero-btn" onClick={() => navigate("/faq")}>
             FIND YOUR SCENT &rarr;
           </button>
         </div>
@@ -359,8 +353,7 @@ const Shop = () => {
             Our <span>Most-Loved</span> Fragrances
           </h2>
           <p className="luxury-instruction">
-            Click on the image to see product details and click Buy to add a
-            product to cart.
+            Click on the heart to add the perfume to your wishlist.
           </p>
         </div>
 
@@ -422,7 +415,6 @@ const Shop = () => {
                       {p.emri.toUpperCase()}
                     </h3>
                     <p className="perfume-price-luxury">{p.cmimi}$</p>
-                    <button className="buy-now-btn">Buy Now</button>
                   </div>
                 </div>
               ))
@@ -525,7 +517,7 @@ const Shop = () => {
             <h5>Discover</h5>
             <ul>
               <li>
-                <a href="#about">About Us</a>
+                <a href="#about-section">About Us</a>
               </li>
               <li>
                 <a href="#bestsellers">Best Sellers</a>
