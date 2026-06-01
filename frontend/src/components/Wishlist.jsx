@@ -28,6 +28,11 @@ function Wishlist() {
 
   useEffect(() => {
     const fetchWishlist = async () => {
+      if (!loggedInUser || !loggedInUser.id) {
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
       try {
         const response = await API.get(`/wishlist/${loggedInUser.id}`);
@@ -39,12 +44,7 @@ function Wishlist() {
         setLoading(false);
       }
     };
-
-    if (loggedInUser?.id) {
-      fetchWishlist();
-    } else if (loggedInUser === null) {
-      setLoading(false);
-    }
+    fetchWishlist();
   }, [loggedInUser]);
 
   const handleRemove = async (parfumId) => {

@@ -108,21 +108,18 @@ const Shop = () => {
 
   useEffect(() => {
     const fetchUserWishlist = async () => {
-      if (user?.id) {
+      if (user && user.id) {
         try {
           const res = await API.get(`/wishlist/${user.id}`);
 
-          if (Array.isArray(res.data)) {
-            const ids = res.data.map((item) => item.parfum_id);
-            setWishlistItems(ids);
-          }
+          setWishlistItems(res.data.map((item) => item.parfum_id));
         } catch (err) {
           console.error("Gabim gjatë marrjes së wishlist:", err);
         }
       }
     };
     fetchUserWishlist();
-  }, []);
+  }, [user]);
 
   return (
     <div className="homepage-wrapper">
@@ -346,7 +343,7 @@ const Shop = () => {
             <div className="about-section-wrapper">
               <button
                 className="about-see-more-btn"
-                onClick={() => navigate("/about")}
+                onClick={() => navigate("/about-store")}
               >
                 LEARN MORE <span className="arrow-icon">&rarr;</span>
               </button>
@@ -393,11 +390,17 @@ const Shop = () => {
                       title="Add to your wishlist"
                     >
                       <i
-                        className={
+                        className={`${
                           wishlistItems.includes(p.parfum_id)
                             ? "fas fa-heart"
                             : "far fa-heart"
-                        }
+                        }`}
+                        style={{
+                          color: wishlistItems.includes(p.parfum_id)
+                            ? "#b89453"
+                            : "inherit", // Ose përdor "red"
+                          transition: "color 0.3s ease",
+                        }}
                       ></i>
                     </button>
                     <div className="perfume-img-box">
