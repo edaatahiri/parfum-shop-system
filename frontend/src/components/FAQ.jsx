@@ -37,11 +37,11 @@ function FAQ() {
     if (!scentType || !timeOfDay) return;
 
     if (scentType === "floral" && timeOfDay === "day") {
-      setQuizResult({ name: "Coco Mademoiselle", desc: "Një aromë e freskët lulesh, perfekte për mëngjeset plot energji.", img: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80&w=300" });
+      setQuizResult({ name: "Coco Mademoiselle", desc: "A fresh floral scent, perfect for mornings full of energy.", img: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80&w=300" });
     } else if (scentType === "woody" && timeOfDay === "night") {
-      setQuizResult({ name: "Noir Oud", desc: "E thellë, misterioze dhe intensive. Ideale për mbrëmje elegante.", img: "https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&q=80&w=300" });
+      setQuizResult({ name: "Noir Oud", desc: "Deep, mysterious, and intensive. Ideal for elegant evenings.", img: "https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&q=80&w=300" });
     } else {
-      setQuizResult({ name: "Bleu Absolute", desc: "Një balancë perfekte e freskisë dhe elegancës që përshtatet në çdo moment.", img: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&q=80&w=300" });
+      setQuizResult({ name: "Bleu Absolute", desc: "A perfect balance of freshness and elegance that fits every moment.", img: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&q=80&w=300" });
     }
   };
 
@@ -66,7 +66,7 @@ function FAQ() {
     <>
       <div className="faq-outer-back-container">
         <button className="faq-back-btn" onClick={() => navigate("/")}>
-          ← Kthehu në Ballinë
+          ← Back to Home
         </button>
       </div>
 
@@ -81,29 +81,29 @@ function FAQ() {
         {/* FRAGRANCE FINDER */}
         <div className="fragrance-finder-section">
           <div className="finder-card">
-            <h3>✨ Gjej Aromën Tënde Ideale</h3>
-            <p className="finder-subtitle">Përgjigju në dy pyetje të shpejta për të zbuluar aromën që të përshtatet më së miri.</p>
+            <h3>✨ Find Your Ideal Scent</h3>
+            <p className="finder-subtitle">Answer two quick questions to discover the fragrance that suits you best.</p>
             
             {!quizResult ? (
               <div className="quiz-container">
                 <div className="quiz-step">
-                  <label>1. Çfarë lloj arome preferon më shumë?</label>
+                  <label>1. What type of scent do you prefer the most?</label>
                   <div className="quiz-options">
-                    <button className={`option-btn ${scentType === "floral" ? "selected" : ""}`} onClick={() => setScentType("floral")}>🌸 Lule & Freski</button>
-                    <button className={`option-btn ${scentType === "woody" ? "selected" : ""}`} onClick={() => setScentType("woody")}>🪵 Dru & Mister</button>
+                    <button className={`option-btn ${scentType === "floral" ? "selected" : ""}`} onClick={() => setScentType("floral")}>🌸 Floral & Fresh</button>
+                    <button className={`option-btn ${scentType === "woody" ? "selected" : ""}`} onClick={() => setScentType("woody")}>🪵 Woody & Intense</button>
                   </div>
                 </div>
 
                 <div className="quiz-step">
-                  <label>2. Kur dëshiron ta përdorësh kryesisht?</label>
+                  <label>2. When do you mainly want to use it?</label>
                   <div className="quiz-options">
-                    <button className={`option-btn ${timeOfDay === "day" ? "selected" : ""}`} onClick={() => setTimeOfDay("day")}>☀️ Gjatë Ditës</button>
-                    <button className={`option-btn ${timeOfDay === "night" ? "selected" : ""}`} onClick={() => setTimeOfDay("night")}>🌙 Për Mbrëmje</button>
+                    <button className={`option-btn ${timeOfDay === "day" ? "selected" : ""}`} onClick={() => setTimeOfDay("day")}>☀️ During the Day</button>
+                    <button className={`option-btn ${timeOfDay === "night" ? "selected" : ""}`} onClick={() => setTimeOfDay("night")}>🌙 For Evening</button>
                   </div>
                 </div>
 
                 <button className="find-perfume-btn" onClick={handleFindPerfume} disabled={!scentType || !timeOfDay}>
-                  Zbuluaj Parfumin Tim
+                  Discover My Perfume
                 </button>
               </div>
             ) : (
@@ -111,13 +111,13 @@ function FAQ() {
                 <div className="result-content">
                   <img src={quizResult.img} alt={quizResult.name} className="result-perfume-img" />
                   <div className="result-text">
-                    <span className="match-tag">REKOMANDIMI YNË</span>
+                    <span className="match-tag">OUR RECOMMENDATION</span>
                     <h4>{quizResult.name}</h4>
                     <p>{quizResult.desc}</p>
                     <div className="result-actions">
                       {/* Tani ky buton hap Pop-up-in në vend se të kalojë direkt */}
-                      <button className="buy-now-btn" onClick={() => setShowModal(true)}>Shiko në Katalog</button>
-                      <button className="retry-btn" onClick={resetQuiz}>Provo Përsëri ↻</button>
+                      <button className="buy-now-btn" onClick={() => setShowModal(true)}>View in Catalog</button>
+                      <button className="retry-btn" onClick={resetQuiz}>Try Again ↻</button>
                     </div>
                   </div>
                 </div>
@@ -133,8 +133,8 @@ function FAQ() {
               <button className="close-modal-x" onClick={() => setShowModal(false)}>✕</button>
               
               <div className="modal-header-zone">
-                <span className="modal-mini-title">Porosia Juaj e Personalizuar</span>
-                <h3>A është ky parfumi i ëndrrave tuaja?</h3>
+                <span className="modal-mini-title">Your Personalized Order</span>
+                <h3>Is this your dream fragrance?</h3>
               </div>
 
               <div className="modal-body-content">
@@ -143,22 +143,22 @@ function FAQ() {
                   <h4>{quizResult?.name}</h4>
                   <p>{quizResult?.desc}</p>
                   <blockquote className="modal-note">
-                    ✨ Klikoni më poshtë për t'u transferuar te Katalogu ynë zyrtar, ku mund të zgjidhni sasinë (ml) dhe të kryeni porosinë tuaj të sigurt menjëherë!
+                    ✨ Click below to transfer to our official Catalog, where you can choose the volume (ml) and complete your secure order immediately!
                   </blockquote>
                 </div>
               </div>
 
               <div className="modal-footer-actions">
-                <button className="modal-cancel-btn" onClick={() => setShowModal(false)}>Anulo</button>
-                <button className="modal-confirm-btn" onClick={handleProceedToCatalog}>Konfirmo & Shko te Katalogu →</button>
+                <button className="modal-cancel-btn" onClick={() => setShowModal(false)}>Cancel</button>
+                <button className="modal-confirm-btn" onClick={handleProceedToCatalog}>Confirm & Go to Catalog →</button>
               </div>
             </div>
           </div>
         )}
 
-    {/* PYETJET E SHPESHTA */}
+        {/* PYETJET E SHPESHTA */}
         <div className="faq-bottom-section">
-          <h3 className="section-title-faq">Pyetjet e Shpeshta</h3>
+          <h3 className="section-title-faq">Frequently Asked Questions</h3>
           <div className="faq-accordion-simple">
             {faqData.map((item, index) => {
               const isActive = activeIndex === index;

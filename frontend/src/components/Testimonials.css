@@ -1,0 +1,322 @@
+/* Sfondi dhe wrapper-i kryesor */
+.testimonials-homepage-wrapper {
+  background: #fcf9f5;
+  min-height: 100vh;
+  color: #222;
+  padding-bottom: 60px;
+}
+
+/* Header-i në qendër */
+.testimonials-header-zone {
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 40px;
+}
+
+.testimonials-mini-subtitle {
+  color: #777;
+  letter-spacing: 2px;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.testimonials-main-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem;
+  font-weight: 400;
+  margin: 10px 0;
+  color: #111;
+}
+
+.testimonials-main-title span {
+  font-style: italic;
+  color: #722f37;
+}
+
+.testimonials-lead-p {
+  color: #555;
+  fontSize: 16px;
+}
+
+/* Loading state */
+.testimonials-loading-text {
+  text-align: center;
+  margin-top: 30px;
+  font-size: 16px;
+  color: #666;
+}
+
+/* Slider-i i Testimonials */
+.testimonials-slider-container {
+  display: flex;
+  max-width: 1100px;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 0px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.04);
+  position: relative;
+  align-items: center;
+  overflow: visible; /* Shto vetëm këtë rresht këtu */
+}
+
+.testimonials-image-side {
+  width: 45%;
+  font-size: 0;
+}
+
+.testimonials-perfume-img {
+  width: 100%;
+  height: 480px;
+  object-fit: cover;
+  transition: all 0.5s ease;
+}
+
+.testimonials-content-side {
+  width: 55%;
+  padding: 50px 60px;
+  position: relative;
+}
+
+.testimonials-quote-mark {
+  color: #722f37;
+  font-size: 70px;
+  font-family: Georgia, serif;
+  line-height: 1;
+  margin-bottom: 0px;
+  margin-top: -20px;
+}
+
+.testimonials-stars {
+  color: #b89453;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.testimonials-comment-text {
+  color: #444;
+  font-size: 15px;
+  line-height: 1.7;
+  margin-bottom: 35px;
+  min-height: 120px;
+  font-style: italic;
+}
+
+.testimonials-client-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.testimonials-avatar {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #e0e0e0;
+}
+
+.testimonials-client-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  margin: 0;
+  color: #722f37;
+  font-weight: 600;
+}
+
+.testimonials-client-role {
+  font-size: 12px;
+  color: #888;
+}
+
+/* Butonat e Slider-it (Navigimi) */
+.testimonials-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #111;
+  color: #fff;
+  border: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  font-size: 16px;
+  transition: background 0.2s;
+  z-index: 99; /* U rrit në 99 që të mos fshihen nën foto apo tekst */
+}
+
+.testimonials-nav-btn:hover {
+  background: #722f37;
+}
+
+/* Meqenëse tani butonat janë jashtë content-side, këto vlera negative i nxjerrin saktësisht në skajet e jashtme */
+.testimonials-nav-btn.prev { 
+  left: -22px; 
+}
+
+.testimonials-nav-btn.next { 
+  right: -22px; 
+}
+/* Forma e Review-ve */
+.testimonials-form-container {
+  max-width: 1100px;
+  margin: 50px auto 0 auto;
+  background: #ffffff;
+  padding: 40px 60px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.04);
+}
+
+.testimonials-form-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  color: #111;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.testimonials-form-title span {
+  font-style: italic;
+  color: #722f37;
+}
+
+.testimonials-main-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.testimonials-form-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.testimonials-form-group {
+  flex: 1;
+  min-width: 250px;
+}
+
+.testimonials-form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: #555;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.testimonials-form-select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+}
+
+.testimonials-form-select.rating-select {
+  color: #b89453;
+  font-weight: bold;
+}
+
+.testimonials-form-textarea {
+  width: 100%;
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: none;
+}
+
+/* Butoni Submit */
+.testimonials-submit-btn {
+  align-self: flex-start;
+  padding: 14px 35px;
+  background: #722f37;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.testimonials-submit-btn:hover:not(:disabled) {
+  background: #000000;
+}
+
+.testimonials-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Mesazhet e gabimit / suksesit */
+.testimonials-status-message {
+  marginTop: 10px;
+  padding: 12px 15px;
+  font-size: 14px;
+  border-radius: 4px;
+  font-weight: 500;
+  width: 100%;
+  max-width: 600px;
+}
+
+.testimonials-status-message.success {
+  background: #f4f9f4;
+  color: #27ae60;
+  border: 1px solid #d4edda;
+}
+
+.testimonials-status-message.error {
+  background: #fdf3f3;
+  color: #c0392b;
+  border: 1px solid #f5c6cb;
+}
+
+/* Zona e Login-it të detyrueshëm */
+.testimonials-login-prompt {
+  max-width: 1100px;
+  margin: 40px auto 0 auto;
+  text-align: center;
+  padding: 20px;
+  background: #fffdf9;
+  border: 1px dashed #b89453;
+}
+
+.testimonials-login-prompt p {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.testimonials-login-link {
+  color: #722f37;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Galeria e fotove në fund */
+.testimonials-bottom-gallery {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  max-width: 1100px;
+  margin: 50px auto 0 auto;
+  padding: 0 10px;
+}
+
+.testimonials-gallery-img {
+  width: 15%;
+  height: 140px;
+  object-fit: cover;
+}

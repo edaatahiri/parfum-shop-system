@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // Shtohet për të bërë funksional kthimin prapa
-import "./Shop.css";
+import { useNavigate } from "react-router-dom"; 
+import "./Catalog.css";
 
 const Catalog = () => {
   const [parfumet, setParfumet] = useState([]);
@@ -13,7 +13,7 @@ const Catalog = () => {
   const [loading, setLoading] = useState(true);
   const [selectedPerfume, setSelectedPerfume] = useState(null);
 
-  const navigate = useNavigate(); // Hook-u për navigim
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     return () => {
@@ -40,7 +40,6 @@ const Catalog = () => {
       (parfum.pershkrimi &&
         parfum.pershkrimi.toLowerCase().includes(searchQuery.toLowerCase()));
 
-    const parfumGender = (parfum.gjinia_target || "").toLowerCase().trim();
     const selected = selectedGender.toLowerCase().trim();
 
     const matchesGender =
@@ -59,8 +58,8 @@ const Catalog = () => {
 
     let emriTeThjeshtuar = emriParfumit
       .toLowerCase()
-      .replace(/\./g, "") // fshin pikat
-      .replace(/\s+/g, "-"); // zëvendëson hapësirat me vizë
+      .replace(/\./g, "") 
+      .replace(/\s+/g, "-"); 
 
     if (emriTeThjeshtuar === "dior-savage") {
       emriTeThjeshtuar = "dior-sauvage";
@@ -71,7 +70,7 @@ const Catalog = () => {
 
   return (
     <div className="homepage-wrapper">
-      {/* SHTIMI ME TAILWIND: Banner njoftimi që qëndron i fiksuar (sticky) gjatë scroll-it */}
+      {/* Banner njoftimi Sticky */}
       <div className="sticky top-0 z-50 bg-amber-950 text-stone-100 text-center py-5 px-6 text-lg sm:text-xl font-semibold tracking-wide uppercase shadow-md w-full flex items-center justify-center gap-4">
         <span>
           ✨ Exclusive Weekend Offer: Use code{" "}
@@ -83,47 +82,29 @@ const Catalog = () => {
         </span>
       </div>
 
-      {/* Navbar i ri i pastruar: Vetëm butoni i kthimit majtas si te FAQ */}
-      <nav
-        className="top-navbar"
-        style={{
-          display: "flex",
-          justifyContent: "flex-start",
-          alignItems: "center",
-          padding: "20px 30px",
-        }}
-      >
-        <div>
-          <button
-            onClick={() => navigate("/")}
-            style={{
-              backgroundColor: "#b89453",
-              color: "#000",
-              border: "none",
-              padding: "10px 22px",
-              borderRadius: "5px",
-              cursor: "pointer",
-              fontWeight: "600",
-              fontSize: "0.95rem",
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-              transition: "all 0.3s ease",
-            }}
-            onMouseOver={(e) => (e.target.style.backgroundColor = "#a38144")}
-            onMouseOut={(e) => (e.target.style.backgroundColor = "#b89453")}
-          >
-            ← Kthehu në Ballinë
-          </button>
-        </div>
-      </nav>
+      {/* Butoni Kthehu - Klasat u izoluan që të mos prishin Navbar-in e faqes */}
+      <div className="catalog-back-navbar">
+        <button
+          onClick={() => navigate("/")}
+          className="catalog-back-btn"
+          onMouseOver={(e) => {
+            e.target.style.backgroundColor = "#a38144";
+            e.target.style.transform = "scale(1.05)";
+          }}
+          onMouseOut={(e) => {
+            e.target.style.backgroundColor = "#b89453";
+            e.target.style.transform = "scale(1)";
+          }}
+        >
+          ← Back to Home
+        </button>
+      </div>
 
       {/* Header */}
       <div className="catalog-header">
         <h2 className="catalog-title">The Fragrance Collection</h2>
         <p className="catalog-subtitle">
-          Eksploroni aromat ekskluzive për stilin tuaj
+          Explore exclusive fragrances tailored to your style
         </p>
       </div>
 
@@ -131,13 +112,13 @@ const Catalog = () => {
       <div className="catalog-container">
         {/* PANELI I FILTRAVE */}
         <aside className="filter-sidebar">
-          <h3 className="filter-section-title">Filtrat</h3>
+          <h3 className="filter-section-title">Filters</h3>
 
           <div className="filter-group">
-            <label className="filter-label">Kërko aromën</label>
+            <label className="filter-label">Search Fragrance</label>
             <input
               type="text"
-              placeholder="Psh. Chanel, Dior..."
+              placeholder="e.g. Chanel, Dior..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="search-input"
@@ -145,7 +126,7 @@ const Catalog = () => {
           </div>
 
           <div className="filter-group">
-            <label className="filter-label">Koleksioni</label>
+            <label className="filter-label">Collection</label>
             {["All", "Meshkuj", "Femra", "Unisex"].map((gender) => (
               <label key={gender} className="radio-option">
                 <input
@@ -154,23 +135,17 @@ const Catalog = () => {
                   checked={selectedGender === gender}
                   onChange={() => setSelectedGender(gender)}
                 />
-                <span>{gender}</span>
+                <span>
+                  {gender === "Meshkuj" ? "Men" : gender === "Femra" ? "Women" : gender}
+                </span>
               </label>
             ))}
           </div>
 
           <div className="filter-group">
             <div className="price-display">
-              <label className="filter-label">Çmimi Maksimal</label>
-              <span
-                style={{
-                  color: "#722f37",
-                  fontWeight: "bold",
-                  fontFamily: "sans-serif",
-                }}
-              >
-                {maxPrice} €
-              </span>
+              <label className="filter-label">Max Price</label>
+              <span className="max-price-badge">{maxPrice} €</span>
             </div>
             <input
               type="range"
@@ -191,7 +166,7 @@ const Catalog = () => {
             }}
             className="clear-filters-btn"
           >
-            Pastro Filtrat
+            Clear Filters
           </button>
         </aside>
 
@@ -199,17 +174,16 @@ const Catalog = () => {
         <main className="products-column">
           {loading ? (
             <div className="catalog-status-text">
-              Duke ngarkuar koleksionin e parfumeve...
+              Loading the fragrance collection...
             </div>
           ) : filteredParfumet.length === 0 ? (
             <div className="catalog-status-text" style={{ fontSize: "1.2rem" }}>
-              Nuk u gjet asnjë parfum që përputhet me këto kritere.
+              No perfumes found matching these criteria.
             </div>
           ) : (
             <div className="products-grid">
               {filteredParfumet.map((parfum) => (
                 <div key={parfum.parfum_id} className="perfume-card">
-                  {/* Foto Box */}
                   <div className="card-image-wrapper">
                     <img
                       src={getPerfumeImage(parfum.emri)}
@@ -221,14 +195,12 @@ const Catalog = () => {
                             ? "https://images.unsplash.com/photo-1541643600914-78b084683601?w=500"
                             : "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=500";
                       }}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "contain",
-                      }}
+                      className="perfume-img-render"
                     />
                     <span className="card-gender-tag">
-                      {parfum.gjinia_target}
+                      {parfum.gjinia_target.toLowerCase() === "meshkuj" ? "Men" : 
+                       parfum.gjinia_target.toLowerCase() === "femra" || parfum.gjinia_target.toLowerCase() === "femer" ? "Women" : 
+                       parfum.gjinia_target}
                     </span>
                   </div>
 
@@ -236,10 +208,10 @@ const Catalog = () => {
                     <div>
                       <h4 className="card-title">{parfum.emri}</h4>
                       <span className="card-volume">
-                        Volumi: {parfum.volumi_ml} ML
+                        Volume: {parfum.volumi_ml} ML
                       </span>
                       {parfum.notat_ere && (
-                        <p className="card-notes">Notat: {parfum.notat_ere}</p>
+                        <p className="card-notes">Notes: {parfum.notat_ere}</p>
                       )}
                     </div>
 
@@ -249,7 +221,7 @@ const Catalog = () => {
                         className="card-button"
                         onClick={() => setSelectedPerfume(parfum)}
                       >
-                        Shiko Detajet
+                        View Details
                       </button>
                     </div>
                   </div>
@@ -259,128 +231,66 @@ const Catalog = () => {
           )}
         </main>
 
-        {/* POP-UP MODAL PËR DETAJET E PARFUMIT */}
+        {/* POP-UP MODAL */}
         {selectedPerfume && (
-          <div
-            className="custom-modal-overlay"
-            style={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              backgroundColor: "rgba(0, 0, 0, 0.7)",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              zIndex: 1000,
-              backdropFilter: "blur(8px)",
-            }}
-          >
-            <div
-              className="perfume-glass-card"
-              style={{
-                maxWidth: "500px",
-                width: "90%",
-                padding: "25px",
-                position: "relative",
-                animation: "fadeIn 0.3s ease",
-              }}
-            >
-              <h3
-                style={{
-                  color: "#fff",
-                  marginBottom: "15px",
-                  fontSize: "1.8rem",
-                }}
-              >
-                {selectedPerfume.emri}
-              </h3>
+          <div className="custom-modal-overlay modal-overlay-backdrop">
+            <div className="perfume-glass-card modal-glass-container">
+              <h3 className="modal-title-text">{selectedPerfume.emri}</h3>
 
-              <p
-                style={{
-                  color: "#ddd",
-                  fontSize: "0.95rem",
-                  lineHeight: "1.5",
-                  marginBottom: "15px",
-                }}
-              >
+              <p className="modal-desc-text">
                 {selectedPerfume.pershkrimi ||
-                  "Ky parfum luksoz sjell një aromë të jashtëzakonshme dhe jetëgjatësi në lëkurën tuaj."}
+                  "This luxury fragrance brings an exceptional scent and long-lasting presence to your skin."}
               </p>
 
-              <div
-                style={{
-                  borderTop: "1px solid rgba(255,255,255,0.1)",
-                  paddingTop: "15px",
-                  color: "#fff",
-                  marginBottom: "20px",
-                }}
-              >
+              <div className="modal-info-box">
                 <p>
-                  <strong>Notat:</strong>{" "}
-                  {selectedPerfume.notat_ere || "Nuk ka shënime"}
+                  <strong>Notes:</strong> {selectedPerfume.notat_ere || "No notes available"}
                 </p>
                 <p>
-                  <strong>Gjinia:</strong> {selectedPerfume.gjinia_target}
+                  <strong>Gender:</strong> {
+                    selectedPerfume.gjinia_target.toLowerCase() === "meshkuj" ? "Men" : 
+                    selectedPerfume.gjinia_target.toLowerCase() === "femra" || selectedPerfume.gjinia_target.toLowerCase() === "femer" ? "Women" : 
+                    selectedPerfume.gjinia_target
+                  }
                 </p>
                 <p>
-                  <strong>Volumi:</strong> {selectedPerfume.volumi_ml} ML
+                  <strong>Volume:</strong> {selectedPerfume.volumi_ml} ML
                 </p>
                 <p>
-                  <strong>Stoku:</strong>{" "}
+                  <strong>Stock:</strong>{" "}
                   {selectedPerfume.sasia_stok > 0 ? (
-                    <span style={{ color: "#4BB543" }}>
-                      Në Stok ({selectedPerfume.sasia_stok} copë)
+                    <span className="modal-stock-available">
+                      In Stock ({selectedPerfume.sasia_stok} pcs)
                     </span>
                   ) : (
-                    <span style={{ color: "#ff4d4d" }}>I Shitur (Pa stok)</span>
+                    <span className="modal-stock-empty">Out of Stock</span>
                   )}
                 </p>
               </div>
 
-              <div
-                className="card-footer"
-                style={{
-                  paddingTop: "15px",
-                  borderTop: "1px solid rgba(255,255,255,0.1)",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <span className="card-price" style={{ fontSize: "1.6rem" }}>
+              <div className="card-footer modal-footer-box">
+                <span className="card-price modal-price-text">
                   {selectedPerfume.cmimi} €
                 </span>
 
-                <div style={{ display: "flex", gap: "10px" }}>
+                <div className="modal-action-gap">
                   <button
-                    className="card-button"
+                    className="card-button modal-btn-cancel"
                     onClick={() => setSelectedPerfume(null)}
-                    style={{
-                      backgroundColor: "rgba(255, 255, 255, 0.1)",
-                      color: "#fff",
-                      border: "1px solid rgba(255, 255, 255, 0.2)",
-                      padding: "8px 15px",
-                    }}
                   >
-                    Anulo
+                    Cancel
                   </button>
 
                   <button
-                    className="card-button"
+                    className="card-button modal-btn-submit"
                     disabled={selectedPerfume.sasia_stok === 0}
                     onClick={async () => {
                       try {
                         const token = localStorage.getItem("token");
-                        const loggedInUser = JSON.parse(
-                          localStorage.getItem("user"),
-                        );
+                        const loggedInUser = JSON.parse(localStorage.getItem("user"));
 
                         if (!token || !loggedInUser) {
-                          alert(
-                            "Duhet të jeni të kyçur (Login) që të bëni porosi!",
-                          );
+                          alert("You must be logged in to place an order!");
                           return;
                         }
 
@@ -398,15 +308,13 @@ const Catalog = () => {
                         const shitjeRes = await axios.post(
                           "http://localhost:5000/api/shitjet",
                           shitjaData,
-                          config,
+                          config
                         );
 
-                        const eShtunaShitjeId =
-                          shitjeRes.data.shitjeId || shitjeRes.data.id;
+                        const eShtunaShitjeId = shitjeRes.data.shitjeId || shitjeRes.data.id;
 
                         const detajiData = {
-                          parfumetId:
-                            selectedPerfume.parfum_id || selectedPerfume.id,
+                          parfumetId: selectedPerfume.parfum_id || selectedPerfume.id,
                           sasia: 1,
                           cmimi: parseFloat(selectedPerfume.cmimi),
                           shitjeld: eShtunaShitjeId,
@@ -415,34 +323,22 @@ const Catalog = () => {
                         await axios.post(
                           "http://localhost:5000/api/detajetShitjes",
                           detajiData,
-                          config,
+                          config
                         );
 
-                        alert(
-                          `Porosia për "${selectedPerfume.emri}" u realizua me sukses!`,
-                        );
+                        alert(`Order for "${selectedPerfume.emri}" was placed successfully!`);
                         setSelectedPerfume(null);
-
                         window.location.reload();
                       } catch (err) {
-                        console.error(
-                          "Gabim gjatë realizimit të shitjes:",
-                          err,
-                        );
-                        alert(
-                          "Diçka shkoi keq: " +
-                            (err.response?.data?.error || err.message),
-                        );
+                        console.error("Gabim gjatë realizimit të shitjes:", err);
+                        alert("Something went wrong: " + (err.response?.data?.error || err.message));
                       }
                     }}
                     style={{
                       opacity: selectedPerfume.sasia_stok === 0 ? 0.5 : 1,
-                      padding: "8px 15px",
                     }}
                   >
-                    {selectedPerfume.sasia_stok > 0
-                      ? "Shto në Shportë"
-                      : "Pa Stok"}
+                    {selectedPerfume.sasia_stok > 0 ? "Add to Cart" : "Out of Stock"}
                   </button>
                 </div>
               </div>
