@@ -38,7 +38,7 @@ const UserProfile = () => {
     );
   if (!profile) return <div className="no-orders p-8">User not found.</div>;
 
-  const klient = profile.klientProfile;
+  const klient = profile.klientet;
   const porosite = klient?.shitjet || [];
 
   return (
@@ -121,7 +121,7 @@ const UserProfile = () => {
                     </td>
                     <td>
                       <ul className="orders-items-list">
-                        {porosi.detajet?.map((detal) => (
+                        {porosi.detajet_shitjes?.map((detal) => (
                           <li key={detal.detal_id}>
                             {detal.parfum?.emri}
                             <span className="text-gray-400 text-xs ml-1">

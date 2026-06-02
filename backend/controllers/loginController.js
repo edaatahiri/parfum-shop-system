@@ -3,6 +3,7 @@ const prisma = new PrismaClient();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
+const { userroles, refreshtokens } = require("../config/db");
 
 const loginUser = async (req, res) => {
   try {
@@ -17,9 +18,9 @@ const loginUser = async (req, res) => {
     const user = await prisma.users.findUnique({
       where: { email },
       include: {
-        userRoles: {
+        userroles: {
           include: {
-            role: true,
+            roles: true,
           },
         },
       },
@@ -38,7 +39,7 @@ const loginUser = async (req, res) => {
       });
     }
 
-    const userRoleName = user.userRoles?.[0]?.role?.normalized_name || "USER";
+    const userRoleName = user.userroles?.[0]?.roles?.emertimi || "USER";
 
     const accessToken = jwt.sign(
       {
@@ -49,14 +50,14 @@ const loginUser = async (req, res) => {
         mbiemri: user.mbiemri,
       },
       process.env.JWT_SECRET || "super-secret-key",
-      { expiresIn: "15m" }
+      { expiresIn: "15m" },
     );
 
     const refreshTokenString = crypto.randomBytes(40).toString("hex");
     const expiresDate = new Date();
     expiresDate.setDate(expiresDate.getDate() + 7);
 
-    await prisma.refreshTokens.create({
+    await prisma.refreshtokens.create({
       data: {
         user_id: user.id,
         token: refreshTokenString,
@@ -67,7 +68,7 @@ const loginUser = async (req, res) => {
     return res.status(200).json({
       message: "Login me sukses",
       accessToken,
-      refreshToken: refreshTokenString,
+      refreshtoken: refreshTokenString,
       user: {
         id: user.id,
         email: user.email,
@@ -76,7 +77,6 @@ const loginUser = async (req, res) => {
         mbiemri: user.mbiemri || "",
       },
     });
-
   } catch (error) {
     console.error("LOGIN ERROR:", error);
     return res.status(500).json({

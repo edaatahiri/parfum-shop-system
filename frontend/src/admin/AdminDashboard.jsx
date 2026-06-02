@@ -712,8 +712,8 @@ const AdminDashboard = () => {
                     <tr key={order.shitje_id}>
                       <td>#SALE-{order.shitje_id}</td>
                       <td className="table-perfume-title">
-                        {order.klient
-                          ? `${order.klient.emri} ${order.klient.mbiemri}`
+                        {order.klientet
+                          ? `${order.klientet.emri} ${order.klientet.mbiemri}`
                           : "Unknown Customes"}
                       </td>
                       <td>
@@ -728,8 +728,11 @@ const AdminDashboard = () => {
                           <button
                             className="edit-btn"
                             onClick={() => {
-                              if (order.detajet && order.detajet.length > 0) {
-                                const emratEParfumeve = order.detajet
+                              if (
+                                order.detajet_shitjes &&
+                                order.detajet_shitjes.length > 0
+                              ) {
+                                const emratEParfumeve = order.detajet_shitjes
                                   .map((d) =>
                                     d.parfum ? d.parfum.emri : "Unknown",
                                   )
@@ -851,11 +854,11 @@ const AdminDashboard = () => {
                     <tr key={rev.review_id}>
                       <td>#{rev.review_id}</td>
                       <td className="table-perfume-title">
-                        {rev.klient
-                          ? `${rev.klient.emri} ${rev.klient.mbiemri}`
+                        {rev.klientet
+                          ? `${rev.klientet.emri} ${rev.klientet.mbiemri}`
                           : `Klient ID #${rev.klient_id}`}
                       </td>
-                      <td>{rev.parfumi?.emri || `Parfum #${rev.parfum_id}`}</td>
+                      <td>{rev.parfum?.emri || `Parfum #${rev.parfum_id}`}</td>
                       <td style={{ letterSpacing: "2px" }}>
                         {renderStars(rev.rating)}
                       </td>

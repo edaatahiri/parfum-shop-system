@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 import "./Catalog.css";
 
 const Catalog = () => {
@@ -13,7 +13,7 @@ const Catalog = () => {
   const [loading, setLoading] = useState(true);
   const [selectedPerfume, setSelectedPerfume] = useState(null);
 
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   useEffect(() => {
     return () => {
@@ -58,8 +58,8 @@ const Catalog = () => {
 
     let emriTeThjeshtuar = emriParfumit
       .toLowerCase()
-      .replace(/\./g, "") 
-      .replace(/\s+/g, "-"); 
+      .replace(/\./g, "")
+      .replace(/\s+/g, "-");
 
     if (emriTeThjeshtuar === "dior-savage") {
       emriTeThjeshtuar = "dior-sauvage";
@@ -136,7 +136,11 @@ const Catalog = () => {
                   onChange={() => setSelectedGender(gender)}
                 />
                 <span>
-                  {gender === "Meshkuj" ? "Men" : gender === "Femra" ? "Women" : gender}
+                  {gender === "Meshkuj"
+                    ? "Men"
+                    : gender === "Femra"
+                      ? "Women"
+                      : gender}
                 </span>
               </label>
             ))}
@@ -198,9 +202,12 @@ const Catalog = () => {
                       className="perfume-img-render"
                     />
                     <span className="card-gender-tag">
-                      {parfum.gjinia_target.toLowerCase() === "meshkuj" ? "Men" : 
-                       parfum.gjinia_target.toLowerCase() === "femra" || parfum.gjinia_target.toLowerCase() === "femer" ? "Women" : 
-                       parfum.gjinia_target}
+                      {parfum.gjinia_target.toLowerCase() === "meshkuj"
+                        ? "Men"
+                        : parfum.gjinia_target.toLowerCase() === "femra" ||
+                            parfum.gjinia_target.toLowerCase() === "femer"
+                          ? "Women"
+                          : parfum.gjinia_target}
                     </span>
                   </div>
 
@@ -244,14 +251,17 @@ const Catalog = () => {
 
               <div className="modal-info-box">
                 <p>
-                  <strong>Notes:</strong> {selectedPerfume.notat_ere || "No notes available"}
+                  <strong>Notes:</strong>{" "}
+                  {selectedPerfume.notat_ere || "No notes available"}
                 </p>
                 <p>
-                  <strong>Gender:</strong> {
-                    selectedPerfume.gjinia_target.toLowerCase() === "meshkuj" ? "Men" : 
-                    selectedPerfume.gjinia_target.toLowerCase() === "femra" || selectedPerfume.gjinia_target.toLowerCase() === "femer" ? "Women" : 
-                    selectedPerfume.gjinia_target
-                  }
+                  <strong>Gender:</strong>{" "}
+                  {selectedPerfume.gjinia_target.toLowerCase() === "meshkuj"
+                    ? "Men"
+                    : selectedPerfume.gjinia_target.toLowerCase() === "femra" ||
+                        selectedPerfume.gjinia_target.toLowerCase() === "femer"
+                      ? "Women"
+                      : selectedPerfume.gjinia_target}
                 </p>
                 <p>
                   <strong>Volume:</strong> {selectedPerfume.volumi_ml} ML
@@ -287,7 +297,9 @@ const Catalog = () => {
                     onClick={async () => {
                       try {
                         const token = localStorage.getItem("token");
-                        const loggedInUser = JSON.parse(localStorage.getItem("user"));
+                        const loggedInUser = JSON.parse(
+                          localStorage.getItem("user"),
+                        );
 
                         if (!token || !loggedInUser) {
                           alert("You must be logged in to place an order!");
@@ -305,40 +317,51 @@ const Catalog = () => {
                           metoda_pageses: "Cash",
                         };
 
-                        const shitjeRes = await axios.post(
+                        const response = await axios.post(
                           "http://localhost:5000/api/shitjet",
-                          shitjaData,
-                          config
+                          { ...shitjaData },
+                          config,
                         );
-
-                        const eShtunaShitjeId = shitjeRes.data.shitjeId || shitjeRes.data.id;
+                        const saktShitjaId = response.data.data.shitje_id;
 
                         const detajiData = {
-                          parfumetId: selectedPerfume.parfum_id || selectedPerfume.id,
+                          shitjeld: saktShitjaId, // Kjo është ID-ja që sapo morëm
+                          parfumetId:
+                            selectedPerfume.parfum_id || selectedPerfume.id,
                           sasia: 1,
                           cmimi: parseFloat(selectedPerfume.cmimi),
-                          shitjeld: eShtunaShitjeId,
                         };
 
                         await axios.post(
-                          "http://localhost:5000/api/detajetShitjes",
+                          "http://localhost:5000/api/detajetshitjes",
                           detajiData,
-                          config
+                          config,
                         );
 
-                        alert(`Order for "${selectedPerfume.emri}" was placed successfully!`);
+                        alert(
+                          `Order for "${selectedPerfume.emri}" was placed successfully!`,
+                        );
+                        // ...
                         setSelectedPerfume(null);
                         window.location.reload();
                       } catch (err) {
-                        console.error("Gabim gjatë realizimit të shitjes:", err);
-                        alert("Something went wrong: " + (err.response?.data?.error || err.message));
+                        console.error(
+                          "Gabim gjatë realizimit të shitjes:",
+                          err,
+                        );
+                        alert(
+                          "Something went wrong: " +
+                            (err.response?.data?.error || err.message),
+                        );
                       }
                     }}
                     style={{
                       opacity: selectedPerfume.sasia_stok === 0 ? 0.5 : 1,
                     }}
                   >
-                    {selectedPerfume.sasia_stok > 0 ? "Add to Cart" : "Out of Stock"}
+                    {selectedPerfume.sasia_stok > 0
+                      ? "Add to Cart"
+                      : "Out of Stock"}
                   </button>
                 </div>
               </div>

@@ -1,199 +1,173 @@
-// Konfigurimi i Gjeneratorit
 generator client {
   provider = "prisma-client-js"
 }
 
-// Lidhja me Databazën (MySQL)
 datasource db {
   provider = "mysql"
-  url=env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
-// Tabelat
-model Parfum {
-  parfum_id     Int     @id @default(autoincrement())
-  emri          String
-  gjinia_target String
-  volumi_ml     Int
-  cmimi         Float
-  sasia_stok    Int @default(0)
-  pershkrimi    String?
-  notat_ere     String?
+model auditlogs {
+  id         Int      @id @default(autoincrement())
+  user_id    Int?
+  action     String
+  table_name String
+  record_id  Int?
+  old_value  String?  @db.Text
+  new_value  String?  @db.Text
+  ip_address String?
+  created_at DateTime @default(now())
+  users      users?   @relation(fields: [user_id], references: [id], map: "AuditLogs_user_id_fkey")
 
-  kategoria_id Int
-  marka_id     Int
-
-  kategoria Kategoria @relation(fields: [kategoria_id], references: [kategori_id])
-  marka     Markat    @relation(fields: [marka_id], references: [marka_id])
-
-  mostrat        Mostrat[]
-  detajetShitjes  Detajet_Shitjes[]
-  detajetPorosise Detajet_Porosise_Furnitorit[]
-  reviews Reviews[]
-  wishlist Wishlist[]
-  ofertatParfumit Ofertat_Parfumit[]
+  @@index([user_id], map: "AuditLogs_user_id_fkey")
 }
 
-model Kategoria {
-  kategori_id Int     @id @default(autoincrement())
-  emri        String  @unique
+model detajet_porosise_furnitorit {
+  detal_id             Int                  @id @default(autoincrement())
+  porosi_id            Int
+  parfum_id            Int
+  sasia                Int
+  cmimi_njesi          Float
+  cmimi_total          Float
+  parfum               parfum               @relation(fields: [parfum_id], references: [parfum_id], map: "Detajet_Porosise_Furnitorit_parfum_id_fkey")
+  porosite_furnitoreve porosite_furnitoreve @relation(fields: [porosi_id], references: [porosi_id], map: "Detajet_Porosise_Furnitorit_porosi_id_fkey")
+
+  @@index([parfum_id], map: "Detajet_Porosise_Furnitorit_parfum_id_fkey")
+  @@index([porosi_id], map: "Detajet_Porosise_Furnitorit_porosi_id_fkey")
+}
+
+model detajet_shitjes {
+  detal_id    Int     @id @default(autoincrement())
+  shitje_id   Int
+  parfum_id   Int
+  sasia       Int
+  cmimi_njesi Float
+  cmimi_total Float
+  parfum      parfum  @relation(fields: [parfum_id], references: [parfum_id], map: "Detajet_Shitjes_parfum_id_fkey")
+  shitjet     shitjet @relation(fields: [shitje_id], references: [shitje_id], map: "Detajet_Shitjes_shitje_id_fkey")
+
+  @@index([parfum_id], map: "Detajet_Shitjes_parfum_id_fkey")
+  @@index([shitje_id], map: "Detajet_Shitjes_shitje_id_fkey")
+}
+
+model furnitoret {
+  furnitor_id          Int                    @id @default(autoincrement())
+  emri                 String
+  personi_kontaktit    String
+  telefoni             String
+  email                String
+  adresa               String
+  shteti               String
+  porosite_furnitoreve porosite_furnitoreve[]
+}
+
+model kategoria {
+  emri        String   @unique(map: "Kategoria_emri_key")
+  kategori_id Int      @id @default(autoincrement())
   pershkrimi  String?
-
-  parfumet Parfum[]
+  parfum      parfum[]
 }
 
-model Klientet {
-  id                Int      @id @default(autoincrement())
+model klientet {
+  id                Int       @id @default(autoincrement())
   emri              String
   mbiemri           String
   telefoni          String?
-  email             String   @unique
+  email             String    @unique(map: "Klientet_email_key")
   data_lindjes      DateTime
   gjinia            String
   adresa            String
-  data_regjistrimit DateTime @default(now())
-  piket_besnikerise Int      @default(0)
-
-  user_id Int? @unique
-  user Users? @relation(fields: [user_id], references: [id])
-
-  shitjet Shitjet[]
-  reviews Reviews[]
-  wishlist Wishlist[]
+  data_regjistrimit DateTime  @default(now())
+  piket_besnikerise Int       @default(0)
+  user_id           Int?      @unique(map: "Klientet_user_id_key")
+  users             users?    @relation(fields: [user_id], references: [id], map: "Klientet_user_id_fkey")
+  reviews           reviews[]
+  shitjet           shitjet[]
 }
 
-model Markat {
-  marka_id         Int     @id @default(autoincrement())
-  emri             String  @unique
+model markat {
+  marka_id         Int      @id @default(autoincrement())
+  emri             String   @unique(map: "Markat_emri_key")
   shteti_origjines String?
   website          String?
   pershkrimi       String?
   logoja           String?
-
-  parfumet Parfum[]
+  parfum           parfum[]
 }
 
-model Ofertat {
-  oferte_id          Int      @id @default(autoincrement())
+model mostrat {
+  mostre_id  Int    @id @default(autoincrement())
+  sasia_stok Int
+  volumi_ml  Int
+  statusi    String
+  parfum_id  Int
+  parfum     parfum @relation(fields: [parfum_id], references: [parfum_id], map: "Mostrat_parfum_id_fkey")
+
+  @@index([parfum_id], map: "Mostrat_parfum_id_fkey")
+}
+
+model ofertat {
+  oferte_id          Int                @id @default(autoincrement())
   emri               String
   pershkrimi         String?
   perqindja_zbritjes Float
   data_fillimit      DateTime
   data_perfundimit   DateTime
   statusi            String
-
-  ofertatParfumit Ofertat_Parfumit[]
+  ofertat_parfumit   ofertat_parfumit[]
 }
 
-model Mostrat {
-  mostre_id  Int    @id @default(autoincrement())
-  sasia_stok Int
-  volumi_ml  Int
-  statusi    String
-
+model ofertat_parfumit {
+  id        Int     @id @default(autoincrement())
+  oferte_id Int
   parfum_id Int
-  parfumi   Parfum @relation(fields: [parfum_id], references: [parfum_id])
+  ofertat   ofertat @relation(fields: [oferte_id], references: [oferte_id], map: "Ofertat_Parfumit_oferte_id_fkey")
+  parfum    parfum  @relation(fields: [parfum_id], references: [parfum_id], map: "Ofertat_Parfumit_parfum_id_fkey")
+
+  @@index([oferte_id], map: "Ofertat_Parfumit_oferte_id_fkey")
+  @@index([parfum_id], map: "Ofertat_Parfumit_parfum_id_fkey")
 }
 
-model Users {
-  id                  Int      @id @default(autoincrement())
-  emri                String
-  mbiemri             String
-  email               String   @unique
-  password_hash       String
-  phone_number        String?
-  email_confirmed     Boolean  @default(false)
-  lockout_enabled     Boolean  @default(true)
-  access_failed_count Int      @default(0)
-  data_krijimit       DateTime @default(now())
-  statusi             String   @default("Active")
+model parfum {
+  emri                        String
+  cmimi                       Float
+  pershkrimi                  String?
+  gjinia_target               String
+  kategoria_id                Int
+  marka_id                    Int
+  notat_ere                   String?
+  parfum_id                   Int                           @id @default(autoincrement())
+  sasia_stok                  Int                           @default(0)
+  volumi_ml                   Int
+  detajet_porosise_furnitorit detajet_porosise_furnitorit[]
+  detajet_shitjes             detajet_shitjes[]
+  mostrat                     mostrat[]
+  ofertat_parfumit            ofertat_parfumit[]
+  kategoria                   kategoria                     @relation(fields: [kategoria_id], references: [kategori_id], map: "Parfum_kategoria_id_fkey")
+  markat                      markat                        @relation(fields: [marka_id], references: [marka_id], map: "Parfum_marka_id_fkey")
+  reviews                     reviews[]
 
-  klientProfile Klientet?
+  @@index([kategoria_id], map: "Parfum_kategoria_id_fkey")
+  @@index([marka_id], map: "Parfum_marka_id_fkey")
 
-  userRoles     UserRoles[]
-  userClaims    UserClaims[]
-  userTokens    UserTokens[]
-  refreshTokens RefreshTokens[]
-  auditLogs AuditLogs[]
+  wishlist wishlist[]
 }
 
-model Roles {
-  id              Int     @id @default(autoincrement())
-  emertimi        String  @unique
-  pershkrimi      String?
-  normalized_name String?
+model porosite_furnitoreve {
+  porosi_id                   Int                           @id @default(autoincrement())
+  furnitor_id                 Int
+  data_porosise               DateTime
+  shuma_totale                Float
+  statusi                     String
+  data_pranimit               DateTime?
+  detajet_porosise_furnitorit detajet_porosise_furnitorit[]
+  furnitoret                  furnitoret                    @relation(fields: [furnitor_id], references: [furnitor_id], map: "Porosite_Furnitoreve_furnitor_id_fkey")
 
-  userRoles UserRoles[]
+  @@index([furnitor_id], map: "Porosite_Furnitoreve_furnitor_id_fkey")
 }
 
-model UserRoles {
-  id Int @id @default(autoincrement())
-
-  user_id Int
-  role_id Int
-
-  user Users @relation(fields: [user_id], references: [id])
-  role Roles @relation(fields: [role_id], references: [id])
-}
-
-model Reviews{
-  review_id Int @id @default(autoincrement())
-  rating Int 
-  komenti String? @db.Text
-  data DateTime @default(now())
-
-  klient_id Int
-  parfum_id Int
-
-  klient Klientet @relation(fields: [klient_id], references: [id])
-  parfumi Parfum @relation(fields: [parfum_id], references: [parfum_id])
-}
-
-model Wishlist{
-  wishlist_id Int @id @default(autoincrement())
-  data_shtimit DateTime @default(now())
-
-  klient_id Int
-  parfum_id Int
-
-  klient Klientet @relation(fields: [klient_id], references: [id])
-  parfumi Parfum @relation(fields: [parfum_id], references: [parfum_id])
-
-  @@unique([klient_id,parfum_id])
-}
-
-model UserClaims {
-  id          Int    @id @default(autoincrement())
-  user_id     Int
-  claim_type  String
-  claim_value String
-
-  user Users @relation(fields: [user_id], references: [id])
-}
-
-model UserTokens {
-  id             Int    @id @default(autoincrement())
-  user_id        Int
-  login_provider String
-  token_name     String
-  token_value    String
-
-  user Users @relation(fields: [user_id], references: [id])
-}
-
-model RefreshTokens {
-  id      Int      @id @default(autoincrement())
-  user_id Int
-  token   String
-  expires DateTime
-  created DateTime @default(now())
-  revoked Boolean  @default(false)
-
-  user Users @relation(fields: [user_id], references: [id])
-}
-
-model Punetoret {
-  punetor_id     Int      @id @default(autoincrement())
+model punetoret {
+  punetor_id     Int       @id @default(autoincrement())
   emri           String
   mbiemri        String
   pozita         String
@@ -201,93 +175,120 @@ model Punetoret {
   email          String
   data_punesimit DateTime
   paga           Float
-
-  shitjet Shitjet[]
+  shitjet        shitjet[]
 }
 
-model Furnitoret {
-  furnitor_id       Int    @id @default(autoincrement())
-  emri              String
-  personi_kontaktit String
-  telefoni          String
-  email             String
-  adresa            String
-  shteti            String
+model refreshtokens {
+  id      Int      @id @default(autoincrement())
+  user_id Int
+  token   String
+  expires DateTime
+  created DateTime @default(now())
+  revoked Boolean  @default(false)
+  users   users    @relation(fields: [user_id], references: [id], map: "RefreshTokens_user_id_fkey")
 
-  porosite Porosite_Furnitoreve[]
+  @@index([user_id], map: "RefreshTokens_user_id_fkey")
 }
 
-model Shitjet {
-  shitje_id      Int      @id @default(autoincrement())
-  klient_id      Int
-  punetor_id     Int
-  data_shitjes   DateTime
-  shuma_totale   Float
-  zbritja        Float
-  metoda_pageses String
+model reviews {
+  review_id Int      @id @default(autoincrement())
+  rating    Int
+  komenti   String?  @db.Text
+  data      DateTime @default(now())
+  klient_id Int
+  parfum_id Int
+  klientet  klientet @relation(fields: [klient_id], references: [id], map: "Reviews_klient_id_fkey")
+  parfum    parfum   @relation(fields: [parfum_id], references: [parfum_id], map: "Reviews_parfum_id_fkey")
 
-  klient  Klientet          @relation(fields: [klient_id], references: [id])
-  punetor Punetoret         @relation(fields: [punetor_id], references: [punetor_id])
-  detajet Detajet_Shitjes[]
+  @@index([klient_id], map: "Reviews_klient_id_fkey")
+  @@index([parfum_id], map: "Reviews_parfum_id_fkey")
 }
 
-model Detajet_Shitjes {
-  detal_id    Int   @id @default(autoincrement())
-  shitje_id   Int
-  parfum_id   Int
-  sasia       Int
-  cmimi_njesi Float
-  cmimi_total Float
-
-  shitje Shitjet @relation(fields: [shitje_id], references: [shitje_id])
-  parfum Parfum  @relation(fields: [parfum_id], references: [parfum_id])
+model roles {
+  id              Int         @id @default(autoincrement())
+  emertimi        String      @unique(map: "Roles_emertimi_key")
+  pershkrimi      String?
+  normalized_name String?
+  userroles       userroles[]
 }
 
-model Porosite_Furnitoreve {
-  porosi_id     Int       @id @default(autoincrement())
-  furnitor_id   Int
-  data_porosise DateTime
-  shuma_totale  Float
-  statusi       String
-  data_pranimit DateTime?
+model shitjet {
+  shitje_id       Int               @id @default(autoincrement())
+  klient_id       Int
+  punetor_id      Int
+  data_shitjes    DateTime
+  shuma_totale    Float
+  zbritja         Float
+  metoda_pageses  String
+  detajet_shitjes detajet_shitjes[]
+  klientet        klientet          @relation(fields: [klient_id], references: [id], map: "Shitjet_klient_id_fkey")
+  punetoret       punetoret         @relation(fields: [punetor_id], references: [punetor_id], map: "Shitjet_punetor_id_fkey")
 
-  furnitor Furnitoret                    @relation(fields: [furnitor_id], references: [furnitor_id])
-  detajet  Detajet_Porosise_Furnitorit[]
+  @@index([klient_id], map: "Shitjet_klient_id_fkey")
+  @@index([punetor_id], map: "Shitjet_punetor_id_fkey")
 }
 
-model Detajet_Porosise_Furnitorit {
-  detal_id    Int   @id @default(autoincrement())
-  porosi_id   Int
-  parfum_id   Int
-  sasia       Int
-  cmimi_njesi Float
-  cmimi_total Float
+model userclaims {
+  id          Int    @id @default(autoincrement())
+  user_id     Int
+  claim_type  String
+  claim_value String
+  users       users  @relation(fields: [user_id], references: [id], map: "UserClaims_user_id_fkey")
 
-  porosi Porosite_Furnitoreve @relation(fields: [porosi_id], references: [porosi_id])
-  parfum Parfum               @relation(fields: [parfum_id], references: [parfum_id])
+  @@index([user_id], map: "UserClaims_user_id_fkey")
 }
 
+model userroles {
+  id      Int   @id @default(autoincrement())
+  user_id Int
+  role_id Int
+  roles   roles @relation(fields: [role_id], references: [id], map: "UserRoles_role_id_fkey")
+  users   users @relation(fields: [user_id], references: [id], map: "UserRoles_user_id_fkey")
 
-model Ofertat_Parfumit {
-  id         Int @id @default(autoincrement())
-
-  oferte_id  Int
-  parfum_id  Int
-
-  oferte Ofertat @relation(fields: [oferte_id], references: [oferte_id])
-  parfum Parfum  @relation(fields: [parfum_id], references: [parfum_id])
+  @@index([role_id], map: "UserRoles_role_id_fkey")
+  @@index([user_id], map: "UserRoles_user_id_fkey")
 }
 
-model AuditLogs {
-  id          Int      @id @default(autoincrement())
-  user_id     Int?
-  action      String
-  table_name  String
-  record_id   Int?
-  old_value   String? @db.Text
-  new_value   String? @db.Text
-  ip_address  String?
-  created_at  DateTime @default(now())
+model users {
+  id                  Int             @id @default(autoincrement())
+  emri                String
+  mbiemri             String
+  email               String          @unique(map: "Users_email_key")
+  password_hash       String
+  phone_number        String?
+  email_confirmed     Boolean         @default(false)
+  lockout_enabled     Boolean         @default(true)
+  access_failed_count Int             @default(0)
+  data_krijimit       DateTime        @default(now())
+  statusi             String          @default("Active")
+  auditlogs           auditlogs[]
+  klientet            klientet?
+  refreshtokens       refreshtokens[]
+  userclaims          userclaims[]
+  userroles           userroles[]
+  usertokens          usertokens[]
+  wishlist            wishlist[]
+}
 
-  user Users? @relation(fields: [user_id], references: [id])
+model usertokens {
+  id             Int    @id @default(autoincrement())
+  user_id        Int
+  login_provider String
+  token_name     String
+  token_value    String
+  users          users  @relation(fields: [user_id], references: [id], map: "UserTokens_user_id_fkey")
+
+  @@index([user_id], map: "UserTokens_user_id_fkey")
+}
+
+model wishlist {
+  wishlist_id  Int      @id @default(autoincrement())
+  data_shtimit DateTime @default(now())
+  parfum_id    Int
+  user_id      Int
+  parfum parfum @relation(fields: [parfum_id], references: [parfum_id], map: "Wishlist_parfum_fkey")
+  users        users    @relation(fields: [user_id], references: [id], map: "Wishlist_user_id_fkey")
+
+  @@unique([user_id, parfum_id], map: "Wishlist_user_id_parfum_id_key")
+  @@index([parfum_id], map: "Wishlist_parfum_fkey")
 }

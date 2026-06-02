@@ -15,23 +15,46 @@ const Shop = () => {
   const navigate = useNavigate();
   const bannerTimeoutRef = useRef(null);
 
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
-  const [role, setRole] = useState(
-    (localStorage.getItem("userRole") || "").trim().toLowerCase(),
-  );
+  const [user, setUser] = useState(null);
+  const [role, setRole] = useState("");
+
+  useEffect(() => {
+    const checkUser = () => {
+      const storedUser = JSON.parse(localStorage.getItem("user"));
+      const storedRole = (localStorage.getItem("userRole") || "")
+        .trim()
+        .toLowerCase();
+
+      setUser(storedUser);
+      setRole(storedRole);
+    };
+    checkUser();
+
+    window.addEventListener("storage", checkUser);
+    return () => window.removeEventListener("storage", checkUser);
+  }, []);
+
+  useEffect(() => {
+    console.log(
+      "Shop.jsx u ngarkua. User ne localStorage:",
+      localStorage.getItem("user"),
+    );
+  }, []);
 
   const hasDashboardAccess =
     (user && ["admin", "manager"].includes(role)) ||
     (user && user.email === "et72862@ubt-uni.net") ||
     (user && user.email === "rozafe.shkodra@gmail.com");
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("userRole");
+  const handleLogout = (e) => {
+    e.preventDefault();
+    localStorage.clear();
 
     setUser(null);
     setRole("");
 
-    window.location.reload();
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 100);
   };
 
   const scrollToSection = (sectionId) => {
@@ -95,11 +118,12 @@ const Shop = () => {
   useEffect(() => {
     const fetchShopPerfumes = async () => {
       try {
+        console.log("Duke kerkuar parfumet...");
         const res = await API.get("/parfumet");
         setPerfumes(res.data);
-        setLoading(false);
       } catch (err) {
-        console.error("Error fetching shop products:", err);
+        console.error("Error fetching shop products:", err.response?.status);
+      } finally {
         setLoading(false);
       }
     };
@@ -107,15 +131,15 @@ const Shop = () => {
   }, []);
 
   useEffect(() => {
-    const fetchUserWishlist = async () => {
-      if (user && user.id) {
-        try {
-          const res = await API.get(`/wishlist/${user.id}`);
+    if (!user?.id) return;
 
-          setWishlistItems(res.data.map((item) => item.parfum_id));
-        } catch (err) {
-          console.error("Gabim gjatë marrjes së wishlist:", err);
-        }
+    const fetchUserWishlist = async () => {
+      try {
+        const res = await API.get(`/wishlist/${user.id}`);
+
+        setWishlistItems(res.data.map((item) => item.parfum_id));
+      } catch (err) {
+        console.error("Gabim gjatë marrjes së wishlist:", err);
       }
     };
     fetchUserWishlist();
@@ -199,7 +223,7 @@ const Shop = () => {
                   Login
                 </a>
                 <span className="auth-divider"></span>
-                <a href="#register" className="auth-link">
+                <a href="/register" className="auth-link">
                   Register
                 </a>
               </>

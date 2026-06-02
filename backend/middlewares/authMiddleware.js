@@ -1,66 +1,86 @@
 const jwt = require("jsonwebtoken");
 
 const verifyToken = (req, res, next) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-
-  if (!token) {
-    return res
-      .status(401)
-      .json({ error: "Qasja u refuzua! Nuk u gjet asnje token." });
-  }
-
   try {
+    const authHeader = req.headers["authorization"];
+
+    if (!authHeader) {
+      return res.status(401).json({ error: "Token mungon (no header)" });
+    }
+
+    const token = authHeader.split(" ")[1];
+
+    if (!token) {
+      return res.status(401).json({ error: "Token format gabim" });
+    }
+
     const verified = jwt.verify(
       token,
       process.env.JWT_SECRET || "super-secret-key",
     );
-    req.user = verified;
+
+    req.user = verified || {};
+
+    req.user.role = (req.user.role || req.user.roles || "")
+      .toString()
+      .toLowerCase();
+
     next();
   } catch (error) {
-    return res
-      .status(403)
-      .json({ error: "Tokeni nuk eshte i vlefshem ose ka skaduar!" });
+    console.error("JWT ERROR:", error.message);
+
+    return res.status(403).json({
+      error: "Token invalid ose i skaduar",
+    });
   }
 };
 
 const isAdmin = (req, res, next) => {
-  if (!req.user || !req.user.role) {
-    return res
-      .status(403)
-      .json({ error: "E ndaluar! Nuk u gjet asnje rol per kete perdorues." });
-  }
+  console.log("Roli qe po vjen nga tokeni:", req.user.role);
+  try {
+    if (!req.user) {
+      return res.status(403).json({ error: "No user found" });
+    }
 
-  if (req.user.email === "et72862@ubt-uni.net") {
-    return next();
-  }
+    const role = (req.user.role || "").toString().toLowerCase();
 
-  if (req.user.role.trim().toLowerCase() === "admin") {
-    next();
-  } else {
+    if (req.user.email === "et72862@ubt-uni.net") {
+      return next();
+    }
+
+    if (role === "admin") {
+      return next();
+    }
+
     return res.status(403).json({
-      error: "E ndaluar! Kjo zone lejohet vetem per Administratoret.",
+      error: "E ndaluar! Vetëm admin.",
     });
+  } catch (err) {
+    console.error("isAdmin crash:", err);
+    return res.status(500).json({ error: "Server error" });
   }
 };
 
 const isManagment = (req, res, next) => {
-  if (!req.user || !req.user.role) {
-    return res.status(403).json({ error: "E ndaluar! Nuk u gjet asnje rol." });
-  }
+  try {
+    if (!req.user) {
+      return res.status(403).json({ error: "No user" });
+    }
 
-  if (req.user.email === "et72862@ubt-uni.net") {
-    return next();
-  }
+    const role = (req.user.role || "").toLowerCase();
 
-  const role = req.user.role.trim().toLowerCase();
-  if (role === "admin" || role === "manager") {
-    next();
-  } else {
-    return res.status(403).json({
-      error: "E ndaluar!",
-    });
+    if (req.user.email === "et72862@ubt-uni.net") {
+      return next();
+    }
+
+    if (role === "admin" || role === "manager") {
+      return next();
+    }
+
+    return res.status(403).json({ error: "E ndaluar!" });
+  } catch (err) {
+    console.error("Middleware crash:", err);
+    return res.status(500).json({ error: "Middleware error" });
   }
 };
-
 module.exports = { verifyToken, isAdmin, isManagment };

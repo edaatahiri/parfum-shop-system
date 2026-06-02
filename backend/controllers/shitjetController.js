@@ -1,109 +1,111 @@
 const prisma = require("../config/db");
 
+// CREATE SHITJE
 exports.createShitje = async (req, res) => {
   try {
-    const userIdFromToken = req.user.id; 
-    const userEmail = req.user.email;
+    const userId = req.user?.id;
+    const email = req.user?.email;
+    const role = (req.user?.role || "").toLowerCase();
 
-    if (!userIdFromToken || !userEmail) {
-      return res.status(401).json({ error: "I paautorizuar! Të dhënat e përdoruesit mungojnë në token." });
+    if (!userId || !email) {
+      return res.status(401).json({ error: "Unauthorized" });
     }
 
-    const userEmri = req.user.emri && req.user.emri.trim() !== "" ? req.user.emri : "Përdorues";
-    const userMbiemri = req.user.mbiemri && req.user.mbiemri.trim() !== "" ? req.user.mbiemri : "Sistemi";
+    const shuma = parseFloat(req.body.shuma_totale);
+    if (isNaN(shuma)) {
+      return res.status(400).json({ error: "Shuma totale e pavlefshme" });
+    }
 
-    // 1. Kontrollojmë/Krijojmë Klientet sipas Email-it
+    // 1. KLienti (gjej ose krijo)
     let klienti = await prisma.klientet.findUnique({
-      where: { email: userEmail },
+      where: { email },
     });
 
     if (!klienti) {
       klienti = await prisma.klientet.create({
         data: {
-          emri: userEmri,
-          mbiemri: userMbiemri,
-          email: userEmail, 
-          data_lindjes: new Date("2000-01-01"), 
+          emri: req.user?.emri || "User",
+          mbiemri: req.user?.mbiemri || "System",
+          email,
+          data_lindjes: new Date("2000-01-01"),
           gjinia: "Unisex",
-          adresa: "Online Store",
-          piket_besnikerise: 0
-        }
+          adresa: "Online",
+          piket_besnikerise: 0,
+        },
       });
     }
 
-    // 2. Gjejmë punëtorin sipas email-it të Adminit logged-in
+    // 2. Punëtori (gjej ose krijo)
     let punetori = await prisma.punetoret.findFirst({
-      where: { email: userEmail } 
+      where: { email },
     });
 
-    // Nëse ky Admin/User nuk ekziston ende te tabela Punetoret, e krijojmë automatikisht
     if (!punetori) {
       punetori = await prisma.punetoret.create({
         data: {
-          emri: userEmri,
-          mbiemri: userMbiemri,
-          email: userEmail,
-          pozita: req.user.role === "Admin" ? "Administrator" : "Online Sales",
-          paga: req.user.role === "Admin" ? 1000.0 : 500.0,
-          telefoni: "044000000",
-          data_punesimit: new Date() // KJO SHTOHET: I jep datën dhe kohën e saktë të tanishme
-        }
+          emri: req.user?.emri || "User",
+          mbiemri: req.user?.mbiemri || "System",
+          email,
+          pozita: role === "admin" ? "Administrator" : "Online Sales",
+          paga: role === "admin" ? 1000 : 500,
+          telefoni: "000000000",
+          data_punesimit: new Date(),
+        },
       });
     }
 
-    // Përdorim 'punetor_id' si ID në tabelën tënde sipas skemës suaj
-    const punetorId = punetori.punetor_id || punetori.id;
+    const punetorId = punetori.punetor_id;
 
-    // 3. Krijojmë rekordet e shitjes me ID-në e saktë të punëtorit të gjetur/krijuar
-    const novaShitje = await prisma.shitjet.create({
+    // 3. CREATE SHITJE
+    const shitja = await prisma.shitjet.create({
       data: {
-        klient_id: klienti.id,        
-        punetor_id: punetorId,       
-        data_shitjes: new Date(req.body.data_shitjes || new Date()),
-        shuma_totale: parseFloat(req.body.shuma_totale),
+        klient_id: klienti.id,
+        punetor_id: punetorId,
+        data_shitjes: new Date(),
+        shuma_totale: shuma,
         zbritja: parseFloat(req.body.zbritja || 0),
         metoda_pageses: req.body.metoda_pageses || "Cash",
       },
     });
 
-    res.status(201).json({
-      message: "Shitja u krijua me sukses!",
-      shitjeId: novaShitje.shitje_id,
-      id: novaShitje.shitje_id,
-      ...novaShitje
+    return res.status(201).json({
+      message: "Shitja u krijua me sukses",
+      data: shitja,
     });
-
   } catch (err) {
-    console.error("Gabim në createShitje:", err);
-    res.status(500).json({ error: err.message });
+    console.error("CREATE SHITJE ERROR:", err);
+    return res.status(500).json({ error: err.message });
   }
 };
 
+// GET ALL SHITJET
 exports.getShitjet = async (req, res) => {
   try {
     const data = await prisma.shitjet.findMany({
       include: {
-        klient: true,
-        punetor: true,
-        detajet: {
-          include: {
-            parfum: true,
-          },
+        klientet: true,
+        punetoret: true,
+        detajet_shitjes: {
+          include: { parfum: true },
         },
       },
       orderBy: {
         data_shitjes: "desc",
       },
     });
+
     res.json(data);
   } catch (err) {
+    console.error("DEBUG ERROR - getShitjet:", err);
     res.status(500).json({ error: err.message });
   }
 };
 
+// GET BY ID
 exports.getShitjeById = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
+
     const data = await prisma.shitjet.findUnique({
       where: { shitje_id: id },
       include: {
@@ -111,31 +113,38 @@ exports.getShitjeById = async (req, res) => {
         punetor: true,
       },
     });
+
     res.json(data);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
+// UPDATE
 exports.updateShitje = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    const data = await prisma.shitjet.update({
+
+    const updated = await prisma.shitjet.update({
       where: { shitje_id: id },
       data: req.body,
     });
-    res.json(data);
+
+    res.json(updated);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
+// DELETE
 exports.deleteShitje = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
+
     await prisma.shitjet.delete({
       where: { shitje_id: id },
     });
+
     res.json({ message: "Shitja u fshi me sukses" });
   } catch (err) {
     res.status(500).json({ error: err.message });

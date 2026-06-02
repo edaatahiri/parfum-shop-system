@@ -3,9 +3,27 @@ const bcrypt = require("bcryptjs");
 
 exports.register = async (req, res) => {
   try {
-    const { emri, mbiemri, email, password, phone_number, role } = req.body;
+    const {
+      emri,
+      mbiemri,
+      email,
+      password,
+      phone_number,
+      data_lindjes,
+      gjinia,
+      adresa,
+      role,
+    } = req.body;
 
-    if (!emri || !mbiemri || !email || !password) {
+    if (
+      !emri ||
+      !mbiemri ||
+      !email ||
+      !password ||
+      !data_lindjes ||
+      !gjinia ||
+      !adresa
+    ) {
       return res.status(400).json({
         error: "All fields except phone number are required!",
       });
@@ -55,6 +73,17 @@ exports.register = async (req, res) => {
             role_id: assignedRoleId,
           },
         },
+        klientProfile: {
+          create: {
+            emri: emri,
+            mbiemri: mbiemri,
+            email: email,
+            data_lindjes: new Date(data_lindjes),
+            gjinia: gjinia,
+            adresa: adresa,
+            piket_besnikerise: 0,
+          },
+        },
       },
     });
 
@@ -77,24 +106,14 @@ exports.getProfile = async (req, res) => {
 
     const userProfile = await prisma.users.findUnique({
       where: { id: userId },
-      select: {
-        id: true,
-        emri: true,
-        mbiemri: true,
-        email: true,
-        phone_number: true,
-        data_krijimit: true,
-        klientProfile: {
+      include: {
+        klientet: {
           include: {
             shitjet: {
-              orderBy: {
-                data_shitjes: "desc",
-              },
+              orderBy: { data_shitjes: "desc" },
               include: {
-                detajet: {
-                  include: {
-                    parfum: true,
-                  },
+                detajet_shitjes: {
+                  include: { parfum: true },
                 },
               },
             },

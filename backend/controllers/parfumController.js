@@ -24,10 +24,11 @@ exports.createParfum = async (req, res) => {
 exports.getAllParfumet = async (req, res) => {
   try {
     const parfumet = await prisma.parfum.findMany({
-      include: { kategoria: true, marka: true },
+      include: { kategoria: true, markat: true },
     });
     res.json(parfumet);
   } catch (err) {
+    console.error("GABIM TE PARFUMET:", err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -67,11 +68,9 @@ exports.deleteParfum = async (req, res) => {
     });
     res.json({ message: "Parfumi u fshi" });
   } catch (err) {
-    res
-      .status(400)
-      .json({
-        error:
-          "Nuk mund të fshihet ky parfum sepse është i lidhur me shitje ose të dhëna të tjera në sistem.",
-      });
+    res.status(400).json({
+      error:
+        "Nuk mund të fshihet ky parfum sepse është i lidhur me shitje ose të dhëna të tjera në sistem.",
+    });
   }
 };

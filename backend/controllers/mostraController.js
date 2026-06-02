@@ -20,7 +20,7 @@ exports.getAllMostrat = async (req, res) => {
   try {
     const mostrat = await prisma.mostrat.findMany({
       include: {
-        parfumi: true,
+        parfum: true,
       },
     });
     res.status(200).json(mostrat);

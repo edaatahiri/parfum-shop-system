@@ -10,7 +10,7 @@ const handleRefreshToken = async (req, res) => {
       return res.status(400).json({ error: "UserId është i detyrueshëm!" });
     }
 
-    const storedToken = await prisma.refreshTokens.findFirst({
+    const storedToken = await prisma.refreshtokens.findFirst({
       where: {
         user_id: parseInt(userId),
         expires: {
@@ -18,17 +18,19 @@ const handleRefreshToken = async (req, res) => {
         },
       },
       include: {
-        user: {
+        users: {
           include: {
-            userRoles: {
+            userroles: {
               include: {
-                role: true,
+                roles: true,
               },
             },
           },
         },
       },
     });
+
+    console.log("A e gjeti tokenin ?", storedToken);
 
     if (!storedToken) {
       return res
@@ -37,12 +39,12 @@ const handleRefreshToken = async (req, res) => {
     }
 
     const userRoleName =
-      storedToken.user.userRoles?.[0]?.role?.emertimi || "User";
+      storedToken.users.userroles?.[0]?.roles?.emertimi || "User";
 
     const newAccessToken = jwt.sign(
       {
-        id: storedToken.user.id,
-        email: storedToken.user.email,
+        id: storedToken.users.id,
+        email: storedToken.users.email,
         role: userRoleName,
       },
       process.env.JWT_SECRET,

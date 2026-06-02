@@ -22,42 +22,35 @@ function Login() {
         password,
       });
 
+      console.log("PËRGJIGJJA NGA SERVERI:", res.data);
+
       const { user, accessToken, token } = res.data;
+      console.log("Kjo eshte ID qe po vjen nga backi", user.id);
       const finalToken = accessToken || token;
 
       // Korrigjimi kryesor: Marrim rolin e pastër nga backend-i, pa u rrëzuar
-      let userRole = user?.role || "Client";
+      let userRole = user?.role || user?.roles || "Client";
 
       // Forcojmë statusin ADMIN për email-in tënd nëse databaza lokale nuk e ka sinkronizuar mirë
       if (email.trim().toLowerCase() === "et72862@ubt-uni.net") {
         userRole = "ADMIN";
       }
 
-      const userToStore = {
-        id: user?.id || "",
-        emri: user?.emri || "Admin",
-        mbiemri: user?.mbiemri || "",
-        email: user?.email || "",
-        role: userRole,
-      };
-
-      localStorage.setItem("user", JSON.stringify(userToStore));
+      localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("token", finalToken);
-      localStorage.setItem("userName", user?.emri || "Admin"); 
+      localStorage.setItem("userName", user?.emri || "Admin");
       localStorage.setItem("userRole", userRole);
 
-      const lowerRole = userRole.trim().toLowerCase();
+      const roleLower = userRole.trim().toLowerCase();
 
-      if (
-        lowerRole === "admin" ||
-        lowerRole === "manager" ||
-        lowerRole === "staff"
-      ) {
-        navigate("/admin");
+      if (["admin", "manager", "staff"].includes(roleLower)) {
+        navigate("/admin"); // Për admin bëjmë refresh
       } else {
-        navigate("/");
+        console.log("Po navigoj ne /");
+        window.location.href = "/";
       }
     } catch (err) {
+      console.error(err.response);
       // Nëse gabimi vjen nga serveri (psh password gabim), shfaqet ai mesazh, përndryshe Login failed
       alert(err.response?.data?.message || "Login failed");
     }

@@ -3,6 +3,8 @@ const prisma = new PrismaClient();
 const bcrypt = require("bcryptjs");
 
 async function main() {
+  await prisma.userRoles.deleteMany({ where: { role_id: 4 } });
+  await prisma.roles.delete({ where: { id: 4 } });
   console.log('Duke nisur procesin e "seeding"...');
 
   await prisma.roles.upsert({
@@ -98,7 +100,7 @@ async function main() {
 
   await prisma.users.upsert({
     where: { email: "staff@parfum.com" },
-    update: { password_hash: hashedPassword },
+    update: {},
     create: {
       emri: "Zana",
       mbiemri: "Tahiri",
@@ -106,7 +108,7 @@ async function main() {
       password_hash: hashedPassword,
       statusi: "Active",
       userRoles: {
-        create: { role_id: 4 },
+        create: { role_id: 2 },
       },
     },
   });

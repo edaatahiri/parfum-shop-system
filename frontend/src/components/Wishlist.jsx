@@ -11,18 +11,18 @@ function Wishlist() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const savedUser =
-      localStorage.getItem("user") ||
-      localStorage.getItem("loggedInUser") ||
-      sessionStorage.getItem("user") ||
-      sessionStorage.getItem("loggedInUser");
+    const savedUser = localStorage.getItem("user");
 
     if (savedUser) {
       try {
-        setLoggedInUser(JSON.parse(savedUser));
+        const parsedUser = JSON.parse(savedUser);
+        console.log("User-i i gjetur në Wishlist:", parsedUser);
+        setLoggedInUser(parsedUser);
       } catch (e) {
         console.error("Gabim gjatë parse të user:", e);
       }
+    } else {
+      console.log("Nuk u gjet asnjë user në localStorage!");
     }
   }, []);
 
@@ -128,9 +128,9 @@ function Wishlist() {
         <>
           <div className="luxury-wishlist-grid">
             {wishlistProducts.map((item) => {
-              const emriParfumit = item.parfumi?.emri || "Perfume";
-              const qmimiParfumit = item.parfumi?.cmimi || "0";
-              const gjinia = item.parfumi?.gjinia_target || "Unisex";
+              const emriParfumit = item.parfum?.emri || "Perfume";
+              const qmimiParfumit = item.parfum?.cmimi || "0";
+              const gjinia = item.parfum?.gjinia_target || "Unisex";
 
               return (
                 <div key={item.wishlist_id} className="luxury-wishlist-card">

@@ -1137,3 +1137,68 @@ body {
 .wishlist-btn-luxury i.fas.fa-heart {
   color: #d13a3a !important;
 }
+
+.wishlist-popup-banner {
+  position: fixed !important;
+  bottom: 25px !important;
+  right: 25px !important;
+  background-color: #111111 !important;
+  color: #ffffff !important;
+  border-left: 4px solid #b89453 !important;
+  padding: 15px 25px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+  z-index: 99999 !important; /* Rritur maksimalisht */
+  border-radius: 4px !important;
+  display: block !important;
+  visibility: visible !important;
+}
+.banner-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.banner-content p {
+  margin: 0;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+.banner-btn {
+  background-color: #b89453;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.banner-btn:hover {
+  background-color: #631d27;
+}
+
+.banner-close {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.banner-close:hover {
+  color: white;
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

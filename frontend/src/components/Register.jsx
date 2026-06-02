@@ -8,6 +8,9 @@ const Register = () => {
     email: "",
     password: "",
     phone_number: "",
+    data_lindjes: "",
+    gjinia: "",
+    adresa: "",
     role: "User",
   });
 
@@ -28,6 +31,9 @@ const Register = () => {
 
     if (!formData.emri.trim()) errors.emri = "First Name is required!";
     if (!formData.mbiemri.trim()) errors.mbiemri = "Last Name is required!";
+    if (!formData.data_lindjes) errors.data_lindjes = "Birth date is required!";
+    if (!formData.gjinia) errors.gjinia = "Gender is required!";
+    if (!formData.adresa.trim()) errors.adresa = "Address is required!";
 
     if (!formData.email.trim()) {
       errors.email = "Email Address is required!";
@@ -88,6 +94,9 @@ const Register = () => {
           email: "",
           password: "",
           phone_number: "",
+          data_lindjes: "",
+          gjinia: "",
+          adresa: "",
           role: "User",
         });
         setFieldErrors({});
@@ -182,6 +191,49 @@ const Register = () => {
             />
             {fieldErrors.phone_number && (
               <span className="error-text">{fieldErrors.phone_number}</span>
+            )}
+          </div>
+
+          <div className="form-group">
+            <input
+              type="date"
+              name="data_lindjes"
+              value={formData.data_lindjes}
+              onChange={handleChange}
+              className={fieldErrors.data_lindjes ? "input-error" : ""}
+            />
+            {fieldErrors.data_lindjes && (
+              <span className="error-text">{fieldErrors.data_lindjes}</span>
+            )}
+          </div>
+
+          <div className="form-group">
+            <select
+              name="gjinia"
+              value={formData.gjinia}
+              onChange={handleChange}
+              className={fieldErrors.gjinia ? "input-error" : ""}
+            >
+              <option value="">Gender</option>
+              <option value="Mashkull">Male</option>
+              <option value="Femer">Female</option>
+            </select>
+            {fieldErrors.gjinia && (
+              <span className="error-text">{fieldErrors.gjinia}</span>
+            )}
+          </div>
+
+          <div className="form-group">
+            <input
+              type="text"
+              name="adresa"
+              placeholder="Address"
+              value={formData.adresa}
+              onChange={handleChange}
+              className={fieldErrors.adresa ? "input-error" : ""}
+            />
+            {fieldErrors.adresa && (
+              <span className="error-text">{fieldErrors.adresa}</span>
             )}
           </div>
 

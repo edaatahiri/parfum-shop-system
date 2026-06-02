@@ -7,9 +7,14 @@ const API = axios.create({
 API.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+
+    if (!token || token === "undefined") {
+      console.error("Token missing!");
+      return Promise.reject("No token");
     }
+
+    config.headers.Authorization = `Bearer ${token}`;
+
     return config;
   },
   (error) => Promise.reject(error),
@@ -24,12 +29,16 @@ API.interceptors.response.use(
       (error.response?.status === 401 || error.response?.status === 403) &&
       !originalRequest._retry
     ) {
+      if (originalRequest.url.includes("/refresh")) {
+        return Promise.reject(error);
+      }
+
       originalRequest._retry = true;
 
       try {
         const userObj = JSON.parse(localStorage.getItem("user"));
 
-        const res = await axios.post("http://localhost:5000/api/refresh", {
+        const res = await API.post("/refresh", {
           userId: userObj?.id,
         });
 
@@ -43,13 +52,11 @@ API.interceptors.response.use(
         }
       } catch (refreshError) {
         console.error("Session ka skaduar plotësisht:", refreshError);
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        localStorage.removeItem("userName");
+        localStorage.clear();
         window.location.href = "/login";
+        return Promise.reject(refreshError);
       }
     }
-
     return Promise.reject(error);
   },
 );

@@ -2,23 +2,38 @@ const prisma = require("../config/db");
 
 exports.createDetajShitje = async (req, res) => {
   try {
-    // 1. Marrim të dhënat saktësisht siç i dërgon frontend-i yt (shih foton e.PNG)
     const { parfumetId, sasia, cmimi, shitjeld } = req.body;
 
-    // 2. Sigurohemi që vlerat kthehen në numra që Prisma mos të ankohet
-    const sasiaNummer = parseInt(sasia || 1);
-    const cmimiNjesiNummer = parseFloat(cmimi);
-    const cmimiTotalNummer = cmimiNjesiNummer * sasiaNummer;
+    // SHTO KETU: Kontrollo nëse ID-të janë valid
+    const shitjeIdInt = parseInt(shitjeld);
+    const parfumIdInt = parseInt(parfumetId);
 
-    // 3. Krijojmë rekordin duke i mapuar fushave të sakta të schema.prisma
-    const data = await prisma.detajet_Shitjes.create({
+    if (isNaN(shitjeIdInt) || isNaN(parfumIdInt)) {
+      return res
+        .status(400)
+        .json({ error: "ID-të e shitjes ose parfumit janë të pavlefshme." });
+    }
+
+    const sasiaNum = parseInt(sasia || 1);
+    const cmimiNjesi = parseFloat(cmimi);
+
+    // KRIJIMI: Përdor `connect` për të lidhur shitjen dhe parfumet ekzistuese
+    const data = await prisma.detajet_shitjes.create({
       data: {
-        shitje_id: parseInt(shitjeld),       // Lidhja me shitjen kryesore
-        parfum_id: parseInt(parfumetId),     // Lidhja me parfumet
-        sasia: sasiaNummer,                  // Sasia e parfumit
-        cmimi_njesi: cmimiNjesiNummer,       // Çmimi për një njësi (Kjo zgjidh error-in)
-        cmimi_total: cmimiTotalNummer        // Çmimi total (sasia * çmimi)
-      }
+        sasia: sasiaNum,
+        cmimi_njesi: cmimiNjesi,
+        cmimi_total: cmimiNjesi * sasiaNum,
+
+        // Lidhja me shitjen ekzistuese
+        shitjet: {
+          connect: { shitje_id: shitjeIdInt },
+        },
+
+        // Lidhja me parfum ekzistues
+        parfum: {
+          connect: { parfum_id: parfumIdInt },
+        },
+      },
     });
 
     res.status(201).json(data);
@@ -30,11 +45,11 @@ exports.createDetajShitje = async (req, res) => {
 
 exports.getDetajet = async (req, res) => {
   try {
-    const data = await prisma.detajet_Shitjes.findMany({
+    const data = await prisma.detajet_shitjes.findMany({
       include: {
-        shitje: true,
-        parfum: true
-      }
+        shitjet: true,
+        parfum: true,
+      },
     });
     res.json(data);
   } catch (err) {
@@ -45,12 +60,12 @@ exports.getDetajet = async (req, res) => {
 exports.getDetajById = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    const data = await prisma.detajet_Shitjes.findUnique({
+    const data = await prisma.detajet_shitjes.findUnique({
       where: { detal_id: id },
       include: {
-        shitje: true,
-        parfum: true
-      }
+        shitjet: true,
+        parfum: true,
+      },
     });
     res.json(data);
   } catch (err) {
@@ -61,9 +76,9 @@ exports.getDetajById = async (req, res) => {
 exports.updateDetaj = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    const data = await prisma.detajet_Shitjes.update({
+    const data = await prisma.detajet_shitjes.update({
       where: { detal_id: id },
-      data: req.body
+      data: req.body,
     });
     res.json(data);
   } catch (err) {
@@ -74,8 +89,8 @@ exports.updateDetaj = async (req, res) => {
 exports.deleteDetaj = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    await prisma.detajet_Shitjes.delete({
-      where: { detal_id: id }
+    await prisma.detajet_shitjes.delete({
+      where: { detal_id: id },
     });
     res.json({ message: "Deleted" });
   } catch (err) {
