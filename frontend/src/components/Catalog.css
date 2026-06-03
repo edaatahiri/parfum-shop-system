@@ -1,129 +1,31 @@
-/* --- Stilet e reja të izoluara për butonin Back të Katalogut --- */
-.catalog-back-navbar {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 25px 30px; /* Hapësirë e pastër poshtë navbar-it tuaj kryesor */
+.homepage-wrapper { padding: 20px; }
+
+.catalog-container {
+  display: flex; /* Kjo e kthente faqen në krahë të barabartë */
+  gap: 20px;
 }
 
-.catalog-back-btn {
-  background-color: #b89453;
-  color: #000;
-  border: none;
-  padding: 14px 28px;       /* Madhësia e rritur (Padding premium) */
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 700;          /* Shkrimi i trashë dhe i dukshëm */
-  font-size: 1.15rem;        /* Fonti i madh dhe i qartë */
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+.filter-sidebar { width: 250px; }
+.products-column { flex: 1; }
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
 }
 
-/* --- Çmimi Maksimal te Filtrat --- */
-.max-price-badge {
-  color: #722f37;
-  font-weight: bold;
-  font-family: sans-serif;
-}
-
-/* --- Fotoja e Kartelës së Parfumit --- */
-.perfume-img-render {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-/* --- Modal Pop-up Overlay dhe Glass Card --- */
 .modal-overlay-backdrop {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
-  backdrop-filter: blur(8px);
 }
 
 .modal-glass-container {
-  max-width: 500px;
-  width: 90%;
-  padding: 25px;
-  position: relative;
-  animation: fadeIn 0.3s ease;
-}
-
-.modal-title-text {
-  color: #fff;
-  margin-bottom: 15px;
-  font-size: 1.8rem;
-}
-
-.modal-desc-text {
-  color: #ddd;
-  font-size: 0.95rem;
-  line-height: 1.5;
-  margin-bottom: 15px;
-}
-
-.modal-info-box {
-  border-top: 1px solid rgba(255,255,255,0.1);
-  padding-top: 15px;
-  color: #fff;
-  margin-bottom: 20px;
-}
-
-.modal-stock-available {
-  color: #4BB543;
-}
-
-.modal-stock-empty {
-  color: #ff4d4d;
-}
-
-.modal-footer-box {
-  padding-top: 15px;
-  border-top: 1px solid rgba(255,255,255,0.1);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.modal-price-text {
-  font-size: 1.6rem;
-}
-
-.modal-action-gap {
-  display: flex;
-  gap: 10px;
-}
-
-.modal-btn-cancel {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 8px 15px;
-}
-
-.modal-btn-submit {
-  padding: 8px 15px;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
 }

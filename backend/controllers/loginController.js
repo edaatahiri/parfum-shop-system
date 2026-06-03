@@ -15,10 +15,10 @@ const loginUser = async (req, res) => {
       });
     }
 
-    const user = await prisma.users.findUnique({
+   const user = await prisma.users.findUnique({
       where: { email },
       include: {
-        userroles: {
+        userroles: { // Ndrysho nga userRoles në userroles
           include: {
             roles: true,
           },
@@ -40,7 +40,6 @@ const loginUser = async (req, res) => {
     }
 
     const userRoleName = user.userroles?.[0]?.roles?.emertimi || "USER";
-
     const accessToken = jwt.sign(
       {
         id: user.id,

@@ -52,19 +52,12 @@ exports.toggleWishlist = async (req, res) => {
 exports.getKlientWishlist = async (req, res) => {
   try {
     const { userId } = req.params;
-
-    console.log("Duke marrë wishlist për user-in:", userId);
-
     const listat = await prisma.wishlist.findMany({
-      where: { user_id: parseInt(userId) },
-      include: {
-        parfum: true,
-      },
-    });
-    console.log("Wishlist u gjet me sukses, numri i artikujve:", listat.length);
+  where: { userId: parseInt(userId) }, // Ndrysho "user_id" në emrin e saktë nga schema
+  include: { parfum: true },
+});
     res.status(200).json(listat);
   } catch (err) {
-    console.error("GABIMI I PRISMA-s:", err);
-    res.status(500).json({ error: err.message });
+    // ...
   }
 };

@@ -24,7 +24,10 @@ exports.createParfum = async (req, res) => {
 exports.getAllParfumet = async (req, res) => {
   try {
     const parfumet = await prisma.parfum.findMany({
-      include: { kategoria: true, markat: true },
+      include: { 
+        kategoria: true, 
+        markat: true // Ndrysho nga "marka" në "markat"
+      },
     });
     res.json(parfumet);
   } catch (err) {

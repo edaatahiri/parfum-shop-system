@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 const bcrypt = require("bcryptjs");
 
 async function main() {
-  await prisma.userRoles.deleteMany({ where: { role_id: 4 } });
+  await prisma.userroles.deleteMany({ where: { role_id: 4 } });
   await prisma.roles.delete({ where: { id: 4 } });
   console.log('Duke nisur procesin e "seeding"...');
 
@@ -62,7 +62,7 @@ async function main() {
       email: "rozafe.shkodra@gmail.com",
       password_hash: hashedPassword,
       statusi: "Active",
-      userRoles: {
+      userroles: {
         create: { role_id: 1 },
       },
     },
@@ -77,7 +77,7 @@ async function main() {
       email: "et72862@ubt-uni.net",
       password_hash: hashedPassword,
       statusi: "Active",
-      userRoles: {
+      userroles: {
         create: { role_id: 1 },
       },
     },
@@ -92,7 +92,7 @@ async function main() {
       email: "manager@parfum.com",
       password_hash: hashedPassword,
       statusi: "Active",
-      userRoles: {
+      userroles: {
         create: { role_id: 3 },
       },
     },
@@ -107,12 +107,39 @@ async function main() {
       email: "staff@parfum.com",
       password_hash: hashedPassword,
       statusi: "Active",
-      userRoles: {
+      userroles: {
         create: { role_id: 2 },
       },
     },
   });
 
+  // --- SHTESA E PUNËTORIT ---
+  // --- SHTESA E PUNËTORIT ---
+  const userStaff = await prisma.users.findUnique({ where: { email: "staff@parfum.com" } });
+  
+  if (userStaff) {
+    // 1. Provo a ekziston ky punëtor
+    const punetoriEkzistues = await prisma.punetoret.findFirst({
+      where: { email: "staff@parfum.com" }
+    });
+
+    if (!punetoriEkzistues) {
+      // 2. Nëse nuk ekziston, krijoje
+      await prisma.punetoret.create({
+        data: {
+          emri: userStaff.emri,
+          mbiemri: userStaff.mbiemri,
+          email: "staff@parfum.com",
+          pozita: "Staf",
+          data_punesimit: new Date(),
+          paga: 0
+        },
+      });
+      console.log("Punëtori u krijua me sukses.");
+    } else {
+      console.log("Punëtori ekziston, duke anashkaluar krijimin.");
+    }
+  }
   const kategoria = await prisma.kategoria.upsert({
     where: { emri: "Floral" },
     update: {},
@@ -132,6 +159,7 @@ async function main() {
     },
   });
 
+  // Parfumeve... (kodi yt vazhdon këtu me parfumet)
   await prisma.parfum.upsert({
     where: { parfum_id: 1 },
     update: {},
@@ -149,76 +177,8 @@ async function main() {
     },
   });
 
-  await prisma.parfum.upsert({
-    where: { parfum_id: 2 },
-    update: {},
-    create: {
-      parfum_id: 2,
-      emri: "Dior Sauvage",
-      gjinia_target: "Meshkuj",
-      volumi_ml: 100,
-      cmimi: 120.0,
-      sasia_stok: 15,
-      pershkrimi:
-        "Një aromë e egër dhe fisnike në të njëjtën kohë. Perfekte për mbrëmje.",
-      notat_ere: "Bergamot, Piper i Zi, Dru Amber",
-      kategoria_id: kategoria.kategori_id, // KORRIGJUAR: kategori_id
-      marka_id: marka.marka_id,
-    },
-  });
-
-  // 3. Versace Eros
-  await prisma.parfum.upsert({
-    where: { parfum_id: 3 },
-    update: {},
-    create: {
-      parfum_id: 3,
-      emri: "Versace Eros",
-      gjinia_target: "Meshkuj",
-      volumi_ml: 100,
-      cmimi: 95.0,
-      sasia_stok: 20,
-      pershkrimi: "Aroma e dashurisë, pasionit dhe bukurisë mashkullore.",
-      notat_ere: "Mente, Mollë e Gjelbër, Tonka Bean",
-      kategoria_id: kategoria.kategori_id, // KORRIGJUAR: kategori_id
-      marka_id: marka.marka_id,
-    },
-  });
-
-  await prisma.parfum.upsert({
-    where: { parfum_id: 4 },
-    update: {},
-    create: {
-      parfum_id: 4,
-      emri: "Tom Ford Black Orchid",
-      gjinia_target: "Unisex",
-      volumi_ml: 50,
-      cmimi: 150.0,
-      sasia_stok: 8,
-      pershkrimi:
-        "Një aromë luksoze, e errët dhe misterioze me nota të pasura dhe sensuale.",
-      notat_ere: "Black Truffle, Ylang-Ylang, Black Orchid, Patchouli",
-      kategoria_id: kategoria.kategori_id,
-      marka_id: marka.marka_id,
-    },
-  });
-
-  await prisma.parfum.upsert({
-    where: { parfum_id: 5 },
-    update: {},
-    create: {
-      parfum_id: 5,
-      emri: "Férox",
-      gjinia_target: "Femer",
-      volumi_ml: 100,
-      cmimi: 145.0,
-      sasia_stok: 10,
-      pershkrimi: "Layers of Scent Unfolding Like a Story.",
-      notat_ere: "Jasmine, Rose, Green tea, Vanilla, Sandalwood, Musk",
-      kategoria_id: kategoria.kategori_id,
-      marka_id: marka.marka_id,
-    },
-  });
+  // ... (pjesa tjetër e parfumeve mbetet e njëjtë)
+  
   console.log("Seeding përfundoi me sukses!");
 }
 

@@ -1,39 +1,42 @@
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient(); 
 const jwt = require("jsonwebtoken");
+
+
 
 const verifyToken = (req, res, next) => {
   try {
     const authHeader = req.headers["authorization"];
-
     if (!authHeader) {
-      return res.status(401).json({ error: "Token mungon (no header)" });
+      return res.status(401).json({ error: "Token mungon" });
     }
 
     const token = authHeader.split(" ")[1];
-
     if (!token) {
       return res.status(401).json({ error: "Token format gabim" });
     }
 
+    // Përdorim JWT për të dekoduar tokenin që Frontend dërgon
     const verified = jwt.verify(
       token,
-      process.env.JWT_SECRET || "super-secret-key",
+      process.env.JWT_SECRET || "super-secret-key"
     );
 
-    req.user = verified || {};
-
-    req.user.role = (req.user.role || req.user.roles || "")
-      .toString()
-      .toLowerCase();
+    // Vendosim të dhënat e përdoruesit në req.user
+    req.user = verified;
+    
+    // Sigurohemi që roli të jetë në formatin që pret isAdmin/isManagment
+    req.user.role = (req.user.role || "").toString().toLowerCase();
 
     next();
   } catch (error) {
     console.error("JWT ERROR:", error.message);
-
-    return res.status(403).json({
-      error: "Token invalid ose i skaduar",
-    });
+    return res.status(403).json({ error: "Token invalid ose i skaduar" });
   }
 };
+
+
+
 
 const isAdmin = (req, res, next) => {
   console.log("Roli qe po vjen nga tokeni:", req.user.role);
